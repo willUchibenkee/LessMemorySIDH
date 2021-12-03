@@ -4,7 +4,10 @@
 #include <time.h> 
 #include <stdio.h>
 
+//extern union T *pt;
 
+
+#define rval "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 
 unsigned int hextoui(char * str, int len){
     unsigned int i, val = 0;
@@ -27,12 +30,12 @@ void Fp_set_str(Fp *a, unsigned char* str){
     unsigned int i;
     // unsigned int c[3];
     unsigned int len = strlen(str); //ここでは９６くらい
-
-    if (len > WORD * MOD_WORDS / 4 + 2) exit(1); //  384bitより長かったらエラー
+    printf("len :%d\n",WORD );
+    // if (len > WORD * MOD_WORDS / 4 + 2) exit(1); //  384bitより長かったらエラー
 
     for(i = 0; i < MOD_WORDS; i++) a->value[i] = 0;
-
-
+    
+    printf("len :%d\n",len / 8);
     //文字数字を配列に代入
     for(i = 0; i < len / 8; i++){
         a->value[i] = hextoui((str + len - (i * 8)), 8);
@@ -45,6 +48,26 @@ void Fp_set_str(Fp *a, unsigned char* str){
 #else
 
 #endif
+
+void Fp_set_R(void){
+    Fp_set_str(r, rval);
+}
+
+void Fp_set_N(void){
+    Fp_set_str(N, Nval);
+}
+
+void Fp_set_p(void){
+    Fp_set_str(p, pval);
+}
+
+void Fp_set_one(void){
+    Fp_set_str(one, oneval);
+}
+
+void Fp_set_Rsq(void){
+    Fp_set_str(Rsq, rsqval);
+}
 
 #ifdef NOELIPS
 void Fp_get_str(char* str, Fp *a){
@@ -154,7 +177,7 @@ void mul_1(unsigned int *rp, unsigned int *up, unsigned int vl){
     *rp = cl;
 }
 //ここでa,bはモンゴメリドメインに乗っている必要あり。求めるのはa*b*R^-1
-//R=2**384 mod p
+//R=2**448 mod p
 void MR(Fp *c, Fp *a, Fp *b){
     unsigned int q = 0, S = 0;
     unsigned int reg1[MOD_WORDS + 1];

@@ -1,10 +1,22 @@
 // my_pairing.h From ANSIIRU's github
+#pragma once
+
+#ifdef TTT_INSTANCE_HERE
+
+    #define TTT_EXTERN
+
+#else
+
+    #define TTT_EXTERN extern
+
+#endif
+
 
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <math.h>
 
 //#define NULL (void *)0 //ここでエラーが出ているが関係ないと思う
 #define TEST
@@ -12,12 +24,15 @@
 #define HHALF_MASK UINT_MAX << (WORD / 2)   //UINT_MAX=4294967295を16bit左にシフトf
 #define LHALF_MASK UINT_MAX >> (WORD / 2)   // 16bit右にシフト
 #define HWORD_BIT ((unsigned int) 1 << (WORD / 2))  //1を１６左にシフト
-#define Mprime 0xFFFCFFFD  //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット）254bitの場合nprime=0x365373ccba60808c92022379c45b843c6e371ba81104f6c808435e50d79435e5
+#define Mprime 0000000001  //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット）254bitの場合nprime=0x365373ccba60808c92022379c45b843c6e371ba81104f6c808435e50d79435e5
 #define NOELIPS            //ELIPSを使うか使わないか
-
+#define Nval "00006FE5D541F71C0E12909F97BADC668562B5045CB25748084E9867D6EBE876DA959B1A13F7CC76E3EC968549F878A8EEAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+#define pval "0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+#define oneval "ECEEA7BD2EDAE93254545F77410CD801A4FB559FACD4B90FF404FC00000000000000000000000000000000000000000000000000742C"
+#define rsqval "25A89BCDD12A69E16A61C7686D9AABCD92BF2DDE347E175CC6AF8D6C7C0BAB27973F8311688DACEC7367768798C228E55B65DCD69B30"
 
 #define MOD_WORDS 14    //BLS12-381のためこれだけ必要？32*14=448bit
-#define MOD_WORDS2 24 
+#define MOD_WORDS2 28 
 #define FAIL_SET_STR 2
 #define FAIL_GET_STR 3
 #define FAIL_FP_SUB 4
@@ -83,11 +98,17 @@ typedef struct EC_Fp2_A{
     int infinity;
 }EC_Fp2_A;
 
+Fp po;
+Fp oneo;
+Fp rsqo;
+Fp ro;
+Fp No;
 
-//extern union T *pt;
-extern Fp *p;
-extern Fp *one;
-extern Fp *Rsq;
+ Fp *p= &po;
+ Fp *one= &oneo;
+ Fp *Rsq = &rsqo;
+ Fp *r= &ro;
+ Fp *N= &No;
 
 void Fp_set_str(Fp *a, unsigned char* str);
 void Fp_get_str(char* str, Fp *a);
