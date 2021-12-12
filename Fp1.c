@@ -3,6 +3,7 @@
 #include "my_pairing.h"
 #include <time.h> 
 #include <stdio.h>
+#include<assert.h>
 
 //extern union T *pt;
 
@@ -12,6 +13,7 @@
 unsigned int hextoui(char * str, int len){
     unsigned int i, val = 0;
     char c;
+    //printf("hextoui\n");
 
     for(i = 0; i < len; i++){
         c = *(str - i - 1);
@@ -30,26 +32,29 @@ void Fp_set_str(Fp *a, unsigned char* str){
     unsigned int i;
     // unsigned int c[3];
     unsigned int len = strlen(str); //ここでは９６くらい
-    printf("len :%d\n",WORD );
+    //printf("WORD :%d\n",WORD );
     // if (len > WORD * MOD_WORDS / 4 + 2) exit(1); //  384bitより長かったらエラー
 
     for(i = 0; i < MOD_WORDS; i++) a->value[i] = 0;
     
-    printf("len :%d\n",len / 8);
+    //printf("len :%d\n",len / 8);
     //文字数字を配列に代入
     for(i = 0; i < len / 8; i++){
         a->value[i] = hextoui((str + len - (i * 8)), 8);
+        //printf("a\n");
     }
 
     if (len & 0x07){
         a->value[i] = hextoui((str + len - (i * 8)), len & 0x7);
+        //printf("b\n");
     }
+    //printf("end set\n");
 }
 #else
 
 #endif
 
-void Fp_set_R(void){
+void Fp_set_r(void){
     Fp_set_str(r, rval);
 }
 
@@ -313,7 +318,7 @@ int Fp_cmp_one(Fp *a){
 #ifdef NOELIPS
 //Fｐをプリントする
 void Fp_print(Fp *a){
-    char buf[97];   //一応９７文字分用意する。
+    char buf[200];   //一応９７文字分用意する。
     Fp_get_str(buf, a);
     printf("%s\n", buf);
 }
