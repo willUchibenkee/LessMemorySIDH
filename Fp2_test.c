@@ -112,6 +112,8 @@ int main(void){
         }
     }
 
+    //legendre srqt test
+
     printf("test complete.\n");
 
     return 0;

@@ -100,6 +100,23 @@ void Fp2_sqr3(Fp2 *c, Fp2 *a){
     Fp2_mul(c, c, a);
 }
 
+int Fp2_pow_c3(Fp2 *z,Fp2 *a){
+	char *c3="1101000000001000100011110101000111001011111111110011010011010010010110001101110100111101101100100001101001011101011001101011101100100011101110100101110000100111100111000010100010010101111110110011100110000110100101010000011110110101100001111011000100100000111101010101111111111111111101011000101010011111111111111111110111001111111101111111111111111111111111111111110101010101010";
+	Fp2 t;
+    Fp2_set(&t,a);
+    // Fp_print(&t);
+    //Left-to-right binary
+    for(int i = 1; i < 379; i++){
+        Fp2_mul(&t, &t, &t);
+        if(*(c3 + i) == '1') {
+            Fp2_mul(&t, &t, a);
+            // printf("はいったよ");
+        }
+    }
+   Fp2_set(z,&t);
+}
+
+
 void Fp2_div2(Fp2 *c, Fp2 *a){
     Fp_div2(elem0(c), elem0(a));
     Fp_div2(elem1(c), elem1(a));
@@ -231,10 +248,61 @@ int Fp2_cmp_zero(Fp2* a){
     }
 }
 
+int Fp2_cmp_one_mont(Fp2 *a){
+    Fp2 b;
+    Fp2_set_str(&b,"15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd 0");
+    if(Fp2_cmp(a,&b)==0){
+        return 1;
+   }else{
+        return 0;
+    }
+}
+
+
 
 //-aを求める
 void _Fp_neg(Fp *c, Fp *a){
     Fp_sub(c, p, a);
 }
 
+//Fp2_legendre()
+int Fp2_legendre(Fp2 *a){
+	char *legendre_num="11010000000010001000111101010001110010111111111100110100110100100101100011011101001111011011001000011010010111010110011010111011001000111011101001011100001001111001110000101000100101011111101100111001100001101001010100000111101101011000011110110001001000001111010101011111111111111111010110001010100111111111111111111101110011111111011111111111111111111111111111111101010101010101";
+	Fp2 t;
+    Fp2_set(&t,a);
+    // Fp_print(&t);
+    //Left-to-right binary
+    for(int i = 1; i < 380; i++){
+        Fp2_mul(&t, &t, &t);
+        if(*(legendre_num + i) == '1') {
+            Fp2_mul(&t, &t, a);
+            // printf("はいったよ");
+        }
+    }
+    // Fp_from_Mont(&t);
+    // Fp_print(&t);
+    if(Fp2_cmp_one_mont(&t)==1){
+      return 1;
+    }else{
+      return -1;
+    }
+}
 
+// Fp2_sqrt()
+
+void Fp2_sqrt(Fp2 *ANS,Fp2 *a){
+  Fp2 c1,c2,c3,c4,c5;
+  Fp2 z,t,c,b;
+
+  Fp2_set_str(&c4,"161f998c5b49581b0849183769bd9b3dfad48bf9246cec972babb6cfe688d67b0893a1b4df74c0c185cc870e65ffbab2 0");
+  Fp2_set_str(&c1,"1");
+  Fp2_set_str(&c2,"d0088f51cbff34d258dd3db21a5d66bb23ba5c279c2895fb39869507b587b120f55ffff58a9ffffdcff7fffffffd555 0");
+  Fp2_set_str(&c3,"680447a8e5ff9a692c6e9ed90d2eb35d91dd2e13ce144afd9cc34a83dac3d8907aaffffac54ffffee7fbfffffffeaaa 0");
+  Fp2_set_str(&c5,"ef145240bdb3a8cc6f71b9a8e6cdf38670d0588614e9c73d15af739036c8ae69a622f2441999f9ef718bc78ccffcd52 0");
+
+  Fp2_pow_c3(&z,a);
+  // Fp_mul(&t,&z,a);
+  // Fp_mul(&t,&z,&t);
+  Fp2_mul(&z,&z,a);
+  Fp2_set(ANS,&z);
+}
