@@ -24,12 +24,14 @@
 #define HHALF_MASK UINT_MAX << (WORD / 2)   //UINT_MAX=4294967295を16bit左にシフトf
 #define LHALF_MASK UINT_MAX >> (WORD / 2)   // 16bit右にシフト
 #define HWORD_BIT ((unsigned int) 1 << (WORD / 2))  //1を１６左にシフト
-#define Mprime 2532326389  //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット）254bitの場合nprime=0x365373ccba60808c92022379c45b843c6e371ba81104f6c808435e50d79435e5
+#define Mprime 656013006  //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット)
 #define NOELIPS            //ELIPSを使うか使わないか
-#define Nval "46acae74fb758612c1f667297971c8a48f9536f0ec3d92996a80e3173e315bb9286cd0db0a821a65f92b0804620cd6e1fa9e15a9677f2719a7a3"
-#define pval "0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-#define oneval "ECEEA7BD2EDAE93254545F77410CD801A4FB559FACD4B90FF404FC00000000000000000000000000000000000000000000000000742C"
-#define rsqval "25A89BCDD12A69E16A61C7686D9AABCD92BF2DDE347E175CC6AF8D6C7C0BAB27973F8311688DACEC7367768798C228E55B65DCD69B30"
+#define Nval "ae74fb758612c1f667297971c8a48f9536f0ec3d92996a80e3173e315bb9286cd0db0a821a65f92b0804620cd6e1fa9e15a9677f2719a7a3" //乱数
+#define pval "0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" // sidh.specより
+#define oneval "ECEEA7BD2EDAE93254545F77410CD801A4FB559FACD4B90FF404FC00000000000000000000000000000000000000000000000000742C" // r&p
+#define rsqval "25A89BCDD12A69E16A61C7686D9AABCD92BF2DDE347E175CC6AF8D6C7C0BAB27973F8311688DACEC7367768798C228E55B65DCD69B30" // r**2%p
+#define rval "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+#define Nprime "9d29b89047d637322e5e278d70dc36164cd2eacf79a690086b803ab9286cd0db0a821a65f92b0804620cd6e1fa9e15a9677f2719f6ce" // N%p
 
 #define MOD_WORDS 14    //BLS12-381のためこれだけ必要？32*14=448bit
 #define MOD_WORDS2 28 
@@ -69,34 +71,13 @@ typedef struct Fp2{
     Fp element[2];
 }Fp2;
 
-//３次元へと射影しているプロジェクティブ座標系
-typedef struct EC_Fp{
-    Fp x;
-    Fp y;
-    Fp z;
-    int infinity;
-}EC_Fp;
-
-typedef struct EC_Fp2{
+typedef struct ec2
+{
     Fp2 x;
     Fp2 y;
-    Fp2 z;
-    int infinity;
-}EC_Fp2;
-
-//アフィン座標系
-
-typedef struct EC_Fp_A{
-    Fp x;
-    Fp y;
-    int infinity;
-}EC_Fp_A;
-
-typedef struct EC_Fp2_A{
-    Fp2 x;
-    Fp2 y;
-    int infinity;
-}EC_Fp2_A;
+    int inf;
+    // 楕円曲線の点 無限遠にいったらinfを１に
+}ec2;
 
 Fp po;
 Fp oneo;
@@ -110,6 +91,7 @@ Fp *Rsq = &rsqo;
 Fp *r= &ro;
 Fp *N= &No;
 
+//Fp1.c
 void Fp_set_str(Fp *a, unsigned char* str);
 void Fp_get_str(char* str, Fp *a);
 void Fp_print(Fp *a);
@@ -127,7 +109,7 @@ int Fp_legendre(Fp *a);
 void Fp_sqrt(Fp *ANS,Fp *a);
 int Fp_pow_c3(Fp *z,Fp *a);
 
-
+//Fp2.c
 void Fp2_set_str(Fp2 *a, char* str);
 void Fp2_get_str(char* str, Fp2 *a);
 void Fp2_print(Fp2 *a);
@@ -156,49 +138,4 @@ void Fp2_mul_line(Fp2* c,Fp2* a);
 void _Fp_neg(Fp *c, Fp *a);
 void Fp2_mul_acc(Fp2 *c, Fp2 *a, Fp2 *b);
 
-
-void EC_Fp_set_str(EC_Fp *P, char* str);
-void EC_Fp_get_str(char* str, EC_Fp *P);
-void EC_Fp_print(EC_Fp *T);
-void EC_Fp_A_print(EC_Fp_A *T);
-void EC_Fp2_print(EC_Fp2 *T);
-void EC_Fp2_point_set(EC_Fp2 *Q, EC_Fp2 *P);
-void EC_Fp2_set_str(EC_Fp2 *P, char* str);
-void EC_Fp2_get_str(char* str, EC_Fp2 *P);
-void EC_Fp_set(EC_Fp *P, EC_Fp *Q);
-void EC_Fp2_set(EC_Fp2 *P, EC_Fp2 *Q);
-void EC_Fp2_affine_set(EC_Fp2 *P, EC_Fp2 *Q);
-void EC_Fp2_neg(EC_Fp2 *P);
-
-void EC_Fp2_twist_frob_p(EC_Fp2 *Q, EC_Fp2 *P);
-void EC_Fp2_to_Mont(EC_Fp2 *Q, EC_Fp2 *P);
-void EC_Fp_to_Mont(EC_Fp *Q, EC_Fp *P);
-void EC_Fp_gen_BN254_Y(EC_Fp *Q, EC_Fp *P);
-int EC_Fp_check_on_curve(EC_Fp *T);
-void EC_Fp2_check_on_curve(EC_Fp2 *T);
-void EC_Fp_A_set(EC_Fp_A *P, EC_Fp_A *Q);
-void EC_Fp2_A_set(EC_Fp2_A *P, EC_Fp2_A *Q);
-void EC_Fp2_A_print(EC_Fp2_A *T);
-void EC_Fp_A_print(EC_Fp_A *T);
-void EC_Fp2_A_to_Mont(EC_Fp2_A *Q, EC_Fp2_A *P);
-void EC_Fp_A_to_Mont(EC_Fp_A *Q, EC_Fp_A *P);
-void EC_Fp_A_set_str(EC_Fp_A *P, char* str);
-void EC_Fp2_A_set_str(EC_Fp2_A *P, char* str);
-
-void EC_Fp2_A_point_set(EC_Fp2_A *Q, EC_Fp2_A *P);
-void EC_Fp_gen_random_BLS381_Mont(EC_Fp *P);
-void rand_value(char *str, int len);
-
-void EC_Fp_make_affine(EC_Fp *T);
-void EC_Fp2_make_affine(EC_Fp2 *T);
-void EC_Fp_addition_only_proj(EC_Fp *R, EC_Fp *T,EC_Fp *Q);
-void EC_Fp_doubling_only_proj(EC_Fp *T2, EC_Fp *T);
-void G1_SCM(EC_Fp* ans, char *s, EC_Fp* P);
-void G2_SCM(EC_Fp2* ans, char *s, EC_Fp2* P);
-void check_A_onE(Fp2 *x,Fp2*y);
-void SCM_Fp_check_proj(EC_Fp* P);
-void EC_Fp_P_to_A(EC_Fp_A* A, EC_Fp* B);
-void EC_Fp2_P_to_A(EC_Fp2_A* A ,EC_Fp2 *B);
-
-
-void Map_to_Point(EC_Fp *c,char *a);
+//efp2.c

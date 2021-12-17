@@ -7,13 +7,9 @@
 
 //extern union T *pt;
 
-
-#define rval "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-
 unsigned int hextoui(char * str, int len){
     unsigned int i, val = 0;
     char c;
-    //printf("hextoui\n");
 
     for(i = 0; i < len; i++){
         c = *(str - i - 1);
@@ -30,41 +26,23 @@ unsigned int hextoui(char * str, int len){
 //Fpの元を1つ作成する。
 void Fp_set_str(Fp *a, unsigned char* str){
     unsigned int i;
-    // unsigned int c[3];
     unsigned int len = strlen(str); //ここでは９６くらい
-    //printf("WORD :%d\n",WORD );
-    // if (len > WORD * MOD_WORDS / 4 + 2) exit(1); //  384bitより長かったらエラー
+    if (len > WORD * MOD_WORDS / 4 + 2) exit(1); //  448bitより長かったらエラー
 
     for(i = 0; i < MOD_WORDS; i++) a->value[i] = 0;
     
-    //printf("len :%d\n",len / 8);
     //文字数字を配列に代入
     for(i = 0; i < len / 8; i++){
         a->value[i] = hextoui((str + len - (i * 8)), 8);
-        //printf("a\n");
     }
 
     if (len & 0x07){
         a->value[i] = hextoui((str + len - (i * 8)), len & 0x7);
-        //printf("b\n");
     }
-    //printf("end set\n");
 }
 #else
 
 #endif
-
-void Fp_set_r(void){
-    Fp_set_str(r, rval);
-}
-
-void Fp_set_N(void){
-    Fp_set_str(N, Nval);
-}
-
-void Fp_set_p(void){
-    Fp_set_str(p, pval);
-}
 
 void Fp_set_one(void){
     Fp_set_str(one, oneval);
@@ -291,19 +269,17 @@ int Fp_cmp_zero(Fp *a){
     }
 }
 
-int Fp_cmp_one_mont(Fp *a){
-    Fp b;
-    Fp_set_str(&b,"15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd");
-    if(Fp_cmp(a,&b)==0){
+int Fp_cmp_one(Fp *a){
+    if(Fp_cmp(a,one)==0){
         return 1;
    }else{
         return 0;
     }
 }
 
-int Fp_cmp_one(Fp *a){
+int Fp_cmp_one_mont(Fp *a){
     Fp b;
-    Fp_set_str(&b,"1");
+    Fp_set_str(&b,"15f65ec3fa80e4935c071a97a256ec6d77ce5853705257455f48985753c758baebf4000bc40c0002760900000002fffd");
     if(Fp_cmp(a,&b)==0){
         return 1;
    }else{
@@ -442,3 +418,4 @@ int Fp_pow_c3(Fp *z,Fp *a){
     }
    Fp_set(z,&t);
 }
+

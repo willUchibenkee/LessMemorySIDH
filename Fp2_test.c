@@ -1,7 +1,7 @@
-// Fp1_test.c
-// #include "test_mypairing.h"
+// Fp2_test.c
+
 #define TTT_INSTANCE_HERE
-#include "Fp1.c"
+#include "Fp2.c"
 
 #define ec_field(p)   (p->ec->field)
 #define rep(x) (*((mpz_t *)x->data))
@@ -14,35 +14,10 @@
 #define curve(p)   (p->ec)
 
 #define TIMES 1,000,000
-// #define Avalue ""
-// #define Bvalue ""
-// #define Cvalue ""
-// Fp po;
-// Fp oneo;
-// Fp rsqo;
-// Fp ro;
-// Fp No;
-
-// Fp *p= &po;
-// Fp *one= &oneo;
-// Fp *Rsq = &rsqo;
-// Fp *r= &ro;
-// Fp *N= &No;
-
 
 int main(void){
 
-     Fp a, b, c;
-    // // a[0]0~31 a[1]32~63
-    // p = &po;
-    // one = &oneo;
-    // Rsq = &rsqo;
-    // r = &ro;
-    // N = &No;
-
-    // char *_r2 = rsqval;
-    // char *_r = rval;
-    // char *_p = pval;
+    Fp2 a, b, c;
 
     printf("Fp1 test starts.\n");
     // Fp_set_R();
@@ -63,70 +38,77 @@ int main(void){
     Fp_print(one);
     Fp_print(Rsq);
 
+    Fp2 onefp2;
+    Fp2_set_fp(&onefp2, one);
+
     printf("add test\n");
     for(int i = 0; i < TIMES; i++){
         for(int k = 0; k < MOD_WORDS; k++){
-            a.value[k] = (rand()) << 32768 + rand();
+            a.element[0].value[k] = (rand()) << 32768 + rand();
+            a.element[1].value[k] = (rand()) << 32768 + rand();
         }
         for(int l = 0; l < MOD_WORDS; l++){
             for(int j = 0; j < N->value[l] << ((int)pow(2, l)); j++){
-                Fp_add(&c, &c, &a);
+                Fp2_add(&c, &c, &a);
             }
         }
-        if(Fp_cmp_zero(&c) != 0){
+        if(Fp2_cmp_zero(&c) != 0){
             printf("failed. value = ");
-            Fp_print(&c);
+            Fp2_print(&c);
         }
     }
 
      printf("sub test\n");
     for(int i = 0; i < TIMES; i++){
         for(int k = 0; k < MOD_WORDS; k++){
-            a.value[k] = (rand()) << 32768 + rand();
+            a.element[0].value[k] = (rand()) << 32768 + rand();
+            a.element[1].value[k] = (rand()) << 32768 + rand();
         }
         for(int l = 0; l < MOD_WORDS; l++){
             for(int j = 0; j < N->value[l] << ((int)pow(2, l)); j++){
-                Fp_sub(&c, &c, &a);
+                Fp2_sub(&c, &c, &a);
             }
         }
-        if(Fp_cmp_zero(&c) != 0){
+        if(Fp2_cmp_zero(&c) != 0){
             printf("failed. value = ");
-            Fp_print(&c);
+            Fp2_print(&c);
         }
     }
 
     printf("mul test\n");
     for(int i = 0; i < TIMES; i++){
         for(int k = 0; k < MOD_WORDS; k++){
-            a.value[k] = (rand()) << 32768 + rand();
+            a.element[0].value[k] = (rand()) << 32768 + rand();
+            a.element[1].value[k] = (rand()) << 32768 + rand();
         }
-        Fp_set_str(&c, "1");
+        Fp2_set_str(&c, "1 0");
         for(int l = 0; l < MOD_WORDS; l++){
             for(int j = 0; j < N->value[l] << ((int)pow(2, l)); j++){
-                Fp_mul(&c, &c, &a);
+                Fp2_mul(&c, &c, &a);
             }
         }
-        if(Fp_cmp(&c, one) != 0){
+        if(Fp2_cmp(&c, &onefp2) != 0){
             printf("failed. value = ");
-            Fp_print(&c);
+            Fp2_print(&c);
         }
     }
 
     printf("inv test\n");
     for(int i = 0; i < TIMES; i++){
         for(int k = 0; k < MOD_WORDS; k++){
-            a.value[k] = (rand()) << 32768 + rand();
+            a.element[0].value[k] = (rand()) << 32768 + rand();
+            a.element[1].value[k] = (rand()) << 32768 + rand();
         }
-        Fp_set_str(&c, "1");
+        Fp2_set_str(&c, "1");
         for(int l = 0; l < MOD_WORDS; l++){
             for(int j = 0; j < N->value[l] << ((int)pow(2, l)); j++){
-                Fp_inv(&c, &a);
+                Fp2_inv(&c, &a);
             }
         }
-        Fp_mul(&c, &c, &a);
-        if(Fp_cmp(&c, one) != 0){
+        Fp2_mul(&c, &c, &a);
+        if(Fp2_cmp(&c, &onefp2) != 0){
             printf("failed. value = ");
-            Fp_print(&c);
+            Fp2_print(&c);
         }
     }
 
