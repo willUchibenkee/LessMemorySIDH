@@ -3,8 +3,6 @@
 
 #ifdef TTT_INSTANCE_HERE
 
-    #define TTT_EXTERN
-
 #else
 
     #define TTT_EXTERN extern
@@ -24,14 +22,12 @@
 #define HHALF_MASK UINT_MAX << (WORD / 2)   //UINT_MAX=4294967295を16bit左にシフトf
 #define LHALF_MASK UINT_MAX >> (WORD / 2)   // 16bit右にシフト
 #define HWORD_BIT ((unsigned int) 1 << (WORD / 2))  //1を１６左にシフト
-#define Mprime 656013006  //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット)
+#define Mprime 0x00000001  //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット) 0xFFFCFFFD
 #define NOELIPS            //ELIPSを使うか使わないか
-#define Nval "ae74fb758612c1f667297971c8a48f9536f0ec3d92996a80e3173e315bb9286cd0db0a821a65f92b0804620cd6e1fa9e15a9677f2719a7a3" //乱数
-#define pval "0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" // sidh.specより
+#define pval "2341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" // sidh.specより
 #define oneval "ECEEA7BD2EDAE93254545F77410CD801A4FB559FACD4B90FF404FC00000000000000000000000000000000000000000000000000742C" // r&p
 #define rsqval "25A89BCDD12A69E16A61C7686D9AABCD92BF2DDE347E175CC6AF8D6C7C0BAB27973F8311688DACEC7367768798C228E55B65DCD69B30" // r**2%p
-#define rval "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-#define Nprime "9d29b89047d637322e5e278d70dc36164cd2eacf79a690086b803ab9286cd0db0a821a65f92b0804620cd6e1fa9e15a9677f2719f6ce" // N%p
+#define rval "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" // r = 2**448
 
 #define MOD_WORDS 14    //BLS12-381のためこれだけ必要？32*14=448bit
 #define MOD_WORDS2 28 
@@ -83,13 +79,11 @@ Fp po;
 Fp oneo;
 Fp rsqo;
 Fp ro;
-Fp No;
 
 Fp *p= &po;
 Fp *one= &oneo;
 Fp *Rsq = &rsqo;
 Fp *r= &ro;
-Fp *N= &No;
 
 //Fp1.c
 void Fp_set_str(Fp *a, unsigned char* str);
@@ -139,3 +133,10 @@ void _Fp_neg(Fp *c, Fp *a);
 void Fp2_mul_acc(Fp2 *c, Fp2 *a, Fp2 *b);
 
 //efp2.c
+void Efp2_set_A();
+int PrintEC2(ec2 *op);
+int Efp2_checkans(ec2 *P, Fp2 *ap);
+void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap);
+void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap);
+void Efp2_to2(char *binary, Fp *in);
+void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap);

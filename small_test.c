@@ -1,7 +1,7 @@
 // Fp1_test.c
 // #include "test_mypairing.h"
 #define TTT_INSTANCE_HERE
-#include "Fp1.c"
+#include "small_fp.c"
 
 #define ec_field(p)   (p->ec->field)
 #define rep(x) (*((mpz_t *)x->data))
@@ -17,8 +17,8 @@
 int main(void){
 
     Fp a, b, c;
-    char *av = "55AAE17846719561764783ABCDCDEEDEFFFFFFFFFFFFFFFFFDDDAAACACCAEE6254671546158FFFFFFFB953BC0015";
-    char *bv = "578926747516482346719468146914689676951461876471578FFFFFFFFFFAAABb235478155AA19AE2937CD83A";
+    char *av = "B";
+    char *bv = "4";
 
     Fp_set_str(&a, av);
     Fp_set_str(&b, bv);
@@ -27,6 +27,10 @@ int main(void){
     Fp_set_one();
     Fp_set_Rsq();
     Fp_set_p();
+
+    Fp_print(one);
+    Fp_print(Rsq);
+    Fp_print(p);
 
     printf("add test\n");
     // for(int i = 0; i < TIMES; i++){
@@ -88,7 +92,7 @@ int main(void){
     Fp_print(&a);
     Fp_print(&b);
     Fp_mul(&c, &a, &b); 
-    //Fp_from_Mont(&c);
+    Fp_from_Mont(&c);
     //1802cc6e9e4dc9fa43e8765d18376b5579ea29bf060927569b0e8e91b60e762f9c00dde44fa791ca29ddd9ec0e857116b805ade3b8fc479bb30ccbe6eef554f3ed5200182d124331217cd978edca2779d2881f93bc31274cefc00dcac095f6ddd3950148ab9ff415ecb6f2f02
     Fp_print(&c);
 
