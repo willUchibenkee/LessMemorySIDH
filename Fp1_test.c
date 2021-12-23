@@ -16,7 +16,7 @@
 
 int main(void){
 
-    Fp a, b, c;
+    Fp a, b, c, AR, BR, ABR, R;
     char *av = "55AAE17846719561764783ABCDCDEEDEFFFFFFFFFFFFFFFFFDDDAAACACCAEE6254671546158FFFFFFFB953BC0015";
     char *bv = "578926747516482346719468146914689676951461876471578FFFFFFFFFFAAABb235478155AA19AE2937CD83A";
 
@@ -27,8 +27,10 @@ int main(void){
     Fp_set_one();
     Fp_set_Rsq();
     Fp_set_p();
+    Fp_set_r();
+    Fp_print(r);
 
-    printf("add test\n");
+    //printf("add test\n");
     // for(int i = 0; i < TIMES; i++){
     //     for(int k = 0; k < MOD_WORDS; k++){
     //         a.value[k] = (rand()) << 32768 + rand();
@@ -43,12 +45,11 @@ int main(void){
     //         Fp_print(&c);
     //     }
     // }
-    Fp_print(&a);
-    Fp_print(&b);
-    Fp_add(&c, &a, &b); // c = 56026a9ebae6aba9998df54035e257f368967695146187646f353aacaccaee5cff22389a8da55aa19a9be738d84f
-    Fp_print(&c);
+    
+    // Fp_add(&c, &a, &b); // c = 56026a9ebae6aba9998df54035e257f368967695146187646f353aacaccaee5cff22389a8da55aa19a9be738d84f
+    // Fp_print(&c);
 
-    printf("sub test\n");
+    //printf("sub test\n");
     // for(int i = 0; i < TIMES; i++){
     //     for(int k = 0; k < MOD_WORDS; k++){
     //         a.value[k] = (rand()) << 32768 + rand();
@@ -63,8 +64,8 @@ int main(void){
     //         Fp_print(&c);
     //     }
     // }
-    Fp_sub(&c, &a, &b); // 55535851d1fc7f195301121765b985ca9769896aeb9e789b8c861aacaccaee67a9abf1f19d7aa55e64d6c03f27db
-    Fp_print(&c);
+    // Fp_sub(&c, &a, &b); // 55535851d1fc7f195301121765b985ca9769896aeb9e789b8c861aacaccaee67a9abf1f19d7aa55e64d6c03f27db
+    // Fp_print(&c);
 
     printf("mul test\n");
     // for(int i = 0; i < TIMES; i++){
@@ -82,17 +83,41 @@ int main(void){
     //         Fp_print(&c);
     //     }
     // }
-    Fp_to_Mont(&a, &a);
-    Fp_to_Mont(&b, &b);
-
+    printf("A:0x");
     Fp_print(&a);
+    printf("B:0x");
     Fp_print(&b);
+
+    Fp_set_str(&AR, av);
+    Fp_set_str(&BR, bv);
+    Fp_to_Mont(&AR, &AR);
+    Fp_to_Mont(&BR, &BR);
+    Fp_to_Mont(&R, &R);
+
+    Fp_AR(&AR);
+    Fp_AR(&BR);
+    Fp_from_Mont(&AR);
+    printf("AR:0x");
+    Fp_print(&AR);
+    Fp_from_Mont(&BR);
+    printf("BR:0x");
+    Fp_print(&BR);
+
+    Fp_to_Mont(&AR, &AR);
+    Fp_to_Mont(&b, &b);
+    Fp_mul(&ABR, &AR, &b);
+    Fp_from_Mont(&ABR);
+    printf("ABR:0x");
+    Fp_print(&ABR);
+
+    Fp_to_Mont(&a, &a);
+    //Fp_to_Mont(&b, &b);
     Fp_mul(&c, &a, &b); 
-    //Fp_from_Mont(&c);
-    //1802cc6e9e4dc9fa43e8765d18376b5579ea29bf060927569b0e8e91b60e762f9c00dde44fa791ca29ddd9ec0e857116b805ade3b8fc479bb30ccbe6eef554f3ed5200182d124331217cd978edca2779d2881f93bc31274cefc00dcac095f6ddd3950148ab9ff415ecb6f2f02
+    Fp_from_Mont(&c);
+    printf("AB:0x");
     Fp_print(&c);
 
-    printf("inv test\n");
+    //printf("inv test\n");
     // for(int i = 0; i < TIMES; i++){
     //     for(int k = 0; k < MOD_WORDS; k++){
     //         a.value[k] = (rand()) << 32768 + rand();
@@ -109,15 +134,15 @@ int main(void){
     //         Fp_print(&c);
     //     }
     // }
-    Fp_inv(&c, &a);
-    Fp_mul(&c, &c, &a);
-    Fp_print(&c);
+    // Fp_inv(&c, &a);
+    // Fp_mul(&c, &c, &a);
+    // Fp_print(&c);
 
-    Fp_inv(&c, &b);
-    Fp_mul(&c, &c, &b);
-    Fp_print(&c);
+    // Fp_inv(&c, &b);
+    // Fp_mul(&c, &c, &b);
+    // Fp_print(&c);
 
-    printf("test complete.\n");
+    //printf("test complete.\n");
 
     return 0;
 }

@@ -58,6 +58,10 @@ void Fp_set_Rsq(void){
     Fp_set_str(Rsq, rsqval);
 }
 
+void Fp_set_r(void){
+    Fp_set_str(r, rval);
+}
+
 #ifdef NOELIPS
 void Fp_get_str(char* str, Fp *a){
     char buf[WORD / 4 + 1];
@@ -217,13 +221,13 @@ void MR(Fp *c, Fp *a, Fp *b){
 
 //多倍長(multiple precision)計算演算掛け算？モンゴメリ乗算を行う結果はa*b*r（modp)とモンゴメリの結果が帰ってくる
 void Fp_mul(Fp *c, Fp *a, Fp *b){
-    Fp aa, bb;
+    //Fp aa, bb;
 
-    //MR(c, a, b);
-    MR(&aa, a, Rsq);
-    MR(&bb, b, Rsq);
-    MR(c, &aa, &bb);
-    MR(c, c, Rsq);  //モンゴメリリダクションをもう一度行い元に戻す。r^2をかける
+    MR(c, a, b);
+    // MR(&aa, a, Rsq);
+    // MR(&bb, b, Rsq);
+    // MR(c, &aa, &bb);
+    // MR(c, c, Rsq);  //モンゴメリリダクションをもう一度行い元に戻す。r^2をかける
     
 }
 #else
@@ -414,3 +418,6 @@ int Fp_pow_c3(Fp *z,Fp *a){
    Fp_set(z,&t);
 }
 
+void Fp_AR(Fp *a){
+    Fp_mul(a, a, r);
+}
