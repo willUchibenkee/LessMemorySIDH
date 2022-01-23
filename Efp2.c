@@ -5,7 +5,7 @@
 #include"Fp2.c"
 #include <string.h>
 
-#define Aval "6 0"
+#define Aval "6 0" //sidh_specから
 
 Fp2 A;
 
