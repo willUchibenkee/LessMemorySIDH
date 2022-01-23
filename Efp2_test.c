@@ -28,6 +28,7 @@ int main(void){
         Fp2_set_str(&a.y, Py);
  
         Fp_add(&nbai, p, &ichi);
+        printf("A: X Y");
         PrintEC2(&a);
         if(Efp2_checkans(&a,&at) == 0){
             printf("rp ok\n");
