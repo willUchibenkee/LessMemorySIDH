@@ -16,26 +16,19 @@
 Fp2 aA0;
 Fp2 bA0;
 
-int ea;
-int eb;
+int ea, eb;
 
 void Isogeny_set_a0(void){
 
-    mpz_set_str(aa0.x0, aa0x0, 16);
-    //printf("x\n");
-    mpz_set_str(ba0.x0, ba0x0, 16);
-    //printf("y\n");
-    mpz_set_str(aa0.x1, aa0x1, 16);
-    //printf("u\n");
-    mpz_set_str(ba0.x1, ba0x1, 16);
-    //printf("v\n");
+    Fp2_set_str(&Aa0, aa0);
+    Fp2_set_str(&Ba0, ba0);
+ 
 }
 
 void Isogeny_set_e(void){
-    mpz_init(ea);
-    mpz_init(eb);
-    mpz_set_str(ea, eA, 16);
-    mpz_set_str(eb, eB, 16);
+    ea = 
+    Fp_set_str(&ea, eA);
+    Fp_set_str(&eb, eB);
 }
 
 void Isogeny_gets(ec2 *S, ec2 *P, ec2 *Q, int k, Fp2 *ap){
@@ -54,6 +47,7 @@ void isogeny_changea(Fp2 *nexta, Fp2 *alpha){
     Fp2_set_ui(&one, "1 0");
     Fp2_set_ui(&two, "2 0");
     Fp2 temp;
+    Fp2_to_Mont(alpha, alpha);
 
     Fp2_mul(&temp, alpha, alpha);
     Fp2_mul(&temp, &temp, &two);
@@ -63,6 +57,7 @@ void isogeny_changea(Fp2 *nexta, Fp2 *alpha){
     free(&one);
     free(&two);
     free(&temp);
+    Fp2_from_Mont(nexta);
 }
 
 void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
@@ -70,7 +65,10 @@ void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
     Fp2_set_ui(&six, "6 0");
 
     Fp2 temp; 
-    Fp2 temp2; 
+    Fp2 temp2;
+
+    Fp2_to_Mont(olda, olda);
+    Fp2_to_Mont(beta, beta);
 
     Fp2_mul(&temp, olda, beta);
     Fp2_mul(&temp2, &six, beta);
@@ -80,6 +78,7 @@ void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
     Fp2_mul(&temp, &temp, beta);
 
     Fp2_set(nexta, &temp);
+    Fp2_from_Mont(nexta);
 }
 
 void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
@@ -93,6 +92,10 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
 
     Fp2 two; 
     Fp2_set_ui(&two, "2 0");
+
+    Fp2_to_Mont(alpha, alpha);
+    Fp2_to_Mont(&P->x, &P->x);
+    Fp2_to_Mont(&P->y, &P->y);
 
     if(l == 2){
         //alice       
@@ -115,127 +118,117 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
         
         //set
         Fp2_set(&ans->x,&U.x);
+        Fp2_from_Mont(&ans->x);
         
     }else{
         //bob
 
-        mpz_t three;
-        mpz_init(three);
-        mpz_set_ui(three, 3);
-
+        Fp three;
+        Fp_set_str(&three, "3");
         
-        fp2 one; 
-        fp2_init(&one);
-        fp2_set_ui(&one, 1, 0);
+        Fp2 one; 
+        Fp2_set_ui(&one, "1 0");
 
         //
-        fp2_mul(&temp, alpha, &P->x);
-        fp2_sub(&temp, &temp, &one);
-        fp2_mul(&temp, &temp, &temp);
-        fp2_mul(&temp, &temp, &P->x);
+        Fp2_mul(&temp, alpha, &P->x);
+        Fp2_sub(&temp, &temp, &one);
+        Fp2_mul(&temp, &temp, &temp);
+        Fp2_mul(&temp, &temp, &P->x);
         
 
         //
-        fp2_sub(&bumbo, &P->x, alpha);
-        fp2_mul(&bumbo, &bumbo, &bumbo);
-        fp2_inv(&bumbo, &bumbo);
+        Fp2_sub(&bumbo, &P->x, alpha);
+        Fp2_mul(&bumbo, &bumbo, &bumbo);
+        Fp2_inv(&bumbo, &bumbo);
         
 
         //
-        fp2_mul(&U.x, &temp, &bumbo);
+        Fp2_mul(&U.x, &temp, &bumbo);
 
         //
-        fp2_set(&ans->x, &U.x);
+        Fp2_set(&ans->x, &U.x);
+        Fp2_from_Mont(&ans->x);
 
     }
 }
 
 void isogeny_mgec3(ec2 *R, ec2 *P, fp2 *ap){
     ec2 U; 
-    fp2_init(&U.x);
-    fp2_init(&U.y);
-    mpz_init(U.inf);
     
-    fp2 temp; 
-    fp2_init(&temp);
-    fp2 temp2; 
-    fp2_init(&temp2);
-    fp2 temp3; 
-    fp2_init(&temp3);
+    Fp2 temp, temp2, temp3; 
 
-    mpz_t four, three;
-    mpz_init(four);
-    mpz_init(three);
-    mpz_set_ui(four, 4);
-    mpz_set_ui(three, 3);
+    Fp four, three;
+    Fp_set_str(&four, "4");
+    Fp_set_str(&three, "3");
 
-    fp2 six, four2, three2, one;
+    Fp2 six, four2, three2, one;
     
-    fp2_init(&six);
-    fp2_init(&four2);
-    fp2_init(&three2);
-    fp2_init(&one);
-    fp2_set_ui(&six, 6, 0);
-    fp2_set_ui(&four2, 4, 0);
-    fp2_set_ui(&three2, 3, 0);
-    fp2_set_ui(&one, 1, 0);
+    Fp2_set_str(&six, "6 0");
+    Fp2_set_str(&four2, "4 0");
+    Fp2_set_str(&three2, "3 0");
+    Fp2_set_str(&one, "1 0");
 
-    fp2 bunshi, bumbo;
-    
-    fp2_init(&bunshi);
-    fp2_init(&bumbo);
+    Fp2_to_Mont(&P->x, &P->x);
+    Fp2_to_Mont(&P->y, &P->y);
+    Fp2_to_Mont(ap, ap);
 
-    fp2_scalarexp(&temp, &P->x, four);
+    Fp2 bunshi, bumbo;
+
+    Fp2_mul(&temp, &P->x, &P->x);
+    Fp2_mul(&temp, &temp, &P->x);
+    Fp2_mul(&temp, &temp, &P->x);
     //x^4
 
-    fp2_mul(&temp2, &six, &P->x);
-    fp2_mul(&temp2, &temp2, &P->x);
+    Fp2_mul(&temp2, &six, &P->x);
+    Fp2_mul(&temp2, &temp2, &P->x);
     //6x^2
 
     
-    fp2_mul(&temp3, &P->x, &four2);
-    fp2_mul(&temp3, &temp3, &A);
+    Fp2_mul(&temp3, &P->x, &four2);
+    Fp2_mul(&temp3, &temp3, &A);
     //4ax^3
 
-    fp2_sub(&temp, &temp, &temp2);
-    fp2_sub(&temp, &temp, &temp3);
-    fp2_sub(&temp, &temp, &three2);
+    Fp2_sub(&temp, &temp, &temp2);
+    Fp2_sub(&temp, &temp, &temp3);
+    Fp2_sub(&temp, &temp, &three2);
     //()
 
-    fp2_mul(&temp, &temp, &temp);
+    Fp2_mul(&temp, &temp, &temp);
     //()^2
 
-    fp2_mul(&temp, &temp, &P->x);
+    Fp2_mul(&temp, &temp, &P->x);
     //x*()^2
 
-    fp2_set(&bunshi, &temp);
+    Fp2_set(&bunshi, &temp);
 
 
-
-
-    fp2_scalarexp(&temp, &P->x, four);
-    fp2_mul(&temp, &temp, &three2);
+    Fp2_mul(&temp, &P->x, &P->x);
+    Fp2_mul(&temp, &temp, &P->x);
+    Fp2_mul(&temp, &temp, &P->x);
+    Fp2_mul(&temp, &temp, &three2);
     //3x^4
 
-    fp2_scalarexp(&temp3, &P->x, three);
-    fp2_mul(&temp3, &temp3, &four2);
-    fp2_mul(&temp3, &temp3, &A);
+    Fp2_mul(&temp3, &P->x, &P->x);
+    Fp2_mul(&temp3, &temp3, &P->x);
+    Fp2_mul(&temp3, &temp3, &four2);
+    Fp2_mul(&temp3, &temp3, &A);
     //4ax^3
     
-    fp2_add(&temp, &temp, &temp2);
-    fp2_add(&temp, &temp, &temp3);
-    fp2_sub(&temp, &temp, &one);
+    Fp2_add(&temp, &temp, &temp2);
+    Fp2_add(&temp, &temp, &temp3);
+    Fp2_sub(&temp, &temp, &one);
     //()
 
-    fp2_mul(&temp, &temp, &temp);
+    Fp2_mul(&temp, &temp, &temp);
     //()^2
 
-    fp2_inv(&temp, &temp);
+    Fp2_inv(&temp, &temp);
     // /
 
-    fp2_set(&bumbo, &temp);
+    Fp2_set(&bumbo, &temp);
 
-    fp2_mul(&U.x, &bunshi, &bumbo);
+    Fp2_mul(&U.x, &bunshi, &bumbo);
     
-    fp2_set(&R->x, &U.x);
+    Fp2_set(&R->x, &U.x);
+    Fp2_from_Mont(&R->x);
 }

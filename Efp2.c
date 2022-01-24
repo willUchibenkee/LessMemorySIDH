@@ -29,6 +29,7 @@ int Efp2_checkans(ec2 *P, Fp2 *ap){
 
     Fp2_to_Mont(&wx, &wx);
     Fp2_to_Mont(&wy, &wy);
+    //Fp2_to_Mont(ap, ap);
 
     Fp2_mul(&sahen, &wy, &wy);
 
@@ -36,14 +37,12 @@ int Efp2_checkans(ec2 *P, Fp2 *ap){
     Fp2_mul(&uhen, &uhen, &wx);
     Fp2_mul(&work, &wx, &wx);
     Fp2_mul(&work, &work, ap);
-
-    Fp2_from_Mont(&sahen);
-    Fp2_from_Mont(&uhen);
-    Fp2_from_Mont(&work);
-    Fp2_from_Mont(&wx);
-
     Fp2_add(&uhen, &uhen, &work);
     Fp2_add(&uhen, &uhen, &wx);
+
+    Fp2_from_Mont(&uhen);
+    Fp2_from_Mont(&sahen);
+    //Fp2_from_Mont(ap);
     
     if(Fp2_cmp(&uhen, &sahen) == 0){
         return 0;
@@ -55,18 +54,16 @@ int Efp2_checkans(ec2 *P, Fp2 *ap){
 void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
     Fp2 bumbo, bunshi, bumbo2, bunshi2, katamari, katamari2, work, work2, work3;
     Fp2 one, four, two2, three2;
-
-    Fp2 Px, Py;
     
     ec2 U;
+
+    Fp2_to_Mont(&P->x, &P->x);
+    Fp2_to_Mont(&P->y, &P->y);
 
     Fp2_set_str(&one, "1 0");
     Fp2_set_str(&four, "4 0");
     Fp2_set_str(&two2, "2 0");
     Fp2_set_str(&three2, "3 0");
-
-    Fp2_set(&Px, &P->x);
-    Fp2_set(&Py, &P->y);
 
     if(P->inf == 1){
         R->inf = 1;
@@ -75,65 +72,45 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             P->inf = 1;
         }else{
             //x座標
-            Fp2_to_Mont(&Px, &Px);
 
             //分子の計算
-            Fp2_mul(&bunshi, &Px, &Px);
-            Fp2_from_Mont(&bunshi);
+            Fp2_mul(&bunshi, &P->x, &P->x);
             Fp2_sub(&bunshi, &bunshi, &one);
-            Fp2_to_Mont(&bunshi, &bunshi);
             Fp2_mul(&bunshi, &bunshi, &bunshi);
             
             //分母の計算(最後にinv)
-            Fp2_to_Mont(ap, ap);
-            Fp2_mul(&bumbo, &Px, &Px);
-            Fp2_mul(&work, ap, &Px); 
-            Fp2_from_Mont(&bumbo);
-            Fp2_from_Mont(&work);
+            Fp2_mul(&bumbo, &P->x, &P->x);
+            Fp2_mul(&work, ap, &P->x); 
             Fp2_add(&bumbo, &bumbo, &work);
             Fp2_add(&bumbo, &bumbo, &one);
-            Fp2_to_Mont(&bumbo, &bumbo);
-            Fp2_mul(&bumbo, &bumbo, &Px);
-            Fp2_to_Mont(&four, &four);
+            Fp2_mul(&bumbo, &bumbo, &P->x);
             Fp2_mul(&bumbo, &bumbo, &four);
             Fp2_inv(&bumbo, &bumbo);
             
             //分子/分母
             Fp2_mul(&U.x, &bunshi, &bumbo);
-            Fp2_from_Mont(&U.x);
             
             //y座標
             //かたまり１
             //分子の計算
-            Fp2_to_Mont(&two2, &two2);
-            Fp2_mul(&work, &Px, &two2);
-            Fp2_from_Mont(&work);
+            Fp2_mul(&work, &P->x, &two2);
             Fp2_add(&work, &work, &P->x);
-            Fp2_from_Mont(ap);
             Fp2_add(&work, &work, ap);
-            Fp2_mul(&work2, &Px, &Px);
-            Fp2_to_Mont(&three2, &three2);
+            Fp2_mul(&work2, &P->x, &P->x);
             Fp2_mul(&work2, &work2, &three2);
-            Fp2_to_Mont(ap, ap);
-            Fp2_mul(&work3, &Px, ap);
+            Fp2_mul(&work3, &P->x, ap);
             Fp2_mul(&work3, &work3, &two2);
-            Fp2_from_Mont(&work2);
-            Fp2_from_Mont(&work3);
             Fp2_add(&work2, &work2, &work3);
             Fp2_add(&work2, &work2, &one);
-            Fp2_to_Mont(&work2, &work2);
-            Fp2_to_Mont(&work, &work);
             Fp2_mul(&bunshi, &work, &work2);
             
             //分母の計算(最後にinv)
-            Fp2_to_Mont(&Py, &Py);
-            Fp2_mul(&bumbo, &two2, &Py);
+            Fp2_mul(&bumbo, &two2, &P->y);
             Fp2_set(&bumbo2, &bumbo);
             Fp2_inv(&bumbo, &bumbo);
             
             //分子/分母
             Fp2_mul(&katamari, &bunshi, &bumbo);
-            Fp2_from_Mont(&katamari);
             
             //かたまり２
             //分子の計算
@@ -149,9 +126,11 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
    
             //分子/分母
             Fp2_mul(&katamari2, &bunshi2, &bumbo2);
-            Fp2_from_Mont(&katamari2);
             Fp2_sub(&U.y, &katamari, &katamari2);
             Fp2_sub(&U.y, &U.y, &P->y);
+
+            Fp2_from_Mont(&U.x);
+            Fp2_from_Mont(&U.y);
             
             Fp2_set(&R->x, &U.x);
             Fp2_set(&R->y, &U.y);
@@ -166,15 +145,10 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
     Fp2 xsa, ysa, work, work2, katamari, katamari2, temp, temp2;
     Fp2 two;
 
-    Fp2 Px, Py, Qx, Qy;
-    Fp2_set(&Px, &P->x);
-    Fp2_set(&Py, &P->y);
-    Fp2_set(&Qx, &Q->x);
-    Fp2_set(&Qy, &Q->y);
-    Fp2_to_Mont(&Px, &Px);
-    Fp2_to_Mont(&Py, &Py);
-    Fp2_to_Mont(&Qx, &Qx);
-    Fp2_to_Mont(&Qy, &Qy);
+    Fp2_to_Mont(&P->x, &P->x);
+    Fp2_to_Mont(&P->y, &P->y);
+    Fp2_to_Mont(&Q->x, &Q->x);
+    Fp2_to_Mont(&Q->y, &Q->y);
     
     Fp2_set_str(&two, "2 0");
 
@@ -204,19 +178,15 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
 
                 //x座標
                 //分子の計算
-                Fp2_mul(&work, &Qx, &Py);
-                Fp2_mul(&work2, &Qy, &Px);
-                Fp2_from_Mont(&work);
-                Fp2_from_Mont(&work2);
+                Fp2_mul(&work, &Q->x, &P->y);
+                Fp2_mul(&work2, &Q->y, &P->x);
                 Fp2_sub(&bunshi, &work, &work2); 
-                Fp2_to_Mont(&bunshi, &bunshi);
                 Fp2_mul(&bunshi, &bunshi, &bunshi);
                 
                 //分母の計算(最後にinv)
-                Fp2_to_Mont(&xsa, &xsa);
                 Fp2_mul(&work, &xsa, &xsa);
-                Fp2_mul(&bumbo, &work, &Px);
-                Fp2_mul(&bumbo, &bumbo, &Qx);
+                Fp2_mul(&bumbo, &work, &P->x);
+                Fp2_mul(&bumbo, &bumbo, &Q->x);
                 Fp2_inv(&bumbo, &bumbo);
 
                 //分子/分母
@@ -225,13 +195,9 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
                 //y座標
                 //かたまり１
                 //分子の計算
-                Fp2_to_Mont(&two, &two);
-                Fp2_mul(&bunshi, &Px, &two);
-                Fp2_from_Mont(&bunshi);
+                Fp2_mul(&bunshi, &P->x, &two);
                 Fp2_add(&bunshi, &bunshi, &Q->x);
                 Fp2_add(&bunshi, &bunshi, ap);
-                Fp2_to_Mont(&bunshi, &bunshi);
-                Fp2_to_Mont(&ysa, &ysa);
                 Fp2_mul(&bunshi, &bunshi, &ysa);               
 
                 //分母の計算(最後にinv)
@@ -242,9 +208,7 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
 
                 //かたまり２
                 //分子の計算
-                //Fp2_sqr3(&bunshi2, &ysa);
-                Fp2_mul(&bunshi2, &ysa, &ysa);
-                Fp2_mul(&bunshi2, &bunshi2, &ysa);
+                Fp2_sqr3(&bunshi2, &ysa);
 
                 //分母の計算(最後にinv)
                 //Fp2_sqr3(&bumbo2, &xsa);
@@ -255,12 +219,12 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
 
                 //分子/分母
                 Fp2_mul(&katamari2, &bumbo2, &bunshi2);
-                Fp2_from_Mont(&katamari);
-                Fp2_from_Mont(&katamari2);
                 Fp2_sub(&temp, &katamari, &katamari2);
                 Fp2_sub(&R->y, &temp, &P->y);
-                Fp2_from_Mont(&temp2);
                 Fp2_set(&R->x, &temp2);
+
+                Fp2_from_Mont(&R->x);
+                Fp2_from_Mont(&R->y);
             }
         }
     }   

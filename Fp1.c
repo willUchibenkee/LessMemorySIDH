@@ -348,6 +348,7 @@ void Fp_inv(Fp *c, Fp *a){
     }
     Fp_set(c, &t);
 }
+
 #else
 
 #endif
@@ -362,6 +363,19 @@ void Fp_from_Mont(Fp *a ){
     Fp first;
     Fp_set_str(&first, "1");
     Fp_mul(a,a,&first);
+}
+
+//多倍長の除算(a/2）を求める演算を行う　（x/yの時、ｘ＊（yの逆元）となる）
+void Fp_div3(Fp *c, Fp *a){
+    Fp_to_Mont(a, a);
+    Fp threeinv;
+    Fp_set_str(&threeinv, "3");
+    Fp_to_Mont(&threeinv, &threeinv);
+    Fp_inv(&threeinv, &threeinv);
+
+    Fp_mul(c, a, &threeinv);
+    Fp_from_Mont(a);
+    Fp_from_Mont(c);
 }
 
 int Fp_legendre(Fp *a){

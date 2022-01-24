@@ -132,7 +132,7 @@ void Fp2_mul_line(Fp2* c,Fp2* a);
 void _Fp_neg(Fp *c, Fp *a);
 void Fp2_mul_acc(Fp2 *c, Fp2 *a, Fp2 *b);
 
-//efp2.c
+//Efp2.c
 void Efp2_set_A();
 int PrintEC2(ec2 *op);
 int Efp2_checkans(ec2 *P, Fp2 *ap);

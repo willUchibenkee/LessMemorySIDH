@@ -24,17 +24,21 @@ int main(void){
         Fp_set_str(&ichi, "1");
         Fp2_set_str(&one,"1 0");
         Efp2_set_A();
+        Fp_set_p();
+        Fp_set_one();
+        Fp_set_Rsq();
+        Fp_set_r();
         Fp2_set_str(&a.x, Px);
         Fp2_set_str(&a.y, Py);
  
         Fp_add(&nbai, p, &ichi);
         printf("A: X Y");
         PrintEC2(&a);
-        if(Efp2_checkans(&a,&at) == 0){
-            printf("rp ok\n");
-        }else{
-            printf("rp ng\n");
-        }
+        // if(Efp2_checkans(&a,&at) == 0){
+        //     printf("rp ok\n");
+        // }else{
+        //     printf("rp ng\n");
+        // }
 
         Efp2_mgecSCM(&ans, &a, &nbai, &at);
         
