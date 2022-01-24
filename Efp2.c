@@ -1,11 +1,11 @@
-// efp2.h(Montgomery)
+// Efp2.c(Montgomery)
 
 #include "my_pairing.h"
 #include <stdio.h>
 #include"Fp2.c"
 #include <string.h>
 
-#define Aval "6 0"
+#define Aval "6 0" //sidh_specから
 
 Fp2 A;
 
@@ -27,6 +27,10 @@ int Efp2_checkans(ec2 *P, Fp2 *ap){
     Fp2_set(&wx, &P->x);
     Fp2_set(&wy, &P->y);
 
+    Fp2_to_Mont(&wx, &wx);
+    Fp2_to_Mont(&wy, &wy);
+    //Fp2_to_Mont(ap, ap);
+
     Fp2_mul(&sahen, &wy, &wy);
 
     Fp2_mul(&uhen, &wx, &wx);
@@ -36,8 +40,9 @@ int Efp2_checkans(ec2 *P, Fp2 *ap){
     Fp2_add(&uhen, &uhen, &work);
     Fp2_add(&uhen, &uhen, &wx);
 
-    //モンゴメリ表現から戻す
-    
+    Fp2_from_Mont(&uhen);
+    Fp2_from_Mont(&sahen);
+    //Fp2_from_Mont(ap);
     
     if(Fp2_cmp(&uhen, &sahen) == 0){
         return 0;
@@ -51,6 +56,9 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
     Fp2 one, four, two2, three2;
     
     ec2 U;
+
+    Fp2_to_Mont(&P->x, &P->x);
+    Fp2_to_Mont(&P->y, &P->y);
 
     Fp2_set_str(&one, "1 0");
     Fp2_set_str(&four, "4 0");
@@ -120,6 +128,9 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             Fp2_mul(&katamari2, &bunshi2, &bumbo2);
             Fp2_sub(&U.y, &katamari, &katamari2);
             Fp2_sub(&U.y, &U.y, &P->y);
+
+            Fp2_from_Mont(&U.x);
+            Fp2_from_Mont(&U.y);
             
             Fp2_set(&R->x, &U.x);
             Fp2_set(&R->y, &U.y);
@@ -133,6 +144,11 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
     Fp2 bumbo, bunshi, bumbo2, bunshi2;
     Fp2 xsa, ysa, work, work2, katamari, katamari2, temp, temp2;
     Fp2 two;
+
+    Fp2_to_Mont(&P->x, &P->x);
+    Fp2_to_Mont(&P->y, &P->y);
+    Fp2_to_Mont(&Q->x, &Q->x);
+    Fp2_to_Mont(&Q->y, &Q->y);
     
     Fp2_set_str(&two, "2 0");
 
@@ -206,6 +222,9 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
                 Fp2_sub(&temp, &katamari, &katamari2);
                 Fp2_sub(&R->y, &temp, &P->y);
                 Fp2_set(&R->x, &temp2);
+
+                Fp2_from_Mont(&R->x);
+                Fp2_from_Mont(&R->y);
             }
         }
     }   
@@ -256,4 +275,3 @@ void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
         R->inf = S.inf;
     }
 }
-

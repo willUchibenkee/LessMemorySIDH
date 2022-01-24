@@ -218,6 +218,13 @@ void Fp2_to_Mont(Fp2 *c, Fp2 *a){
     Fp_mul(elem1(c), elem1(a), Rsq);
 }
 
+void Fp2_from_Mont(Fp2 *a ){
+    Fp first;
+    Fp_set_str(&first, "1");
+    Fp_mul(elem0(a), elem0(a), &first);
+    Fp_mul(elem1(a), elem1(a),&first);
+}
+
 //等しいかどうかを調べる
 int Fp2_equal(Fp2 *c,Fp2 *a){
 
