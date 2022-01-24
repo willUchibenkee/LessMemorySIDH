@@ -115,11 +115,11 @@ int main(void){
     Fp_print(one);
 
     Fp test;
-    Fp_set_str(&test, "27");
+    Fp_set_str(&test, "3");
     printf("test=");
     Fp_print(&test);
     Fp_div3(&test, &test);
-    printf("27/3=");
+    printf("3/3=");
     Fp_print(&test);
 
     printf("test complete.\n");

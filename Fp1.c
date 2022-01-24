@@ -370,12 +370,17 @@ void Fp_div3(Fp *c, Fp *a){
     Fp_to_Mont(a, a);
     Fp threeinv;
     Fp_set_str(&threeinv, "3");
+    //Fp_set_str(&three, "3");
+    //Fp_print(&threeinv);
     Fp_to_Mont(&threeinv, &threeinv);
     Fp_inv(&threeinv, &threeinv);
+    //Fp_mul(&tt, &threeinv, &three);
+    //printf("3*1/3=");
+    //Fp_print(&tt);
 
     Fp_mul(c, a, &threeinv);
     Fp_from_Mont(a);
-    Fp_from_Mont(c);
+    //Fp_from_Mont(c);
 }
 
 int Fp_legendre(Fp *a){
