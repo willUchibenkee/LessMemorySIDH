@@ -8,15 +8,15 @@
 #define ba0 "0001CD28597256D4FFE7E002E87870752A8F8A64A1CC78B5A2122074783F51B4FDE90E89C48ED91A8F4A0CCBACBFA7F51A89CE518A52B76C 000147073290D78DD0CC8420B1188187D1A49DBFA24F26AAD46B2D9BB547DBB6F63A760ECB0C2B20BE52FB77BD2776C3D14BCBC404736AE4"
 #define ka "0xB"
 #define kb "0x2"
-#define eA "000000D8"
-#define eB "00000089"
+#define eA 216 //216
+#define eB 137 //137
 #define la 2
 #define lb 3
 
 Fp2 aA0;
 Fp2 bA0;
 
-Fp ea, eb;
+int ea, eb;
 
 void Isogeny_set_a0(void){
 
@@ -27,8 +27,10 @@ void Isogeny_set_a0(void){
 
 void Isogeny_set_e(void){
     //ea = 
-    Fp_set_str(&ea, eA);
-    Fp_set_str(&eb, eB);
+    // Fp_set_str(&ea, eA);
+    // Fp_set_str(&eb, eB);
+    ea = eA;
+    eb = eB;
 }
 
 void Isogeny_gets(ec2 *S, ec2 *P, ec2 *Q, Fp *k, Fp2 *ap){

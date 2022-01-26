@@ -47,20 +47,24 @@ int main(void){
     lbt = lb;
 
     Isogeny_set_e();
-    Fp py;
-    Fp_set(&py, &ea);
+    // Fp py;
+    // Fp_set(&py, &ea);
+    // printf("py=");
+    // Fp_print(&py);
+    //py=21
+    int py = ea;
     //ea = ea / lat;
     // Fp_mul(&py, &lat, &lat);
-    Fp ichi;
-    Fp_set_str(&ichi, "1");
+    // Fp ichi;
+    // Fp_set_str(&ichi, "1");
     // for(Fp_set_str(&count, "1"); Fp_cmp(&count, &ea) =! 0; Fp_add(&count, &count, &ichi)){
     //     Fp_mul(&py, )
     // }
     // py =  (int)pow((double)lat, (double)ea);
 
-    Fp q;
-    Fp i;
-    Fp_set_str(&i, "0");
+    int q;
+    int i = 0;
+    //Fp_set_str(&i, "0");
 
     Isogeny_set_a0();
     Fp2 newa;
@@ -80,8 +84,11 @@ int main(void){
     Isogeny_gets(&Sa, &Pa, &Qa, &kam, &aA0);
     Isogeny_gets(&Sb, &Pb, &Qb, &kbm, &bA0);
 
-    while(Fp_cmp_zero(&py) == 0){
-        Efp2_mgecSCM(&Ra, &Sa, &py, &aA0);
+    while(py > 0){
+        //Efp2_mgecSCM(&Ra, &Sa, &py, &aA0);
+        for(int j =0 ; j < py; j++){
+            Efp2_mgecD(&Ra, &Sa, &aA0);
+        }
 
         Isogeny_changea(&newa, &Ra.x);
 
@@ -91,8 +98,9 @@ int main(void){
         Fp2_set(&aA0, &newa);
         
         //py = py / lat;
-        Fp_sub(&py, &py, &ichi);
-        Fp_print(&py);
+        py = py - 1;
+        //Fp_sub(&py, &py, &ichi);
+        //printf("py = %d\n", py);
     }
 
     //gmp_printf("PKA = (aA, PB, QB) = ((%Zd + %Zd i), (%Zd + %Zd i), (%Zd + %Zd i))\n", Aa0.x0, Aa0.x1, Pbp->x.x0, Pbp->x.x1, Qbp->x.x0, Qbp->x.x1);
@@ -113,23 +121,24 @@ int main(void){
     //mpz_divexact(eb, eb, lbt);
     //mpz_pow_ui(py, lbt, mpz_get_ui(eb));
     //gmp_printf("py = %Zd\n", py);
-    Fp_set(&py, &eb);
+    //Fp_set(&py, &eb);
+    py = eb;
 
-    while(Fp_cmp_zero(&py) == 0){
+    while(py > 0){
         
         Fp2_set(&Rb.x, &Sb.x);
-        Fp_set(&q, &py);
+        //Fp_set(&q, &py);
+        q = py;
         //i = 0;
         //Fp_set_str(&i, "0");
         // while(mpz_cmp_ui(q, 1) != 0){
         //     mpz_tdiv_q_ui(q, q, 3);
         //     i++;
         // 
-        for(Fp_set_str(&i, "0"); Fp_cmp(&i, &q) == -1; Fp_add(&i, &i, &ichi)){
+        for(i = 0; i < q; i++){
             Isogeny_mgec3(&Rb, &Rb, &bA0);
             //printf("a\n");
         }
-
 
         Isogeny_changeb(&newa, &Rb.x, &bA0);
         //fp2_printf(aip);
@@ -142,8 +151,9 @@ int main(void){
 
         //fp2_printf(ap);
         //mpz_divexact(py, py, lbt);
-        Fp_sub(&py, &py, &ichi);
-
+        //Fp_sub(&py, &py, &ichi);
+        py = py - 1;
+        //printf("py = %d\n", py);
     }
 
     //gmp_printf("PKB = (aB, PA, QA) = ((%Zd + %Zd i), (%Zd + %Zd i), (%Zd + %Zd i))\n", ba0.x0, ba0.x1, Pap->x.x0, Pap->x.x1, Qap->x.x0, Qap->x.x1);
@@ -180,8 +190,10 @@ int main(void){
     Isogeny_gets(&Sa, &Pa, &Qa, &kam, &bA0);
     //mpz_divexact(ea, ea, lat);
     //mpz_pow_ui(py, lat, mpz_get_ui(ea));
-    while(Fp_cmp_zero(&py) == 0){
-        Efp2_mgecSCM(&Ra, &Sa, &py, &bA0);
+    while(py > 0){
+        for(int k = 0; k < py; k++){
+            Efp2_mgecD(&Ra, &Sa, &bA0);
+        }
         //fp2_printf(&Rap->x);
 
         Isogeny_changea(&newa, &Ra.x);
@@ -191,6 +203,7 @@ int main(void){
         Fp2_set(&bA0, &newa);
         
         //mpz_divexact(py, py, lat);
+        py = py - 1;
 
     }
 
@@ -207,17 +220,18 @@ int main(void){
     //mpz_pow_ui(py, lbt, mpz_get_ui(eb));
     Fp2 ai;
 
-    while(Fp_cmp_zero(&py) == 0){
+    while(py > 0){
         
         Fp2_set(&Rb.x, &Sb.x);
         //q = py;
-        Fp_set(&q, &py);
+        //Fp_set(&q, &py);
+        q = py;
         //i = 0;
         // while(mpz_cmp_ui(q, 1) != 0){
         //     //mpz_tdiv_q_ui(q, q, 3);
         //     i++;
         // }
-        for(Fp_set_str(&i, "0"); Fp_cmp(&i, &q) == -1; Fp_add(&i, &i, &ichi)){
+        for(i = 0; i < q; i++){
             Isogeny_mgec3(&Rb, &Rb, &aa);
             //printf("a\n");
         }
@@ -231,6 +245,7 @@ int main(void){
 
         Fp2_print(&aa);
         //mpz_divexact(py, py, lbt);
+        py = py - 1;
         
     }
 

@@ -124,6 +124,15 @@ int main(void){
     printf("9/3=");
     Fp_print(&test);
 
+    Fp ichi, num;
+    Fp_set_str(&ichi, "1");
+    Fp_set_str(&num, "7");
+    Fp_print(&num);
+    Fp_print(&ichi);
+    Fp_sub(&num, &num, &ichi);
+    printf("7-1=");
+    Fp_print(&num);
+
     printf("test complete.\n");
 
     return 0;
