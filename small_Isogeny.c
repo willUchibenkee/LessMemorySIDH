@@ -6,8 +6,8 @@
 
 #define aa0 "329 423"
 #define ba0 "329 423"
-#define ka "0xB"
-#define kb "0x2"
+#define ka "B"
+#define kb "2"
 #define eA 4 //216
 #define eB 3 //137
 #define la 2
@@ -20,8 +20,8 @@ int ea, eb;
 
 void Isogeny_set_a0(void){
 
-    Fp2_set_str(&aA0, aa0);
-    Fp2_set_str(&bA0, ba0);
+    Fp2_set_str(&aA0, Aval);
+    Fp2_set_str(&bA0, Aval);
  
 }
 

@@ -5,7 +5,7 @@
 #include"small_Fp2.c"
 #include <string.h>
 
-#define Aval "329 423" //sidh_specから
+#define Aval "149 1a7" //sidh_specから
 
 Fp2 A;
 
@@ -57,8 +57,7 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
     
     ec2 U;
 
-    Fp2_to_Mont(&P->x, &P->x);
-    Fp2_to_Mont(&P->y, &P->y);
+    //tempoにinを保存
 
     Fp2_set_str(&one, "1 0");
     Fp2_set_str(&four, "4 0");
@@ -67,9 +66,14 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
 
     if(P->inf == 1){
         R->inf = 1;
+        // printf("R:infecd\n");
+        // printf("%d\n", R->inf);
     }else{
         if(Fp2_cmp_zero(&P->x) == 0 || Fp2_cmp_zero(&P->y) == 0){
             P->inf = 1;
+            // printf("P:inf\n");
+            // printf("%d\n", R->inf);
+
         }else{
             //x座標
 
@@ -77,6 +81,8 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             Fp2_mul(&bunshi, &P->x, &P->x);
             Fp2_sub(&bunshi, &bunshi, &one);
             Fp2_mul(&bunshi, &bunshi, &bunshi);
+            // printf("bunshi:");
+            // Fp2_print(&bunshi);
             
             //分母の計算(最後にinv)
             Fp2_mul(&bumbo, &P->x, &P->x);
@@ -85,6 +91,8 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             Fp2_add(&bumbo, &bumbo, &one);
             Fp2_mul(&bumbo, &bumbo, &P->x);
             Fp2_mul(&bumbo, &bumbo, &four);
+            // printf("bumbo(反転前):");
+            // Fp2_print(&bumbo);
             Fp2_inv(&bumbo, &bumbo);
             
             //分子/分母
@@ -128,9 +136,6 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             Fp2_mul(&katamari2, &bunshi2, &bumbo2);
             Fp2_sub(&U.y, &katamari, &katamari2);
             Fp2_sub(&U.y, &U.y, &P->y);
-
-            Fp2_from_Mont(&U.x);
-            Fp2_from_Mont(&U.y);
             
             Fp2_set(&R->x, &U.x);
             Fp2_set(&R->y, &U.y);
@@ -144,11 +149,6 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
     Fp2 bumbo, bunshi, bumbo2, bunshi2;
     Fp2 xsa, ysa, work, work2, katamari, katamari2, temp, temp2;
     Fp2 two;
-
-    Fp2_to_Mont(&P->x, &P->x);
-    Fp2_to_Mont(&P->y, &P->y);
-    Fp2_to_Mont(&Q->x, &Q->x);
-    Fp2_to_Mont(&Q->y, &Q->y);
     
     Fp2_set_str(&two, "2 0");
 
@@ -159,18 +159,22 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
             Fp2_set(&R->x, &Q->x);
             Fp2_set(&R->y, &Q->y);
             R->inf = 0;
+            //printf("Rinf1 reset\n");
          }
     }else{
         if(Q->inf == 1){
             Fp2_set(&R->x, &P->x);
             Fp2_set(&R->y, &P->y);
-            R->inf = 0;
+            // R->inf = 0;
+            // printf("Rinf3 reset\n");
         }else{
             if(Fp2_cmp(&P->x, &Q->x) == 0 || Fp2_cmp(&P->y, &Q->y) == 0){
                 if(Fp2_cmp(&P->x, &Q->x) == 0 && Fp2_cmp(&P->y, &Q->y) == 0){
                     Efp2_mgecD(R, P, ap);
                 }else{
                     R->inf = 1;
+                    // printf("R:infeca\n");
+                    // printf("%d\n", R->inf);
                 }
             }else{
                 Fp2_sub(&xsa, &Q->x, &P->x);
@@ -222,30 +226,37 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
                 Fp2_sub(&temp, &katamari, &katamari2);
                 Fp2_sub(&R->y, &temp, &P->y);
                 Fp2_set(&R->x, &temp2);
-
-                Fp2_from_Mont(&R->x);
-                Fp2_from_Mont(&R->y);
             }
         }
     }   
 }
 
-void Efp2_to2(char *binary, Fp *in){
+void Efp2_to2(int *length, char *binary, Fp *in){
     int i = 0;
     // value[14] 32bit*14 448bit
     //2**32=4294967296 max
+    //printf("%u\n", in->value[0]);
     for(int k = 0; k < MOD_WORDS; k++){
-        while(in->value[k] != '\0'){
-            binary[i] = in->value[k] % 2;
+        while(in->value[k] != 0){
+            binary[i] = (unsigned int)(in->value[k] % 2)+0x30;
+            //sprintf(&binary[i], "%u", (unsigned int)(in->value[k] % 2));
+            //printf("a %u\n", in->value[k] % 2);
             in->value[k] = in->value[k] / 2;
-            i++;
+            //printf("b %c\n", binary[i]);
+            i++;   
         }
+        //printf("\n");
     }
+    // for(int j = i; j >= 0; j--){
+    //     printf("%c", binary[j]);
+    // }
+    *length = i;
+    //printf("\n");
     
 }
 
 void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
-    ec2 S,T;
+    ec2 S,T,F;
     S.inf = 1;
     T.inf = 0;
 
@@ -253,8 +264,7 @@ void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
     int length = 0;
     length = WORD * MOD_WORDS;
     char binary[length + 1];
-    Efp2_to2(binary, n);
-    //
+    Efp2_to2(&length, binary, n);
 
     Fp2_set(&T.x, &P->x);
     Fp2_set(&T.y, &P->y);
@@ -265,11 +275,24 @@ void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
         Fp2_set(&R->y, &P->y);
     }else{
         for(int k = length-1; k >= 0; k--){
+
+            //printf("bin:%c\n", binary[k]);
             if(binary[k] == '1'){
-                Efp2_mgecA(&S, &S, &T, ap);
+                Efp2_mgecA(&F, &S, &T, ap);
+                Fp2_set(&S.x, &F.x);
+                Fp2_set(&S.y, &F.y);
+                //printf("a\n");
+                //PrintEC2(&S);
             }
-            Efp2_mgecD(&T, &T, ap);
+            Efp2_mgecD(&F, &T, ap);
+            Fp2_set(&T.x, &F.x);
+            Fp2_set(&T.y, &F.y);
+            //PrintEC2(&S);
+            //printf("b\n");
+            // printf("S.inf:%d\n", S.inf);
+            // printf("T.inf:%d\n", S.inf);
         }
+        //printf("\n");
         Fp2_set(&R->x, &S.x);
         Fp2_set(&R->y, &S.y);
         R->inf = S.inf;

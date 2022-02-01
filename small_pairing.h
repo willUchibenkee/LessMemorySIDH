@@ -24,10 +24,10 @@
 #define HWORD_BIT ((unsigned int) 1 << (WORD / 2))  //1を１６左にシフト
 #define Mprime 0xc0720ab1 //モンゴメリ乗算の求める法を32bitとしている(Nprimeの下位３２ビット) 0xFFFCFFFD
 #define NOELIPS            //ELIPSを使うか使わないか
-#define pval "0x1af" // beginnersより431
-#define oneval "0x91" // r&p
-#define rsqval "0x151" // r**2%p
-#define rval "0x100000000" // r = 2**32
+#define pval "1af" // beginnersより431
+#define oneval "91" // r&p
+#define rsqval "151" // r**2%p
+#define rval "100000000" // r = 2**32
 
 #define MOD_WORDS 1    //BLS12-381のためこれだけ必要？32*1=32bit 431 9~10bitあればよい
 #define MOD_WORDS2 2 
@@ -66,6 +66,14 @@ typedef struct Fp{
 typedef struct Fp2{
     Fp element[2];
 }Fp2;
+
+typedef struct ec
+{
+    Fp x;
+    Fp y;
+    int inf;
+    // 楕円曲線の点 無限遠にいったらinfを１に
+}ec;
 
 typedef struct ec2
 {
@@ -138,5 +146,5 @@ int PrintEC2(ec2 *op);
 int Efp2_checkans(ec2 *P, Fp2 *ap);
 void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap);
 void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap);
-void Efp2_to2(char *binary, Fp *in);
+void Efp2_to2(int *length, char *binary, Fp *in);
 void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap);

@@ -6,17 +6,17 @@
 #include<gmp.h>
 #include"small_Isogeny.c"
 
-#define Pax "100 248"
-#define Pay "304 199"
+#define Pax "64 f8"
+#define Pay "130 c7"
 
-#define Qax "426 394"
-#define Qay "51 79"
+#define Qax "1aa 18a"
+#define Qay "33 4f"
 
-#define Pbx "358 275"
-#define Pby "410 104"
+#define Pbx "166 113"
+#define Pby "19a 68"
 
-#define Qbx "20 185"
-#define Qby "281 239"
+#define Qbx "14 b9"
+#define Qby "119 ef"
 
 int main(void){
     //define
@@ -31,10 +31,10 @@ int main(void){
     Fp2_set_str(&Pb.y, Pby);
 
     Fp2_set_str(&Qa.x, Qax);
-    Fp2_set_str(&Qa.x, Qay);
+    Fp2_set_str(&Qa.y, Qay);
 
     Fp2_set_str(&Qb.x, Qbx);
-    Fp2_set_str(&Qb.x, Qby);
+    Fp2_set_str(&Qb.y, Qby);
 
     Fp kam, kbm;
     // kam = ka;
@@ -81,13 +81,64 @@ int main(void){
     //Fp_print(&ichi);
 
     //test(alice)
+    printf("A0\n");
+    Fp2_print(&aA0);
+    printf("Pa\n");
+    PrintEC2(&Pa);
+    printf("Pb\n");
+    PrintEC2(&Pb);
+    printf("Qa\n");
+    PrintEC2(&Qa);
+    printf("Qb\n");
+    PrintEC2(&Qb);
+
+    printf("ka\n");
+    Fp_print(&kam);
+    printf("kb\n");
+    Fp_print(&kbm);
+
+    Fp2_to_Mont(&Pa.x, &Pa.x);
+    Fp2_to_Mont(&Pa.y, &Pa.y);
+    Fp2_to_Mont(&Qa.x, &Qa.x);
+    Fp2_to_Mont(&Qa.y, &Qa.y);
+
+    Fp2_to_Mont(&aA0, &aA0);
+    Fp2_to_Mont(&bA0, &bA0);
+
+
+    Fp2_to_Mont(&Pb.x, &Pb.x);
+    Fp2_to_Mont(&Pb.y, &Pb.y);
+    Fp2_to_Mont(&Qb.x, &Qb.x);
+    Fp2_to_Mont(&Qb.y, &Qb.y);
+
     Isogeny_gets(&Sa, &Pa, &Qa, &kam, &aA0);
     Isogeny_gets(&Sb, &Pb, &Qb, &kbm, &bA0);
+
+    Fp2_from_Mont(&Sa.x);
+    Fp2_from_Mont(&Sa.y);
+    Fp2_from_Mont(&Sb.x);
+    Fp2_from_Mont(&Sb.y);
+
+    printf("SaとSb\n");
+    PrintEC2(&Sa); //271i + 79, 153i + 430
+    PrintEC2(&Sb); //122i + 309, 291i + 374
+//     //Sa
+//   0x10f 0x4f
+//   0x99 0x1ae
+//      Sb
+// 0x7a 0x135
+// 0x123 0x176
+//     //
 
     while(py > 0){
         //Efp2_mgecSCM(&Ra, &Sa, &py, &aA0);
         for(int j =0 ; j < py; j++){
-            Efp2_mgecD(&Ra, &Sa, &aA0);
+            if(j == 0){
+                Efp2_mgecD(&Ra, &Sa, &aA0);
+            }else{
+                Efp2_mgecD(&Ra, &Ra, &aA0);
+            }
+            //Efp2_mgecD(&Ra, &Sa, &aA0);
         }
 
         Isogeny_changea(&newa, &Ra.x);
@@ -101,7 +152,9 @@ int main(void){
         py = py - 1;
         //Fp_sub(&py, &py, &ichi);
         //printf("py = %d\n", py);
+        i++;
     }
+    printf("ループ回数:%d\n", i);
 
     //gmp_printf("PKA = (aA, PB, QB) = ((%Zd + %Zd i), (%Zd + %Zd i), (%Zd + %Zd i))\n", Aa0.x0, Aa0.x1, Pbp->x.x0, Pbp->x.x1, Qbp->x.x0, Qbp->x.x1);
     printf("PKA:aA:");
