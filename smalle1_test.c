@@ -22,14 +22,14 @@ int main(void){
         int pp, p1;
         Fp nbai;
         Fp uhen, sahen;
-        Fp at, bt, work;
+        Fp work;
 
         Fp_set_str(&nbai, "1b0");
         Efp_set_A();
         Fp_set_p();
         Fp_set_one();
         Fp_set_Rsq();
-        Fp_set_r();
+        //Fp_set_r();
         Fp_set_str(&a.x, Px);
         Fp_set_str(&a.y, Py);
 
@@ -39,33 +39,77 @@ int main(void){
         //Fp_add(&nbai, Rsq, &ichi);
         printf("A: X Y\n");
         Efp_PrintEC(&a);
+        printf("a:");
+        Fp_print(&A);
 
         Fp_to_Mont(&b.x, &b.x);
         Fp_to_Mont(&b.y, &b.y);
-        Fp_to_Mont(&at, &at);
-        Efp_mgecD(&ecd, &b, &at);
+        Fp_to_Mont(&A, &A);
+        // printf("a(mont):");
+        // Fp_print(&at);
+        Efp_mgecD(&ecd, &b, &A);
         Fp_from_Mont(&b.x);
         Fp_from_Mont(&b.y);
-        Fp_from_Mont(&at);
+        Fp_from_Mont(&A);
 
+        printf("ecd:");
+        Fp_from_Mont(&ecd.x);
+        Fp_from_Mont(&ecd.y);
         Efp_PrintEC(&ecd);
-        //printf("p**2+1:\n");
-        //Fp_print(&nbai);
-        // if(Efp2_checkans(&a,&at) == 0){
-        //     printf("rp ok\n");
-        // }else{
-        //     printf("rp ng\n");
-        // }
+
+        // bunshi: 0x1b
+        // bumbo: 0x90 
+        // bunshi2: 0x5
+        // bumbo2: 0x12
+        // U.x: 0x51
+        // U.y: 0x6d
+
+        ec c, eca;
+        Fp_set_str(&c.x, "51");
+        Fp_set_str(&c.y, "6d");
+
+        Fp_to_Mont(&b.x, &b.x);
+        Fp_to_Mont(&b.y, &b.y);
+        Fp_to_Mont(&c.x, &c.x);
+        Fp_to_Mont(&c.y, &c.y);
+        Fp_to_Mont(&A, &A);
+        Efp_mgecA(&eca, &b, &c, &A);
+        Fp_from_Mont(&b.x);
+        Fp_from_Mont(&b.y);
+        Fp_from_Mont(&A);
+        Fp_from_Mont(&c.x);
+        Fp_from_Mont(&c.y);
+
+        printf("eca:");
+        Fp_from_Mont(&eca.x);
+        Fp_from_Mont(&eca.y);
+        Efp_PrintEC(&eca);
+        // rx: 0x131
+        // ry: 0x123
 
         Fp_to_Mont(&a.x, &a.x);
         Fp_to_Mont(&a.y, &a.y);
-        Fp_to_Mont(&at, &at);
-        Efp_mgecSCM(&ans, &a, &nbai, &at);
+        Fp_to_Mont(&A, &A);
+        Efp_mgecSCM(&ans, &a, &nbai, &A);
         Fp_from_Mont(&a.x);
         Fp_from_Mont(&a.y);
-        Fp_from_Mont(&at);
+        Fp_from_Mont(&A);
+
+        ec ect;
+        Fp_to_Mont(&a.x, &a.x);
+        Fp_to_Mont(&a.y, &a.y);
+        Fp_to_Mont(&A, &A);
+        Efp_mgecT(&ect, &a, &A);
+        Fp_from_Mont(&a.x);
+        Fp_from_Mont(&a.y);
+        Fp_from_Mont(&A);
+
+        printf("ect:");
+        Fp_from_Mont(&ect.x);
+        Fp_from_Mont(&ect.y);
+        Efp_PrintEC(&ect);
         
-        //printf("inf:%d\n",ans.inf);
+        printf("inf:%d\n",ans.inf);
         if(ans.inf == 1){
             printf("ans = inf\n");
         }else{

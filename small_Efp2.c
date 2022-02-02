@@ -1,4 +1,4 @@
-// Efp2.c(Montgomery)
+// small_Efp.c(Montgomery)
 
 #include "small_pairing.h"
 #include <stdio.h>
@@ -14,7 +14,7 @@ void Efp2_set_A(){
 }
 
 //点の出力
-int PrintEC2(ec2 *op){
+int Efp2_PrintEC2(ec2 *op){
     if( op->inf == 1 )printf("!Inf!\n");
     else {
         Fp2_print(&op->x);
@@ -55,76 +55,131 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
     Fp2 bumbo, bunshi, bumbo2, bunshi2, katamari, katamari2, work, work2, work3;
     Fp2 one, four, two2, three2;
     
-    ec2 U;
+    ec2 U, v;
+    ec2 *V = &v;
+
+    Fp2_set(xcoord(V), xcoord(P));
+    Fp2_set(ycoord(V), ycoord(P));
+    V->inf = P->inf;
 
     //tempoにinを保存
 
-    Fp2_set_str(&one, "1 0");
-    Fp2_set_str(&four, "4 0");
-    Fp2_set_str(&two2, "2 0");
-    Fp2_set_str(&three2, "3 0");
+    Fp2_set_str(&one, "91 0");
+    Fp2_set_str(&two2, "122 0");
+    Fp2_set_str(&three2, "4 0");
+    Fp2_set_str(&four, "95 0");
 
-    if(P->inf == 1){
+    if(V->inf == 1){
         R->inf = 1;
-        // printf("R:infecd\n");
-        // printf("%d\n", R->inf);
+        printf("R:infecd\n");
+        printf("%d\n", R->inf);
     }else{
-        if(Fp2_cmp_zero(&P->x) == 0 || Fp2_cmp_zero(&P->y) == 0){
-            P->inf = 1;
-            // printf("P:inf\n");
-            // printf("%d\n", R->inf);
+        if(Fp2_cmp_zero(xcoord(V)) == 1 || Fp2_cmp_zero(xcoord(V)) == 1){
+            R->inf = 1;
+            printf("P:inf\n");
+            printf("%d\n", R->inf);
 
         }else{
             //x座標
 
             //分子の計算
-            Fp2_mul(&bunshi, &P->x, &P->x);
+            // (x**2-1)**2
+            // bunshi=px*px%p
+            // bunshi=(bunshi-1)%p
+            // bunshi=bunshi*bunshi%p
+            // print("bunshi:", hex(bunshi))
+
+            Fp2_mul(&bunshi, xcoord(V), xcoord(V));
             Fp2_sub(&bunshi, &bunshi, &one);
             Fp2_mul(&bunshi, &bunshi, &bunshi);
             // printf("bunshi:");
+            // Fp2_from_Mont(&bunshi);
             // Fp2_print(&bunshi);
+            // Fp2_to_Mont(&bunshi, &bunshi);
             
             //分母の計算(最後にinv)
-            Fp2_mul(&bumbo, &P->x, &P->x);
-            Fp2_mul(&work, ap, &P->x); 
-            Fp2_add(&bumbo, &bumbo, &work);
-            Fp2_add(&bumbo, &bumbo, &one);
-            Fp2_mul(&bumbo, &bumbo, &P->x);
-            Fp2_mul(&bumbo, &bumbo, &four);
-            // printf("bumbo(反転前):");
+            Fp2_mul(&bumbo, xcoord(V), xcoord(V));
+            // Fp2_from_Mont(&bumbo);
             // Fp2_print(&bumbo);
+            // Fp2_to_Mont(&bumbo, &bumbo);
+            
+            Fp2_mul(&work, ap, xcoord(V)); 
+            // Fp2_from_Mont(&work);
+            // Fp2_print(&work);
+            // Fp2_to_Mont(&work, &work);
+            
+            Fp2_add(&bumbo, &bumbo, &work);
+            // Fp2_from_Mont(&bumbo);
+            // Fp2_print(&bumbo);
+            // Fp2_to_Mont(&bumbo, &bumbo);
+            
+            Fp2_add(&bumbo, &bumbo, &one);
+            // Fp2_from_Mont(&bumbo);
+            // Fp2_print(&bumbo);
+            // Fp2_to_Mont(&bumbo, &bumbo);
+            
+            Fp2_mul(&bumbo, &bumbo, xcoord(V));
+            // Fp2_from_Mont(&bumbo);
+            // Fp2_print(&bumbo);
+            // Fp2_to_Mont(&bumbo, &bumbo);
+            
+            Fp2_mul(&bumbo, &bumbo, &four);
+            // Fp2_from_Mont(&bumbo);
+            // Fp2_print(&bumbo);
+            // Fp2_to_Mont(&bumbo, &bumbo);
+            
+
             Fp2_inv(&bumbo, &bumbo);
+            
+            //printf("bumbo:");
+            // Fp2_from_Mont(&bumbo);
+            // Fp2_print(&bumbo);
+            // Fp2_to_Mont(&bumbo, &bumbo);
             
             //分子/分母
             Fp2_mul(&U.x, &bunshi, &bumbo);
             
+            // printf("Ux:");
+            // Fp2_from_Mont(&U.x);
+            // Fp2_print(&U.x);
+            // Fp2_to_Mont(&U.x, &U.x);
+            
             //y座標
             //かたまり１
             //分子の計算
-            Fp2_mul(&work, &P->x, &two2);
-            Fp2_add(&work, &work, &P->x);
+            Fp2_mul(&work, xcoord(V), &two2);
+            Fp2_add(&work, &work, xcoord(V));
             Fp2_add(&work, &work, ap);
-            Fp2_mul(&work2, &P->x, &P->x);
+            Fp2_mul(&work2, xcoord(V), xcoord(V));
             Fp2_mul(&work2, &work2, &three2);
-            Fp2_mul(&work3, &P->x, ap);
+            Fp2_mul(&work3, xcoord(V), ap);
             Fp2_mul(&work3, &work3, &two2);
             Fp2_add(&work2, &work2, &work3);
             Fp2_add(&work2, &work2, &one);
             Fp2_mul(&bunshi, &work, &work2);
+
+            // printf("bunshi:");
+            // Fp2_from_Mont(&bunshi);
+            // Fp2_print(&bunshi);
+            // Fp2_to_Mont(&bunshi, &bunshi);
             
             //分母の計算(最後にinv)
-            Fp2_mul(&bumbo, &two2, &P->y);
+            Fp2_mul(&bumbo, &two2, ycoord(V));
             Fp2_set(&bumbo2, &bumbo);
             Fp2_inv(&bumbo, &bumbo);
             
             //分子/分母
             Fp2_mul(&katamari, &bunshi, &bumbo);
+            // printf("katamari:");
+            // Fp2_print(&katamari);
             
             //かたまり２
             //分子の計算
             //Fp2_sqr3(&bunshi2, &work2);
             Fp2_mul(&bunshi2, &work2, &work2);
             Fp2_mul(&bunshi2, &bunshi2, &work2);
+            // printf("bunshi2:");
+            // Fp2_print(&bunshi2);
             
             //分母の計算(最後にinv)
             //Fp2_sqr3(&bumbo2, &bumbo2);
@@ -135,7 +190,9 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             //分子/分母
             Fp2_mul(&katamari2, &bunshi2, &bumbo2);
             Fp2_sub(&U.y, &katamari, &katamari2);
-            Fp2_sub(&U.y, &U.y, &P->y);
+            Fp2_sub(&U.y, &U.y, ycoord(V));
+            // printf("U.y:");
+            // Fp2_print(&U.y);
             
             Fp2_set(&R->x, &U.x);
             Fp2_set(&R->y, &U.y);
@@ -149,58 +206,94 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
     Fp2 bumbo, bunshi, bumbo2, bunshi2;
     Fp2 xsa, ysa, work, work2, katamari, katamari2, temp, temp2;
     Fp2 two;
-    
-    Fp2_set_str(&two, "2 0");
 
-    if(P->inf == 1){
-        if(Q->inf == 1){
+    Fp2 rmd;
+    
+    Fp2_set_str(&two, "122 0");
+
+    ec2 u, v;
+    ec2 *U = &u;
+    ec2 *V = &v;
+    Fp2_set(xcoord(U), xcoord(P));
+    Fp2_set(xcoord(V), xcoord(Q));
+    Fp2_set(ycoord(U), ycoord(P));
+    Fp2_set(ycoord(V), ycoord(Q));
+    U->inf = P->inf;
+    V->inf = Q->inf;
+    //printf("copy\n");
+
+    if(U->inf == 1){
+        if(V->inf == 1){
             R->inf = 1;
         }else{
-            Fp2_set(&R->x, &Q->x);
-            Fp2_set(&R->y, &Q->y);
+            //printf("Rinf1 reset\n");
+            Fp2_set(xcoord(R), xcoord(V));
+            Fp2_set(ycoord(R), ycoord(V));
             R->inf = 0;
             //printf("Rinf1 reset\n");
          }
     }else{
         if(Q->inf == 1){
-            Fp2_set(&R->x, &P->x);
-            Fp2_set(&R->y, &P->y);
-            // R->inf = 0;
-            // printf("Rinf3 reset\n");
+            //printf("Rinf1 reset\n");
+            Fp2_set(xcoord(R), xcoord(U));
+            Fp2_set(ycoord(R), ycoord(U));
+            R->inf = 0;
+            //printf("Rinf3 reset\n");
         }else{
-            if(Fp2_cmp(&P->x, &Q->x) == 0 || Fp2_cmp(&P->y, &Q->y) == 0){
-                if(Fp2_cmp(&P->x, &Q->x) == 0 && Fp2_cmp(&P->y, &Q->y) == 0){
+            if(Fp2_cmp(xcoord(V), xcoord(U)) == 0 || Fp2_cmp(ycoord(V), ycoord(U)) == 0){
+                if(Fp2_cmp(xcoord(V), xcoord(U)) == 0 && Fp2_cmp(ycoord(V), ycoord(U)) == 0){
                     Efp2_mgecD(R, P, ap);
                 }else{
                     R->inf = 1;
-                    // printf("R:infeca\n");
-                    // printf("%d\n", R->inf);
+                    //printf("R:infeca\n");
+                    //printf("%d\n", R->inf);
                 }
             }else{
-                Fp2_sub(&xsa, &Q->x, &P->x);
-                Fp2_sub(&ysa, &Q->y, &P->y);
+                Fp2_sub(&xsa, xcoord(V), xcoord(U));
+                Fp2_sub(&ysa, ycoord(V), ycoord(U));
 
                 //x座標
                 //分子の計算
-                Fp2_mul(&work, &Q->x, &P->y);
-                Fp2_mul(&work2, &Q->y, &P->x);
-                Fp2_sub(&bunshi, &work, &work2); 
-                Fp2_mul(&bunshi, &bunshi, &bunshi);
-                
-                //分母の計算(最後にinv)
-                Fp2_mul(&work, &xsa, &xsa);
-                Fp2_mul(&bumbo, &work, &P->x);
-                Fp2_mul(&bumbo, &bumbo, &Q->x);
-                Fp2_inv(&bumbo, &bumbo);
+//              #eca x: λ**2 − (xP + xQ) − A
+                Fp2_inv(&rmd, &xsa);
+                Fp2_mul(&rmd, &rmd, &ysa);
 
-                //分子/分母
-                Fp2_mul(&temp2, &bumbo, &bunshi);
+                // printf("rmd:");
+                // Fp2_print(&rmd);
+                // ramda=(uy-py)%p
+                // waru=(ux-px)%p
+                // wari=pow(waru, -1, p)
+                // rmd=ramda*wari%p
+
+                // print("ramda:", hex(rmd))
+
+                // rx=((rmd*rmd)%p -((px+ux)%p) - a)%p
+                Fp2_mul(xcoord(R), &rmd, &rmd);
+                Fp2_sub(xcoord(R), xcoord(R), xcoord(U));
+                Fp2_sub(xcoord(R), xcoord(R), xcoord(V));
+                Fp2_sub(xcoord(R), xcoord(R), ap);
+
+                // printf("Rx:");
+                // Fp2_print(xcoord(R));
+                // Fp2_mul(&work, xcoord(V), ycoord(U));
+                // Fp2_mul(&work2, ycoord(V), xcoord(U));
+                // Fp2_sub(&bunshi, &work, &work2); 
+                // Fp2_mul(&bunshi, &bunshi, &bunshi);
+                
+                // //分母の計算(最後にinv)
+                // Fp2_mul(&work, &xsa, &xsa);
+                // Fp2_mul(&bumbo, &work, xcoord(U));
+                // Fp2_mul(&bumbo, &bumbo, ycoord(U));
+                // Fp2_inv(&bumbo, &bumbo);
+
+                // //分子/分母
+                // Fp2_mul(&temp2, &bumbo, &bunshi);
 
                 //y座標
                 //かたまり１
                 //分子の計算
-                Fp2_mul(&bunshi, &P->x, &two);
-                Fp2_add(&bunshi, &bunshi, &Q->x);
+                Fp2_mul(&bunshi, xcoord(U), &two);
+                Fp2_add(&bunshi, &bunshi, xcoord(V));
                 Fp2_add(&bunshi, &bunshi, ap);
                 Fp2_mul(&bunshi, &bunshi, &ysa);               
 
@@ -212,7 +305,9 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
 
                 //かたまり２
                 //分子の計算
-                Fp2_sqr3(&bunshi2, &ysa);
+                //Fp2_sqr3(&bunshi2, &ysa);
+                Fp2_mul(&bunshi2, &ysa, &ysa);
+                Fp2_mul(&bunshi2, &bunshi2, &ysa);
 
                 //分母の計算(最後にinv)
                 //Fp2_sqr3(&bumbo2, &xsa);
@@ -224,8 +319,7 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
                 //分子/分母
                 Fp2_mul(&katamari2, &bumbo2, &bunshi2);
                 Fp2_sub(&temp, &katamari, &katamari2);
-                Fp2_sub(&R->y, &temp, &P->y);
-                Fp2_set(&R->x, &temp2);
+                Fp2_sub(ycoord(R), &temp, ycoord(U));
             }
         }
     }   
@@ -276,8 +370,9 @@ void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
     }else{
         for(int k = length-1; k >= 0; k--){
 
-            //printf("bin:%c\n", binary[k]);
+            printf("bin:%c\n", binary[k]);
             if(binary[k] == '1'){
+                //printf("eca\n");
                 Efp2_mgecA(&F, &S, &T, ap);
                 Fp2_set(&S.x, &F.x);
                 Fp2_set(&S.y, &F.y);
@@ -297,4 +392,324 @@ void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
         Fp2_set(&R->y, &S.y);
         R->inf = S.inf;
     }
+}
+
+void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
+    Fp2 temp, temp2;
+    Fp2 three, four, six, nihachi, hex, one2;
+
+    ec2 u;
+    ec2 *U = &u;
+    Fp2_set(xcoord(U), xcoord(P));
+    Fp2_set(ycoord(U), ycoord(P));
+    U->inf = P->inf;
+
+    Fp2_set_str(&one2, "91 0");
+    Fp2_set_str(&three, "4 0");
+    Fp2_set_str(&four, "95 0");
+    Fp2_set_str(&six, "8 0");
+    Fp2_set_str(&nihachi, "b5 0");
+    Fp2_set_str(&hex, "a5 0");
+    //x 分子 (x**4 − 4Ax − 6x**2 − 3)**2*x
+    Fp2_mul(xcoord(R), xcoord(U), xcoord(U));
+    Fp2_mul(xcoord(R), xcoord(R), xcoord(U));
+    Fp2_mul(xcoord(R), xcoord(R), xcoord(U));
+
+    Fp2_mul(&temp, A, &four);
+    Fp2_mul(&temp, &temp, xcoord(U));
+
+    Fp2_sub(xcoord(R), xcoord(R), &temp);
+
+    Fp2_mul(&temp, &six, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+
+    Fp2_sub(xcoord(R), xcoord(R), &temp);
+
+    Fp2_sub(xcoord(R), xcoord(R), &three);
+
+    Fp2_mul(xcoord(R), xcoord(R), xcoord(R));
+
+    Fp2_mul(xcoord(R), xcoord(R), xcoord(U));
+
+    //分母 (4Ax**3 + 3x**4 + 6x**2 − 1)**2
+    Fp2_mul(&temp, &four, A);
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+
+    Fp2_mul(&temp2, &three, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+
+    Fp2_add(&temp, &temp, &temp2);
+
+    Fp2_mul(&temp2, &six, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+
+    Fp2_add(&temp, &temp, &temp2);
+
+    Fp2_sub(&temp, &temp, &one2);
+
+    Fp2_mul(&temp, &temp, &temp);
+
+    Fp2_inv(&temp, &temp);
+
+    Fp2_mul(xcoord(R), xcoord(R), &temp);
+
+    // y  分子 (x**4 − 4Ax − 6x**2 − 3)(x**8 + 4Ax**7 + 28x**6 + 28Ax**5 + (16A**2 + 6)x**4 + 28Ax**3 + 28x**2 + 4Ax + 1)
+    Fp2_mul(ycoord(R), xcoord(U), xcoord(U));
+    Fp2_mul(ycoord(R), ycoord(R), xcoord(U));
+    Fp2_mul(ycoord(R), ycoord(R), xcoord(U));
+    // printf("x**4:");
+    // Fp2_from_Mont(ycoord(R));
+    // Fp2_print(ycoord(R));
+    // Fp2_to_Mont(ycoord(R), ycoord(R));
+
+    Fp2_mul(&temp, &four, A);
+    Fp2_mul(&temp, &temp, xcoord(U));
+    // printf("4ax:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_sub(ycoord(R), ycoord(R), &temp);
+    //printf("hiki:");
+    // Fp2_from_Mont(ycoord(R));
+    // Fp2_print(ycoord(R));
+    // Fp2_to_Mont(ycoord(R), ycoord(R));
+
+    Fp2_mul(&temp, &six, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+
+    Fp2_sub(ycoord(R), ycoord(R), &temp);
+
+    Fp2_sub(ycoord(R), ycoord(R), &three);
+
+    // printf("zenhan:");
+    // Fp2_from_Mont(ycoord(R));
+    // Fp2_print(ycoord(R));
+    // Fp2_to_Mont(ycoord(R), ycoord(R));
+    //13
+
+    //////////////////////////////////////////////////////////////////////
+
+    Fp2_mul(&temp, xcoord(U), xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    // printf("x8:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &four, A);
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("4Ax7:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+
+    // printf("tasu:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &nihachi, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("28x6:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+    // printf("tasu2:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &nihachi, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, A);
+    // printf("28Ax5:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+    // printf("tasu3:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &hex, A);
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_mul(&temp2, &temp2, A);
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp2, &temp2, &six);
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("(16A**2+6)x4:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+    // printf("tasu4:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &nihachi, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, A);
+    // printf("x3:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+    // printf("tasu5:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &nihachi, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("x3:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+    // printf("tasu6:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &four, A);
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("x:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+    // printf("tasu7:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_add(&temp, &temp, &one2);
+
+    // printf("kouhan:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+    //18a
+
+    Fp2_mul(ycoord(R), ycoord(R), &temp);
+    // printf("bunshi:");
+    // Fp2_from_Mont(ycoord(R));
+    // Fp2_print(ycoord(R));
+    // Fp2_to_Mont(ycoord(R), ycoord(R));
+    //9f
+
+    //分母 (4Ax**3 + 3x**4 + 6x**2 − 1)**3
+    Fp2_mul(&temp, &four, A);
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    Fp2_mul(&temp, &temp, xcoord(U));
+    // printf("x3:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &three, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("x4:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+
+    Fp2_mul(&temp2, &six, xcoord(U));
+    Fp2_mul(&temp2, &temp2, xcoord(U));
+    // printf("x2:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_add(&temp, &temp, &temp2);
+
+    Fp2_sub(&temp, &temp, &one2);
+    // printf("katamari:");
+    // Fp2_from_Mont(&temp);
+    // Fp2_print(&temp);
+    // Fp2_to_Mont(&temp, &temp);
+
+    Fp2_mul(&temp2, &temp, &temp);
+    Fp2_mul(&temp2, &temp2, &temp);
+    // printf("ans:");
+    // Fp2_from_Mont(&temp2);
+    // Fp2_print(&temp2);
+    // Fp2_to_Mont(&temp2, &temp2);
+
+    Fp2_inv(&temp2, &temp2);
+    //188
+
+    //////////////////////////////////////////////////////////////
+
+    Fp2_mul(ycoord(R), ycoord(R), &temp2);
+
+    //////////////////////////////////////////////////////////////
+
+    Fp2_mul(ycoord(R), ycoord(R), ycoord(U));
+    
 }

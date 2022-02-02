@@ -1,83 +1,106 @@
 #scm.py
 p=0x1af
 
-px0=0x64
-px1=0xf8
-py0=0x130
-py1=0xc7
+px=0x12
+py=0x6
 
-a0=0x149 
-a1=0x1a7
+a=0x6
 
-# Fp2_mul(&bunshi, &P->x, &P->x);
-bunshi0=px0*px0-px1*px1
-bunshi1=2*px0*px1
-# Fp2_sub(&bunshi, &bunshi, &one);
-bunshi0=bunshi0-1
-# Fp2_mul(&bunshi, &bunshi, &bunshi);
-bunshi0=bunshi0*bunshi0-bunshi1*bunshi1
-bunshi1=2*bunshi0*bunshi1
-print(hex(bunshi0%p), hex(bunshi1%p))
+#y**2=x**3+ax**2+x
+
+# //x座標
+
+#             //分子の計算
+# (x**2-1)**2
+bunshi=px*px%p
+bunshi=(bunshi-1)%p
+bunshi=bunshi*bunshi%p
+print("bunshi:", hex(bunshi))
+     
+#             //分母の計算(最後にinv)
+#4*x(x**2 + A*x + 1)
+bumbo=px*px%p
+work=a*px%p
+bumbo=(bumbo+work)%p
+bumbo=(bumbo+1)%p
+bumbo=bumbo*px%p
+bumbo=bumbo*4%p
+print("bumbo:", hex(bumbo))
+
+hanten=pow(bumbo, -1, p)
+ux=bunshi*hanten%p
+print("ux:", hex(ux))
+
+#    (x**2 − 1)(x**4 + 2*A*x**3 + 6*x**2 + 2*A*x + 1)           
+#             //y座標 py*(bunshi*bumbo(inv))
+#             //分子の計算
+work=px*px%p
+work=(work-1)%p
+work2=(px**4)%p
+work3=(2*a*px**3)%p
+work2=(work2+work3)%p
+work3=(6*px*px)%p
+work2=(work2+work3)%p
+work3=(2*a*px)%p
+work2=(work2+work3+1)%p
+bunshi2=work*work2%p
+
+print("bunshi2:", hex(bunshi2))
+
+#8x**2(x**2 + Ax + 1)**2
+work=8*px*px%p
+work2=((px*px%p)+(a*px%p)+1)%p
+work=(work*work2*work2)%p
+
+bumbo2=pow(work, -1, p)
+
+print("bumbo2:", hex(bumbo2))
+
+uy=py*(bunshi2*bumbo2)%p
             
-# //分母の計算(最後にinv)
-# Fp2_mul(&bumbo, &P->x, &P->x);
-bumbo0=px0*px0-px1*px1
-bumbo1=2*px0*px1
-# Fp2_mul(&work, ap, &P->x); 
-work0=a0*px0-a1*px1
-work1=a1*px0+a0*px1
-# Fp2_add(&bumbo, &bumbo, &work);
-bumbo0=bumbo0+work0
-bumbo1=bumbo1+work1
-# Fp2_add(&bumbo, &bumbo, &one);
-bumbo0=bumbo0+1
-# Fp2_mul(&bumbo, &bumbo, &P->x);
-bumbo0=bumbo0*px0-bumbo1*px1
-bumbo1=bumbo1*px0+bumbo0*px1
-# Fp2_mul(&bumbo, &bumbo, &four);
-bumbo0=bumbo0*4
-bumbo1=bumbo1*4
-print(hex(bumbo0%p), hex(bumbo1%p))
-# Fp2_inv(&bumbo, &bumbo);
-            
-# //分子/分母
-# Fp2_mul(&U.x, &bunshi, &bumbo);
-            
-# //y座標
-# //かたまり１
-# //分子の計算
-# Fp2_mul(&work, &P->x, &two2);
-# Fp2_add(&work, &work, &P->x);
-# Fp2_add(&work, &work, ap);
-# Fp2_mul(&work2, &P->x, &P->x);
-# Fp2_mul(&work2, &work2, &three2);
-# Fp2_mul(&work3, &P->x, ap);
-# Fp2_mul(&work3, &work3, &two2);
-# Fp2_add(&work2, &work2, &work3);
-# Fp2_add(&work2, &work2, &one);
-# Fp2_mul(&bunshi, &work, &work2);
+print("U.y:", hex(uy))
 
-# //分母の計算(最後にinv)
-# Fp2_mul(&bumbo, &two2, &P->y);
-# Fp2_set(&bumbo2, &bumbo);
-# Fp2_inv(&bumbo, &bumbo);
+#eca x: λ**2 − (xP + xQ) − A
+ramda=(uy-py)%p
+waru=(ux-px)%p
+wari=pow(waru, -1, p)
+rmd=ramda*wari%p
 
-# //分子/分母
-# Fp2_mul(&katamari, &bunshi, &bumbo);
+print("ramda:", hex(rmd))
 
-# //かたまり２
-# //分子の計算
-# //Fp2_sqr3(&bunshi2, &work2);
-# Fp2_mul(&bunshi2, &work2, &work2);
-# Fp2_mul(&bunshi2, &bunshi2, &work2);
+rx=((rmd*rmd)%p -((px+ux)%p) - a)%p
 
-# //分母の計算(最後にinv)
-# //Fp2_sqr3(&bumbo2, &bumbo2);
-# Fp2_mul(&work, &bumbo2, &bumbo2);
-# Fp2_mul(&bumbo2, &work, &bumbo2);
-# Fp2_inv(&bumbo2, &bumbo2);
+print("rx:", hex(rx))
+#305
+#λはかたむき
+# y: λ(xP − xR) − yP
+ry=((rmd*(px-rx)%p) - py)%p
 
-# //分子/分母
-# Fp2_mul(&katamari2, &bunshi2, &bumbo2);
-# Fp2_sub(&U.y, &katamari, &katamari2);
-# Fp2_sub(&U.y, &U.y, &P->y);
+print("ry:", hex(ry))
+#291
+
+#(x**4 − 4Ax − 6x**2 − 3)(x**8 + 4Ax**7 + 28x**6 + 28Ax**5 + (16A**2 + 6)x**4 + 28Ax**3 + 28x**2 + 4Ax + 1)
+
+bunshi3 = (px**4 - 4*a*px - 6*(px**2) - 3)%p
+
+print("zenhan:", hex(bunshi3))
+
+kouhan=(px**8 + 4*a*(px**7) + 28*(px**6) + 28*a*(px**5) + (16*a**2 + 6)*(px**4) + 28*a*(px**3) + 28*(px**2) + 4*a*px + 1)%p
+
+print("kouhan:",hex(kouhan))
+
+bunshi3=bunshi3*kouhan%p
+
+print("ect_bunshi:", hex(bunshi3))
+
+#(4Ax**3 + 3x**4 + 6x**2 − 1)**3
+
+bumbo=((4*a*(px**3) + 3*(px**4) + 6*(px**2) - 1)**3)%p
+
+hanten = pow(bumbo, -1, p)
+
+print("ect_bumbo(inv)", hex(hanten))
+
+ty = bunshi3*hanten*py%p
+
+print("ect_y:", hex(ty))

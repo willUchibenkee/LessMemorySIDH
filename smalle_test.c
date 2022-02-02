@@ -38,7 +38,7 @@ int main(void){
  
         //Fp_add(&nbai, Rsq, &ichi);
         printf("A: X Y\n");
-        PrintEC2(&a);
+        Efp2_PrintEC2(&a);
 
         Fp2_to_Mont(&b.x, &b.x);
         Fp2_to_Mont(&b.y, &b.y);
@@ -48,7 +48,7 @@ int main(void){
         Fp2_from_Mont(&b.y);
         Fp2_from_Mont(&at);
 
-        PrintEC2(&ecd);
+        Efp2_PrintEC2(&ecd);
         //printf("p**2+1:\n");
         //Fp_print(&nbai);
         // if(Efp2_checkans(&a,&at) == 0){
@@ -69,7 +69,7 @@ int main(void){
         if(ans.inf == 1){
             printf("ans = inf\n");
         }else{
-            PrintEC2(&ans);
+            Efp2_PrintEC2(&ans);
         }
 
         return 0;
