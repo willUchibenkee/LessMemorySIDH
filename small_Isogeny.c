@@ -4,8 +4,8 @@
 #include"small_Efp2.c"
 #include<gmp.h>
 
-#define aa0 "329 423"
-#define ba0 "329 423"
+#define aa0 "149 1a7"
+#define ba0 "149 1a7"
 #define ka "B"
 #define kb "2"
 #define eA 4 //216
@@ -36,9 +36,12 @@ void Isogeny_set_e(void){
 void Isogeny_gets(ec2 *S, ec2 *P, ec2 *Q, Fp *k, Fp2 *ap){
     // SaやSbを求めます
     //Sa = Pa + ka*Qa
-    ec2 U; 
+    ec2 U;
+    U.inf = 0;
 
     Efp2_mgecSCM(&U, Q, k, ap);
+    printf("kQ:");
+    Efp2_PrintEC2(&U);
     Efp2_mgecA(S, P, &U, ap);
 
     //free(&U);
@@ -46,8 +49,8 @@ void Isogeny_gets(ec2 *S, ec2 *P, ec2 *Q, Fp *k, Fp2 *ap){
 
 void Isogeny_changea(Fp2 *nexta, Fp2 *alpha){
     Fp2 one, two;
-    Fp2_set_str(&one, "1 0");
-    Fp2_set_str(&two, "2 0");
+    Fp2_set_str(&one, "91 0");
+    Fp2_set_str(&two, "122 0");
     Fp2 temp;
     Fp2_to_Mont(alpha, alpha);
 
@@ -64,7 +67,7 @@ void Isogeny_changea(Fp2 *nexta, Fp2 *alpha){
 
 void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
     Fp2 six;
-    Fp2_set_str(&six, "6 0");
+    Fp2_set_str(&six, "8 0");
 
     Fp2 temp; 
     Fp2 temp2;
@@ -93,7 +96,7 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
     Fp2 temp2; 
 
     Fp2 two; 
-    Fp2_set_str(&two, "2 0");
+    Fp2_set_str(&two, "122 0");
 
     Fp2_to_Mont(alpha, alpha);
     Fp2_to_Mont(&P->x, &P->x);
@@ -125,11 +128,11 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
     }else{
         //bob
 
-        Fp three;
-        Fp_set_str(&three, "3");
+        // Fp three;
+        // Fp_set_str(&three, "4");
         
         Fp2 one; 
-        Fp2_set_str(&one, "1 0");
+        Fp2_set_str(&one, "91 0");
 
         //
         Fp2_mul(&temp, alpha, &P->x);
@@ -154,83 +157,83 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
     }
 }
 
-void Isogeny_mgec3(ec2 *R, ec2 *P, Fp2 *ap){
-    ec2 U; 
+// void Isogeny_mgec3(ec2 *R, ec2 *P, Fp2 *ap){
+//     ec2 U; 
     
-    Fp2 temp, temp2, temp3; 
+//     Fp2 temp, temp2, temp3; 
 
-    Fp four, three;
-    Fp_set_str(&four, "4");
-    Fp_set_str(&three, "3");
+//     // Fp four, three;
+//     // Fp_set_str(&four, "95");
+//     // Fp_set_str(&three, "3");
 
-    Fp2 six, four2, three2, one;
+//     Fp2 six, four2, three2, one;
     
-    Fp2_set_str(&six, "6 0");
-    Fp2_set_str(&four2, "4 0");
-    Fp2_set_str(&three2, "3 0");
-    Fp2_set_str(&one, "1 0");
+//     Fp2_set_str(&six, "8 0");
+//     Fp2_set_str(&four2, "95 0");
+//     Fp2_set_str(&three2, "4 0");
+//     Fp2_set_str(&one, "91 0");
 
-    Fp2_to_Mont(&P->x, &P->x);
-    Fp2_to_Mont(&P->y, &P->y);
-    Fp2_to_Mont(ap, ap);
+//     Fp2_to_Mont(&P->x, &P->x);
+//     Fp2_to_Mont(&P->y, &P->y);
+//     Fp2_to_Mont(ap, ap);
 
-    Fp2 bunshi, bumbo;
+//     Fp2 bunshi, bumbo;
 
-    Fp2_mul(&temp, &P->x, &P->x);
-    Fp2_mul(&temp, &temp, &P->x);
-    Fp2_mul(&temp, &temp, &P->x);
-    //x^4
+//     Fp2_mul(&temp, &P->x, &P->x);
+//     Fp2_mul(&temp, &temp, &P->x);
+//     Fp2_mul(&temp, &temp, &P->x);
+//     //x^4
 
-    Fp2_mul(&temp2, &six, &P->x);
-    Fp2_mul(&temp2, &temp2, &P->x);
-    //6x^2
+//     Fp2_mul(&temp2, &six, &P->x);
+//     Fp2_mul(&temp2, &temp2, &P->x);
+//     //6x^2
 
     
-    Fp2_mul(&temp3, &P->x, &four2);
-    Fp2_mul(&temp3, &temp3, &A);
-    //4ax^3
+//     Fp2_mul(&temp3, &P->x, &four2);
+//     Fp2_mul(&temp3, &temp3, &A);
+//     //4ax^3
 
-    Fp2_sub(&temp, &temp, &temp2);
-    Fp2_sub(&temp, &temp, &temp3);
-    Fp2_sub(&temp, &temp, &three2);
-    //()
+//     Fp2_sub(&temp, &temp, &temp2);
+//     Fp2_sub(&temp, &temp, &temp3);
+//     Fp2_sub(&temp, &temp, &three2);
+//     //()
 
-    Fp2_mul(&temp, &temp, &temp);
-    //()^2
+//     Fp2_mul(&temp, &temp, &temp);
+//     //()^2
 
-    Fp2_mul(&temp, &temp, &P->x);
-    //x*()^2
+//     Fp2_mul(&temp, &temp, &P->x);
+//     //x*()^2
 
-    Fp2_set(&bunshi, &temp);
+//     Fp2_set(&bunshi, &temp);
 
 
-    Fp2_mul(&temp, &P->x, &P->x);
-    Fp2_mul(&temp, &temp, &P->x);
-    Fp2_mul(&temp, &temp, &P->x);
-    Fp2_mul(&temp, &temp, &three2);
-    //3x^4
+//     Fp2_mul(&temp, &P->x, &P->x);
+//     Fp2_mul(&temp, &temp, &P->x);
+//     Fp2_mul(&temp, &temp, &P->x);
+//     Fp2_mul(&temp, &temp, &three2);
+//     //3x^4
 
-    Fp2_mul(&temp3, &P->x, &P->x);
-    Fp2_mul(&temp3, &temp3, &P->x);
-    Fp2_mul(&temp3, &temp3, &four2);
-    Fp2_mul(&temp3, &temp3, &A);
-    //4ax^3
+//     Fp2_mul(&temp3, &P->x, &P->x);
+//     Fp2_mul(&temp3, &temp3, &P->x);
+//     Fp2_mul(&temp3, &temp3, &four2);
+//     Fp2_mul(&temp3, &temp3, &A);
+//     //4ax^3
     
-    Fp2_add(&temp, &temp, &temp2);
-    Fp2_add(&temp, &temp, &temp3);
-    Fp2_sub(&temp, &temp, &one);
-    //()
+//     Fp2_add(&temp, &temp, &temp2);
+//     Fp2_add(&temp, &temp, &temp3);
+//     Fp2_sub(&temp, &temp, &one);
+//     //()
 
-    Fp2_mul(&temp, &temp, &temp);
-    //()^2
+//     Fp2_mul(&temp, &temp, &temp);
+//     //()^2
 
-    Fp2_inv(&temp, &temp);
-    // /
+//     Fp2_inv(&temp, &temp);
+//     // /
 
-    Fp2_set(&bumbo, &temp);
+//     Fp2_set(&bumbo, &temp);
 
-    Fp2_mul(&U.x, &bunshi, &bumbo);
+//     Fp2_mul(&U.x, &bunshi, &bumbo);
     
-    Fp2_set(&R->x, &U.x);
-    Fp2_from_Mont(&R->x);
-}
+//     Fp2_set(&R->x, &U.x);
+//     Fp2_from_Mont(&R->x);
+// }
