@@ -57,53 +57,69 @@ void Fp2_sub(Fp2 *c, Fp2 *a, Fp2 *b){
 void Fp2_mul(Fp2 *c, Fp2 *a, Fp2 *b){
     Fp t[2];
     
+    // Fp_from_Mont(elem0(a));
+    // Fp_print(elem0(a));
+    // Fp_to_Mont(elem0(a), elem0(a));
+    
     Fp_add(&t[0], elem0(a), elem1(a));    //T0
-    Fp_from_Mont(&t[0]);
-    printf("t[0] ");
-    Fp_print(&t[0]);
-    Fp_to_Mont(&t[0], &t[0]);
+    // Fp_from_Mont(&t[0]);
+    // printf("t[0] ");
+    // Fp_print(&t[0]);
+    // Fp_to_Mont(&t[0], &t[0]);
 
+    // Fp_from_Mont(elem0(b));
+    // Fp_print(elem0(b));
+    // Fp_to_Mont(elem0(b), elem0(b));
+    
     Fp_add(&t[1], elem0(b), elem1(b));    //T1
-    printf("t[1] ");
-    Fp_from_Mont(&t[1]);
-    Fp_print(&t[1]);
-    Fp_to_Mont(&t[1], &t[1]);
+    // printf("t[1] ");
+    // Fp_from_Mont(&t[1]);
+    // Fp_print(&t[1]);
+    // Fp_to_Mont(&t[1], &t[1]);
 
     Fp_mul(&t[0], &t[0], &t[1]);   //T0=(a0+a1)*(b0+b1)
-    Fp_from_Mont(&t[0]);
-    printf("t[0] ");
-    Fp_print(&t[0]);
-    Fp_to_Mont(&t[0], &t[0]);
+    // Fp_from_Mont(&t[0]);
+    // printf("t[0] ");
+    // Fp_print(&t[0]);
+    // Fp_to_Mont(&t[0], &t[0]);
 
+    // Fp_from_Mont(elem0(a));
+    // Fp_print(elem0(a));
+    // Fp_to_Mont(elem0(a), elem0(a));
+
+    // Fp_from_Mont(elem0(b));
+    // Fp_print(elem0(b));
+    // Fp_to_Mont(elem0(b), elem0(b));
+    
     Fp_mul(&t[1], elem0(a), elem0(b));    //T0
-    printf("t[1] ");
-    Fp_from_Mont(&t[1]);
-    Fp_print(&t[1]);
-    Fp_to_Mont(&t[1], &t[1]);
+    // printf("t[1] ");
+    // Fp_from_Mont(&t[1]);
+    // Fp_print(&t[1]);
+    // Fp_to_Mont(&t[1], &t[1]);
 
     Fp_mul(elem1(c), elem1(a), elem1(b));    //T1
-    printf("c1 ");
-    Fp_from_Mont(elem1(c));
-    Fp_print(elem1(c));
-    Fp_to_Mont(elem1(c), elem1(c));
+    // printf("c1 ");
+    // Fp_from_Mont(elem1(c));
+    // Fp_print(elem1(c));
+    // Fp_to_Mont(elem1(c), elem1(c));
 
     Fp_sub(elem0(c), &t[1], elem1(c));   //T4
-    printf("c0 ");
-    Fp_from_Mont(elem0(c));
-    Fp_print(elem0(c));
-    Fp_to_Mont(elem0(c), elem0(c));
+    // printf("c0 ");
+    // Fp_from_Mont(elem0(c));
+    // Fp_print(elem0(c));
+    // Fp_to_Mont(elem0(c), elem0(c));
 
     Fp_add(&t[1], elem1(c), &t[1]);    //T3
-    printf("t[1] ");
-    Fp_from_Mont(&t[1]);
-    Fp_print(&t[1]);
-    Fp_to_Mont(&t[1], &t[1]);
+    // printf("t[1] ");
+    // Fp_from_Mont(&t[1]);
+    // Fp_print(&t[1]);
+    // Fp_to_Mont(&t[1], &t[1]);
 
     Fp_sub(elem1(c), &t[0], &t[1]);   //T3
-    printf("c1 ");
-    Fp_from_Mont(elem1(c));
-    Fp_print(elem1(c));
-    Fp_to_Mont(elem1(c), elem1(c));
+    // printf("c1 ");
+    // Fp_from_Mont(elem1(c));
+    // Fp_print(elem1(c));
+    // Fp_to_Mont(elem1(c), elem1(c));
 }
 
 void Fp2_mul_acc(Fp2 *c, Fp2 *a, Fp2 *b){
@@ -351,4 +367,12 @@ void Fp2_sqrt(Fp2 *ANS,Fp2 *a){
   // Fp_mul(&t,&z,&t);
   Fp2_mul(&z,&z,a);
   Fp2_set(ANS,&z);
+}
+
+void Fp2_print_s(Fp2 *in){
+    Fp2_from_Mont(in);
+    //printf("/////////////^n");
+    Fp2_print(in);
+    Fp2_to_Mont(in, in);
+    //printf("/////////////^n");
 }

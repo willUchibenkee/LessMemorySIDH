@@ -22,6 +22,16 @@ int Efp2_PrintEC2(ec2 *op){
     }
 }
 
+int Efp2_PrintEC2_s(ec2 *op){
+    if( op->inf == 1 )printf("!Inf!\n");
+    else {
+        printf("x:");
+        Fp2_print_s(&op->x);
+        printf("y:");
+        Fp2_print_s(&op->y);
+    }
+}
+
 int Efp2_checkans(ec2 *P, Fp2 *ap){
     Fp2 wx, wy, uhen, sahen, work;
     Fp2_set(&wx, &P->x);
@@ -73,13 +83,13 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
 
     if(V->inf == 1){
         R->inf = 1;
-        printf("P:inf ecd\n");
+        //printf("P:inf ecd\n");
         //printf("%d\n", R->inf);
     }else{
         if(Fp2_cmp_zero(xcoord(V)) == 1 || Fp2_cmp_zero(xcoord(V)) == 1){
             //P->inf = 1;
             R->inf = 1;
-            printf("P:x or y 0\n");
+            //printf("P:x or y 0\n");
             //printf("%d\n", R->inf);
 
         }else{
@@ -250,12 +260,12 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
     if(P->inf == 1){
         if(Q->inf == 1){
             R->inf = 1;
-            printf("P,Q inf\n");
+            //printf("P,Q inf\n");
         }else{
             Fp2_set(xcoord(R), xcoord(Q));
             Fp2_set(ycoord(R), ycoord(Q));
             R->inf = 0;
-            printf("Rinf1 reset: Q=R\n");
+            //printf("Rinf1 reset: Q=R\n");
          }
     }else{
         if(Q->inf == 1){
@@ -263,17 +273,18 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
             Fp2_set(xcoord(R), xcoord(P));
             Fp2_set(ycoord(R), ycoord(P));
             R->inf = 0;
-            printf("Rinf3 reset: P=R\n");
+            //printf("Rinf3 reset: P=R\n");
         }else{
             if(Fp2_cmp(xcoord(Q), xcoord(P)) == 0 || Fp2_cmp(ycoord(Q), ycoord(P)) == 0){
                 if(Fp2_cmp(xcoord(Q), xcoord(P)) == 0 && Fp2_cmp(ycoord(Q), ycoord(P)) == 0){
                     Efp2_mgecD(R, P, ap);
                 }else{
                     R->inf = 1;
-                    //printf("R:infeca\n");
+                    //printf("R:inf gen\n");
                     //printf("%d\n", R->inf);
                 }
             }else{
+                //printf("普通のeca\n");
                 Fp2_sub(&xsa, xcoord(Q), xcoord(P));
                 Fp2_sub(&ysa, ycoord(Q), ycoord(P));
 
@@ -388,35 +399,68 @@ void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
     Fp2_set(&T.y, &P->y);
     T.inf = P->inf;
 
+    ec2 F, G;
+    F.inf = 1;
+    G.inf = 0;
+
     if(Fp_cmp_one(n)){
         Fp2_set(&R->x, &P->x);
         Fp2_set(&R->y, &P->y);
         R->inf = P->inf;
     }else{
-        for(int k = length-1; k >= 0; k--){
+        for(int k = 0; k < length; k++){
 
-            printf("k:%d\n", k);
+            //printf("k:%d\n", k);
+            //printf("bin[k]: %c\n", binary[k]);
+            // if(k == 1){
+            //     //printf("S.inf: %d  T.inf: %d\n", S.inf, T.inf);
+            //     printf("S:");
+            //     Fp2_from_Mont(&S.x);
+            //     Fp2_from_Mont(&S.y);
+            //     Efp2_PrintEC2(&S);
+            //     Fp2_to_Mont(&S.x, &S.x);
+            //     Fp2_to_Mont(&S.y, &S.y);
+            //     printf("T:");
+            //     Fp2_from_Mont(&T.x);
+            //     Fp2_from_Mont(&T.y);
+            //     Efp2_PrintEC2(&T);
+            //     Fp2_to_Mont(&T.x, &T.x);
+            //     Fp2_to_Mont(&T.y, &T.y);
+            // }
             if(binary[k] == '1'){
 
-                printf("eca\n");
-                Efp2_mgecA(&S, &S, &T, ap);
+                //printf("eca\n");
+                Efp2_mgecA(&F, &S, &T, ap);
 
-                if(S.inf == 1){
-                    printf("S: inf\n");
+                if(F.inf == 1){
+                   // printf("F: inf\n");
                 }else{
-                    printf("S:");
-                    Efp2_PrintEC2(&S);
+                    // printf("F:");
+                    // Fp2_from_Mont(&F.x);
+                    // Fp2_from_Mont(&F.y);
+                    // Efp2_PrintEC2(&F);
+                    // Fp2_to_Mont(&F.x, &F.x);
+                    // Fp2_to_Mont(&F.y, &F.y);
                 }
-
+                Fp2_set(&S.x, &F.x);
+                Fp2_set(&S.y, &F.y);
+                S.inf = F.inf;
             }
-            Efp2_mgecD(&T, &T, ap);
+            Efp2_mgecD(&G, &T, ap);
             
-            if(T.inf == 1){
-                printf("T: inf\n");
+            if(G.inf == 1){
+                //printf("G: inf\n");
             }else{
-                printf("T:");
-                Efp2_PrintEC2(&T);
+                // printf("G:");
+                // Fp2_from_Mont(&G.x);
+                // Fp2_from_Mont(&G.y);
+                // Efp2_PrintEC2(&G);
+                // Fp2_to_Mont(&G.x, &G.x);
+                // Fp2_to_Mont(&G.y, &G.y);
             }
+            Fp2_set(&T.x, &G.x);
+            Fp2_set(&T.y, &G.y);
+            T.inf = G.inf;
 
         }
 
@@ -431,11 +475,16 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2 temp, temp2;
     Fp2 three, four, six, nihachi, hex, one2;
 
-    ec2 u;
+    ec2 u, v;
     ec2 *U = &u;
+    ec2 *V = &v;
     Fp2_set(xcoord(U), xcoord(P));
     Fp2_set(ycoord(U), ycoord(P));
     U->inf = P->inf;
+
+    V->inf = 0;
+    Fp2_set_str(xcoord(V), "0 0");
+    Fp2_set_str(ycoord(V), "0 0");
 
     Fp2_set_str(&one2, "91 0");
     Fp2_set_str(&three, "4 0");
@@ -444,25 +493,49 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_set_str(&nihachi, "b5 0");
     Fp2_set_str(&hex, "a5 0");
     //x 分子 (x**4 − 4Ax − 6x**2 − 3)**2*x
-    Fp2_mul(xcoord(R), xcoord(U), xcoord(U));
-    Fp2_mul(xcoord(R), xcoord(R), xcoord(U));
-    Fp2_mul(xcoord(R), xcoord(R), xcoord(U));
+    Fp2_mul(xcoord(V), xcoord(U), xcoord(U));
+    Fp2_mul(xcoord(V), xcoord(V), xcoord(U));
+    Fp2_mul(xcoord(V), xcoord(V), xcoord(U));
+
+    // printf("x**4:");
+    // Fp2_print_s(xcoord(V));
 
     Fp2_mul(&temp, A, &four);
     Fp2_mul(&temp, &temp, xcoord(U));
 
-    Fp2_sub(xcoord(R), xcoord(R), &temp);
+    // printf("4Ax:");
+    // Fp2_print_s(&temp);
+
+    Fp2_sub(xcoord(V), xcoord(V), &temp);
+
+    // printf("x**4 - 4Ax:");
+    // Fp2_print_s(xcoord(V));
 
     Fp2_mul(&temp, &six, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
 
-    Fp2_sub(xcoord(R), xcoord(R), &temp);
+    // printf("6x**2:");
+    // Fp2_print_s(&temp);
 
-    Fp2_sub(xcoord(R), xcoord(R), &three);
+    Fp2_sub(xcoord(V), xcoord(V), &temp);
 
-    Fp2_mul(xcoord(R), xcoord(R), xcoord(R));
+    // printf("x**4 - 4Ax - 6x**2:");
+    // Fp2_print_s(xcoord(V));
 
-    Fp2_mul(xcoord(R), xcoord(R), xcoord(U));
+    Fp2_sub(xcoord(V), xcoord(V), &three);
+
+    // printf("x**4 - 4Ax - 6x**2 - 3:");
+    // Fp2_print_s(xcoord(V));
+
+    Fp2_mul(xcoord(V), xcoord(V), xcoord(V));
+
+    // printf("(x**4 - 4Ax - 6x**2 - 3)**2:");
+    // Fp2_print_s(xcoord(V));
+
+    Fp2_mul(xcoord(V), xcoord(V), xcoord(U));
+
+    // printf("(x**4 - 4Ax - 6x**2 - 3)**3:");
+    // Fp2_print_s(xcoord(V));
 
     //分母 (4Ax**3 + 3x**4 + 6x**2 − 1)**2
     Fp2_mul(&temp, &four, A);
@@ -470,30 +543,55 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp, &temp, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
 
+    // printf("4Ax**3:");
+    // Fp2_print_s(&temp);
+
     Fp2_mul(&temp2, &three, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
 
+    // printf("3x**4:");
+    // Fp2_print_s(&temp2);
+
     Fp2_add(&temp, &temp, &temp2);
+
+    // printf("4Ax**3 + 3x**4:");
+    // Fp2_print_s(&temp);
 
     Fp2_mul(&temp2, &six, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
 
+    // printf("6x**2:");
+    // Fp2_print_s(&temp2);
+
     Fp2_add(&temp, &temp, &temp2);
+
+    // printf("4Ax**3 + 3x**4 + 6x**2:");
+    // Fp2_print_s(&temp);
 
     Fp2_sub(&temp, &temp, &one2);
 
+    // printf("4Ax**3 + 3x**4 + 6x**2 -1:");
+    // Fp2_print_s(&temp);
+
     Fp2_mul(&temp, &temp, &temp);
+
+    // printf("(4Ax**3 + 3x**4 + 6x**2 -1)**2:");
+    // Fp2_print_s(&temp);
 
     Fp2_inv(&temp, &temp);
 
-    Fp2_mul(xcoord(R), xcoord(R), &temp);
+    // printf("inv (4Ax**3 + 3x**4 + 6x**2 -1)**2:");
+    // Fp2_print_s(&temp);
+
+    Fp2_mul(xcoord(V), xcoord(V), &temp);
 
     // y  分子 (x**4 − 4Ax − 6x**2 − 3)(x**8 + 4Ax**7 + 28x**6 + 28Ax**5 + (16A**2 + 6)x**4 + 28Ax**3 + 28x**2 + 4Ax + 1)
-    Fp2_mul(ycoord(R), xcoord(U), xcoord(U));
-    Fp2_mul(ycoord(R), ycoord(R), xcoord(U));
-    Fp2_mul(ycoord(R), ycoord(R), xcoord(U));
+    Fp2_mul(ycoord(V), xcoord(U), xcoord(U));
+    Fp2_mul(ycoord(V), ycoord(V), xcoord(U));
+    Fp2_mul(ycoord(V), ycoord(V), xcoord(U));
+
     // printf("x**4:");
     // Fp2_from_Mont(ycoord(R));
     // Fp2_print(ycoord(R));
@@ -501,13 +599,15 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
 
     Fp2_mul(&temp, &four, A);
     Fp2_mul(&temp, &temp, xcoord(U));
+
     // printf("4ax:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
     // Fp2_to_Mont(&temp, &temp);
 
-    Fp2_sub(ycoord(R), ycoord(R), &temp);
-    //printf("hiki:");
+    Fp2_sub(ycoord(V), ycoord(V), &temp);
+
+    // printf("hiki:");
     // Fp2_from_Mont(ycoord(R));
     // Fp2_print(ycoord(R));
     // Fp2_to_Mont(ycoord(R), ycoord(R));
@@ -515,9 +615,9 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp, &six, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
 
-    Fp2_sub(ycoord(R), ycoord(R), &temp);
+    Fp2_sub(ycoord(V), ycoord(V), &temp);
 
-    Fp2_sub(ycoord(R), ycoord(R), &three);
+    Fp2_sub(ycoord(V), ycoord(V), &three);
 
     // printf("zenhan:");
     // Fp2_from_Mont(ycoord(R));
@@ -534,6 +634,7 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp, &temp, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
+
     // printf("x8:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -547,7 +648,8 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
-    // printf("4Ax7:");
+
+    // printf("x7:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
@@ -565,12 +667,14 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
-    // printf("28x6:");
+
+    // printf("x6:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp, &temp, &temp2);
+
     // printf("tasu2:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -582,54 +686,64 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, A);
-    // printf("28Ax5:");
+
+    // printf("x5:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp, &temp, &temp2);
+
     // printf("tasu3:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
     // Fp2_to_Mont(&temp, &temp);
 
     Fp2_mul(&temp2, &hex, A);
+
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_mul(&temp2, &temp2, A);
+
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp2, &temp2, &six);
+
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_mul(&temp2, &temp2, xcoord(U));
+    
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // printf("(16A**2+6)x4:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp, &temp, &temp2);
+
     // printf("tasu4:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -639,12 +753,14 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, A);
+
     // printf("x3:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp, &temp, &temp2);
+
     // printf("tasu5:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -652,12 +768,14 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
 
     Fp2_mul(&temp2, &nihachi, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // printf("x3:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp, &temp, &temp2);
+
     // printf("tasu6:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -665,12 +783,14 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
 
     Fp2_mul(&temp2, &four, A);
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // printf("x:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
     // Fp2_to_Mont(&temp2, &temp2);
 
     Fp2_add(&temp, &temp, &temp2);
+
     // printf("tasu7:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -684,7 +804,8 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     // Fp2_to_Mont(&temp, &temp);
     //18a
 
-    Fp2_mul(ycoord(R), ycoord(R), &temp);
+    Fp2_mul(ycoord(V), ycoord(V), &temp);
+
     // printf("bunshi:");
     // Fp2_from_Mont(ycoord(R));
     // Fp2_print(ycoord(R));
@@ -696,6 +817,7 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp, &temp, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
     Fp2_mul(&temp, &temp, xcoord(U));
+
     // printf("x3:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -705,6 +827,7 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // printf("x4:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
@@ -714,6 +837,7 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
 
     Fp2_mul(&temp2, &six, xcoord(U));
     Fp2_mul(&temp2, &temp2, xcoord(U));
+
     // printf("x2:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
@@ -722,6 +846,7 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
     Fp2_add(&temp, &temp, &temp2);
 
     Fp2_sub(&temp, &temp, &one2);
+
     // printf("katamari:");
     // Fp2_from_Mont(&temp);
     // Fp2_print(&temp);
@@ -729,6 +854,7 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
 
     Fp2_mul(&temp2, &temp, &temp);
     Fp2_mul(&temp2, &temp2, &temp);
+
     // printf("ans:");
     // Fp2_from_Mont(&temp2);
     // Fp2_print(&temp2);
@@ -739,10 +865,14 @@ void Efp2_mgecT(ec2 *R, ec2 *P, Fp2 *A){
 
     //////////////////////////////////////////////////////////////
 
-    Fp2_mul(ycoord(R), ycoord(R), &temp2);
+    Fp2_mul(ycoord(V), ycoord(V), &temp2);
 
     //////////////////////////////////////////////////////////////
 
-    Fp2_mul(ycoord(R), ycoord(R), ycoord(U));
+    Fp2_mul(ycoord(V), ycoord(V), ycoord(U));
+
+    Fp2_set(xcoord(R), xcoord(V));
+    Fp2_set(ycoord(R), ycoord(V));
+    R->inf = V->inf;
     
 }

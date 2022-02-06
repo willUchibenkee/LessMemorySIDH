@@ -4,8 +4,8 @@
 #include"small_Efp2.c"
 #include<gmp.h>
 
-#define aa0 "149 1a7"
-#define ba0 "149 1a7"
+#define aa0 "1a7 149"
+#define ba0 "1a7 149"
 #define ka "B"
 #define kb "2"
 #define eA 4 //216
@@ -39,9 +39,21 @@ void Isogeny_gets(ec2 *S, ec2 *P, ec2 *Q, Fp *k, Fp2 *ap){
     ec2 U;
     U.inf = 0;
 
+    // printf("k: ");
+    // Fp_print(k);
+    // printf("Qx: ");
+    // Fp2_print(xcoord(Q));
+    // printf("Qy: ");
+    // Fp2_print(ycoord(Q));
+    // printf("A: ");
+    // Fp2_print(ap);
     Efp2_mgecSCM(&U, Q, k, ap);
-    printf("kQ:");
-    Efp2_PrintEC2(&U);
+    // printf("kQ:");
+    // Fp2_from_Mont(&U.x);
+    // Fp2_from_Mont(&U.y);
+    // Efp2_PrintEC2(&U);
+    // Fp2_to_Mont(&U.x, &U.x);
+    // Fp2_to_Mont(&U.y, &U.y);
     Efp2_mgecA(S, P, &U, ap);
 
     //free(&U);
@@ -52,17 +64,25 @@ void Isogeny_changea(Fp2 *nexta, Fp2 *alpha){
     Fp2_set_str(&one, "91 0");
     Fp2_set_str(&two, "122 0");
     Fp2 temp;
-    Fp2_to_Mont(alpha, alpha);
+    //Fp2_to_Mont(alpha, alpha);
 
     Fp2_mul(&temp, alpha, alpha);
+    // printf("alpha**2: ");
+    // Fp2_print_s(&temp);
     Fp2_mul(&temp, &temp, &two);
+    // printf("2*alpha**2: ");
+    // Fp2_print_s(&temp);
     Fp2_sub(&temp, &one, &temp);
+    // printf("2*alpha**2 - 1: ");
+    // Fp2_print_s(&temp);
     Fp2_mul(nexta, &two, &temp);
+    // printf("nexta: ");
+    // Fp2_print_s(nexta);
 
     // free(&one);
     // free(&two);
     // free(&temp);
-    Fp2_from_Mont(nexta);
+    //Fp2_from_Mont(nexta);
 }
 
 void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
@@ -72,9 +92,6 @@ void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
     Fp2 temp; 
     Fp2 temp2;
 
-    Fp2_to_Mont(olda, olda);
-    Fp2_to_Mont(beta, beta);
-
     Fp2_mul(&temp, olda, beta);
     Fp2_mul(&temp2, &six, beta);
     Fp2_mul(&temp2, &temp2, beta);
@@ -83,13 +100,12 @@ void Isogeny_changeb(Fp2 *nexta, Fp2 *beta, Fp2 *olda){
     Fp2_mul(&temp, &temp, beta);
 
     Fp2_set(nexta, &temp);
-    Fp2_from_Mont(nexta);
 }
 
 void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
     //同種写像Φを求めます
     //P...点 alpha...スタート地点 l...AliceですかBobですか
-    ec2 U; 
+    ec2 U, V; 
 
     Fp2 temp; 
     Fp2 bumbo; 
@@ -98,61 +114,131 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
     Fp2 two; 
     Fp2_set_str(&two, "122 0");
 
-    Fp2_to_Mont(alpha, alpha);
-    Fp2_to_Mont(&P->x, &P->x);
-    Fp2_to_Mont(&P->y, &P->y);
+    Fp2_set(&U.x, &P->x);
+    Fp2_set(&U.y, &P->y);
+    U.inf = 0;
+    V.inf = 0;
+    Fp2_set_str(&V.x, "0 0");
+    Fp2_set_str(&V.y, "0 0");
 
     if(l == 2){
         //alice       
-        //分子
+        //分子 xp px x2 alpha
         
-        Fp2_mul(&temp, &P->x, &P->x);
+        Fp2_mul(&temp, &U.x, &U.x);
         Fp2_mul(&temp, &temp, alpha);
-        Fp2_sub(&temp, &temp, &P->x);
+        Fp2_sub(&temp, &temp, &U.x);
         
 
         //分母
-        Fp2_sub(&bumbo, &P->x, alpha);
+        Fp2_sub(&bumbo, &U.x, alpha);
         
         Fp2_inv(&bumbo, &bumbo);
 
         
         //掛け算
-        Fp2_mul(&U.x, &temp, &bumbo);
-
+        Fp2_mul(&V.x, &temp, &bumbo);
         
         //set
-        Fp2_set(&ans->x,&U.x);
-        Fp2_from_Mont(&ans->x);
+        Fp2_set(&ans->x, &V.x);
+        //Fp2_from_Mont(&ans->x);
+
+        //y 分子 xP**2* alpha − 2*xP*alpha**2 + alpha
+        Fp2_mul(&temp, &U.x, &U.x);
+        Fp2_mul(&temp, &temp, alpha);
+        Fp2_sub(&temp, &temp, &U.x);
+
+        Fp2_mul(&temp2, &two, &U.x);
+        Fp2_mul(&temp2, &temp2, alpha);
+        Fp2_mul(&temp2, &temp2, alpha);
+
+        Fp2_sub(&temp, &temp, &temp2);
+
+        Fp2_add(&temp, &temp, alpha);
+
+        //分母　(xP − alpha)**2
+        Fp2_sub(&bumbo, &U.x, alpha);
+        Fp2_mul(&bumbo, &bumbo, &bumbo);
+
+        Fp2_inv(&bumbo, &bumbo);
+
+        Fp2_mul(&temp, &temp, &bumbo);
+        Fp2_mul(&V.y, &temp, &U.y);
+
+        Fp2_set(&ans->y, &V.y);
         
     }else{
         //bob
 
-        // Fp three;
-        // Fp_set_str(&three, "4");
+        Fp2 three;
+        Fp2_set_str(&three, "4 0");
         
-        Fp2 one; 
+        Fp2 one, temp3; 
         Fp2_set_str(&one, "91 0");
+        // Fp2 temp; 
+        // Fp2 bumbo; 
+        // Fp2 temp2;
 
         //
-        Fp2_mul(&temp, alpha, &P->x);
+        Fp2_mul(&temp, alpha, &U.x);
         Fp2_sub(&temp, &temp, &one);
         Fp2_mul(&temp, &temp, &temp);
-        Fp2_mul(&temp, &temp, &P->x);
+        Fp2_mul(&temp, &temp, &U.x);
         
-
         //
-        Fp2_sub(&bumbo, &P->x, alpha);
+        Fp2_sub(&bumbo, &U.x, alpha);
         Fp2_mul(&bumbo, &bumbo, &bumbo);
         Fp2_inv(&bumbo, &bumbo);
         
 
         //
-        Fp2_mul(&U.x, &temp, &bumbo);
+        Fp2_mul(&V.x, &temp, &bumbo);
 
         //
-        Fp2_set(&ans->x, &U.x);
-        Fp2_from_Mont(&ans->x);
+        Fp2_set(&ans->x, &V.x);
+
+        //y 分子 (xP*a − 1)(xP**2*a − 3*xP*a**3 + xP + a)
+        // printf("alpha:");
+        // Fp2_print_s(alpha);
+        // printf("U:");
+        // Efp2_PrintEC2_s(&U);
+
+        Fp2_mul(&temp, &U.x, alpha);
+        Fp2_sub(&temp, &temp, &one);
+
+        //////////////////////////////////////
+
+        Fp2_mul(&temp2, &U.x, alpha);
+        Fp2_mul(&temp2, &temp2, &U.x);
+
+        Fp2_mul(&temp3, &three, &U.x);
+        Fp2_mul(&temp3, &temp3, alpha);
+        Fp2_mul(&temp3, &temp3, alpha);
+
+        Fp2_sub(&temp2, &temp2, &temp3);
+
+        Fp2_add(&temp2, &temp2, &U.x);
+
+        Fp2_add(&temp2, &temp2, alpha);
+
+        ///////////////////////////////////////
+
+        Fp2_mul(&temp, &temp, &temp2);
+
+        //分母 (xP − x3)3
+        Fp2_sub(&temp3, &U.x, alpha);
+        Fp2_mul(&bumbo, &temp3, &temp3);
+        Fp2_mul(&bumbo, &bumbo, &temp3);
+
+        Fp2_inv(&bumbo, &bumbo);
+
+        ///////////////////////////////////////
+
+        Fp2_mul(&V.y, &temp, &bumbo);
+
+        Fp2_mul(&V.y, &V.y, &U.y);
+
+        Fp2_set(&ans->y, &V.y);
 
     }
 }
