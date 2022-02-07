@@ -106,10 +106,10 @@ void isogeny_nextp(ec2 *ans, ec2 *P, fp2 *alpha, mpz_t l){
     temp2p = &temp2;
     fp2_init(temp2p);
 
-    fp2 two; fp2 *t2p;
-    t2p = &two;
-    fp2_init(t2p);
-    fp2_set_ui(t2p, 2, 0);
+    // fp2 two; fp2 *t2p;
+    // t2p = &two;
+    // fp2_init(t2p);
+    // fp2_set_ui(t2p, 2, 0);
 
     if(mpz_cmp_ui(l,2) == 0){
         //alice       
@@ -137,7 +137,7 @@ void isogeny_nextp(ec2 *ans, ec2 *P, fp2 *alpha, mpz_t l){
         fp2_mul(&temp, &temp, alpha);
         fp2_sub(&temp, &temp, &U.x);
 
-        fp2_mul(&temp2, &two, &U.x);
+        fp2_add(&temp2, &U.x, &U.x);
         fp2_mul(&temp2, &temp2, alpha);
         fp2_mul(&temp2, &temp2, alpha);
 
@@ -698,4 +698,33 @@ void isogeny_mgec3(ec2 *R, ec2 *P, fp2 *ap){
     fp2_set(&R->y, &V.y);
     mpz_set(R->inf, V.inf);
     
+}
+
+void isogeny_gety(fp2 *y, fp2 *x, fp2 *A){
+    // y**2=x**3+Ax**2+x
+    fp2 temp, temp2;
+
+    fp2_init(&temp);
+    fp2_init(&temp2);
+
+    mpz_t three;
+    mpz_init(three);
+    mpz_set_ui(three, 3);
+
+    fp2_scalarexp(&temp, x, three);
+    fp2_mul(&temp2, A, x);
+    fp2_mul(&temp2, &temp2, x);
+
+    fp2_add(&temp, &temp, &temp2);
+
+    fp2_add(&temp, &temp, x);
+
+    if(fp2_legendre(&temp) == 1){
+        printf("temp:");
+
+        fp2_printf(&temp);
+        fp2_sqrt(y, &temp);
+    }else{
+        printf("no y\n");
+    }
 }

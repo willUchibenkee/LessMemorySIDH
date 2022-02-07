@@ -193,27 +193,53 @@ void fp2_scalarsub(fp2 *ans, fp2 *c, fp2 *d){
 }
 
 void fp2_scalarexp(fp2 *ans, fp2 *c, mpz_t d){
-    int length = 0;
-    length = (int)mpz_sizeinbase(d, 2);
-    char binary[length + 1];
-    fp2 s,t; fp2 *sp; fp2 *tp;
-    sp = &s; tp = &t;
-    fp2_init(sp); fp2_init(tp);
-    mpz_set_ui(sp->x0, 1); mpz_set(tp->x0, c->x0);
-    mpz_set_ui(sp->x1, 0); mpz_set(tp->x1, c->x1);
+    // int length = 0;
+    // length = (int)mpz_sizeinbase(d, 2);
+    // char binary[length + 1];
+    // fp2 s,t; fp2 *sp; fp2 *tp;
+    // sp = &s; tp = &t;
+    // fp2_init(sp); fp2_init(tp);
+    // mpz_set_ui(sp->x0, 1); mpz_set(tp->x0, c->x0);
+    // mpz_set_ui(sp->x1, 0); mpz_set(tp->x1, c->x1);
 
-    if(mpz_cmp_ui(d, 0) == 0  || (mpz_cmp_ui(c->x0, 0) == 0 && mpz_cmp_ui(c->x1, 0) == 0)){
-        mpz_set_ui(ans->x0, 1); mpz_set_ui(ans->x1, 0);
-    }else{
-        mpz_get_str(binary, 2, d);
-        for(int k = length-1; k >= 0; k--){
-            if(binary[k] == '1'){
-                fp2_mul(sp, sp, tp);
-            }
-            fp2_mul(tp, tp, tp);
-        }
-        mpz_set(ans->x0, sp->x0); mpz_set(ans->x1, sp->x1);
+    // if(mpz_cmp_ui(d, 0) == 0  || (mpz_cmp_ui(c->x0, 0) == 0 && mpz_cmp_ui(c->x1, 0) == 0)){
+    //     mpz_set_ui(ans->x0, 1); mpz_set_ui(ans->x1, 0);
+    // }else{
+    //     mpz_get_str(binary, 2, d);
+    //     for(int k = length-1; k >= 0; k--){
+    //         if(binary[k] == '1'){
+    //             fp2_mul(sp, sp, tp);
+    //         }
+    //         fp2_mul(tp, tp, tp);
+    //     }
+    //     mpz_set(ans->x0, sp->x0); mpz_set(ans->x1, sp->x1);
+    // }
+
+    int i,length;
+
+    length=(int)mpz_sizeinbase(d,2);
+
+    char binary[length+1];
+
+    mpz_get_str(binary , 2, d);
+
+    fp2 tmp;
+
+    fp2_init(&tmp);
+
+    fp2_set(&tmp, c);
+
+
+
+    for(i=1;i<length; i++){
+
+        fp2_mul(&tmp, &tmp, &tmp);
+
+        if(binary[i]=='1')  fp2_mul(&tmp, c, &tmp);
+
     }
+
+    fp2_set(ans,&tmp);
 }
 
 int fp2_legendre(fp2 *in){
@@ -264,6 +290,8 @@ void fp2_inv(fp2 *ans, fp2 *in){
 void fp2_sqrt(fp2 *ANS, fp2 *A){
     fp2 x,y,t,k,n,temp;
 
+    getchar();
+
     fp2_init(&x);
     fp2_init(&y);
     fp2_init(&t);
@@ -293,6 +321,7 @@ void fp2_sqrt(fp2 *ANS, fp2 *A){
         mpz_urandomm(n.x0, state, pp);
         mpz_urandomm(n.x1, state, pp);
     }
+    printf("a\n");
     
     mpz_pow_ui(q, prime_z, 2);
     mpz_sub_ui(q, q, 1);
@@ -304,6 +333,8 @@ void fp2_sqrt(fp2 *ANS, fp2 *A){
         mpz_mod_ui(r, q, 2);
         e++;
     }
+    printf("b\n");
+
 
     fp2_scalarexp(&y, &n, q);
     mpz_set_ui(z, e);
@@ -324,7 +355,10 @@ void fp2_sqrt(fp2 *ANS, fp2 *A){
             m++;
             mpz_ui_pow_ui(exp, 2, m);
             fp2_scalarexp(&temp, &k, exp);
+            printf("%lu\n", m);
         }
+    printf("c\n");
+
 
         mpz_sub_ui(exp, z, m);
         mpz_sub_ui(exp, exp, 1);
@@ -335,6 +369,8 @@ void fp2_sqrt(fp2 *ANS, fp2 *A){
         fp2_mul(&x, &x, &t);
         fp2_mul(&k, &k, &y);
     }
+    printf("d\n");
+
 
     fp2_set(ANS, &x);
 

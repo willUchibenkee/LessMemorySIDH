@@ -126,12 +126,25 @@ int main(void){
         isogeny_nextp(Pbp, Pbp, &Rap->x, lat);
         isogeny_nextp(Qbp, Qbp, &Rap->x, lat);
         isogeny_nextp(Sap, Sap, &Rap->x, lat);
+
+        if(mpz_cmp_ui(py, 1) == 0){
+            printf("PKa:");
+            fp2_printf(aip);
+            printf("Pb:");
+            PrintEC2(Pbp);
+            printf("Qb:");
+            PrintEC2(Qbp);
+            isogeny_gety(&Pbp->y, &Pbp->x, aip);
+            printf("a\n");
+            isogeny_gety(&Qbp->y, &Qbp->x, aip);
+        }
+
         fp2_set(ap, aip);
 
-        // printf("Pb:");
-        // PrintEC2(Pbp);
-        // printf("Qb:");
-        // PrintEC2(Qbp);
+        printf("Pb:");
+        PrintEC2(Pbp);
+        printf("Qb:");
+        PrintEC2(Qbp);
         // printf("Sa:");
         // PrintEC2(Sap);
         
