@@ -77,13 +77,14 @@ int main(void){
     mpz_set_ui(lbt, lb);
     //gmp_printf("la = %Zd\n", lat);
 
-    fp2 at; fp2 *ap;
+    fp2 at, aap; fp2 *ap;
     ap = &at;
     fp2_init(ap);
     fp2_set_ui(ap, a0x0, a0x1);
     fp2 ai; fp2 *aip;
     aip = &ai;
     fp2_init(aip);
+    fp2_init(&aap);
     //fp2_printf(ap);
 
     fp2 alpha; fp2 *alphap;
@@ -107,25 +108,48 @@ int main(void){
     PrintEC2(Sbp);
 
     while(mpz_cmp_ui(py, 0) != 0){
+        // gmp_printf("py = %Zd\n", py);
+        // printf("Sa:");
+        // PrintEC2(Sap);
+        // printf("a:");
+        // fp2_printf(ap);
         fp2_mgecSCM(Rap, Sap, py, ap);
-        fp2_printf(&Rap->x);
+
+        // printf("Ra:");
+        // fp2_printf(&Rap->x);
+        // fp2_printf(&Rap->y);
 
         isogeny_changea(aip, &Rap->x);
-        fp2_printf(aip);
+        // printf("newa:");
+        // fp2_printf(aip);
 
         isogeny_nextp(Pbp, Pbp, &Rap->x, lat);
         isogeny_nextp(Qbp, Qbp, &Rap->x, lat);
         isogeny_nextp(Sap, Sap, &Rap->x, lat);
         fp2_set(ap, aip);
 
-        PrintEC2(Pbp);
-        PrintEC2(Qbp);
-        PrintEC2(Sap);
+        // printf("Pb:");
+        // PrintEC2(Pbp);
+        // printf("Qb:");
+        // PrintEC2(Qbp);
+        // printf("Sa:");
+        // PrintEC2(Sap);
         
         mpz_set_ui(py, mpz_get_ui(py)/la);
         //gmp_printf("py = %Zd\n", py);
         //getchar();
     }
+
+    fp2_set(&aap, ap);
+
+    printf("PKa:");
+    fp2_printf(&aap);
+    printf("Pb:");
+    PrintEC2(Pbp);
+    printf("Qb:");
+    PrintEC2(Qbp);
+
+    
 
     printf("//////////////////////////////////////\n");
 
@@ -139,9 +163,14 @@ int main(void){
     while(mpz_cmp_ui(py, 0) != 0){
         
         //fp2_mgecSCM(Rbp, Sbp, py, ap);
+        gmp_printf("loop: %Zd / 3\n", py);
+        printf("Sb:");
         PrintEC2(Sbp);
+        printf("ap:");
         fp2_printf(ap);
+
         fp2_set(&Rbp->x, &Sbp->x);
+        fp2_set(&Rbp->y, &Sbp->y);
         mpz_set(q,py);
         i = 0;
         while(mpz_cmp_ui(q, 1) != 0){
@@ -150,11 +179,18 @@ int main(void){
         }
         for(int j = 0; j < i; j++){
             isogeny_mgec3(Rbp, Rbp, ap);
-            printf("a\n");
+
+            printf("_______________________\n");
+            printf("Rb:");
+            fp2_printf(&Rbp->x);
+            fp2_printf(&Rbp->y);
+            printf("_______________________\n");
+            //printf("a\n");
         }
-        fp2_printf(&Rbp->x);
 
         isogeny_changeb(aip, &Rbp->x, ap);
+
+        printf("newb:");
         fp2_printf(aip);
 
         isogeny_nextp(Pap, Pap, &Rbp->x, lbt);
@@ -162,8 +198,11 @@ int main(void){
         isogeny_nextp(Sbp, Sbp, &Rbp->x, lbt);
         fp2_set(ap, aip);
         
+        printf("Pa:");
         PrintEC2(Pap);
+        printf("Qa:");
         PrintEC2(Qap);
+        printf("Sb:");
         PrintEC2(Sbp);
 
         //fp2_printf(ap);
@@ -182,6 +221,91 @@ int main(void){
     // fp2_set_ui(&Ap->x, 3,0);
     // isogeny_mgec3(Bp, Ap, ap);
     // PrintEC2(Bp);
+
+    //鍵共有
+    printf("ここから鍵共有です\n");
+    while(fp2_checkans(Pap, ap) != 0){
+        mpz_urandomm(Pap->y.x0, state, mp); 
+        mpz_urandomm(Pap->y.x1, state, mp);
+    }
+    while(fp2_checkans(Qap, ap) != 0){
+        mpz_urandomm(Qap->y.x0, state, mp); 
+        mpz_urandomm(Qap->y.x1, state, mp);
+    }
+    while(fp2_checkans(Pbp, &aap) != 0){
+        mpz_urandomm(Pbp->y.x0, state, mp); 
+        mpz_urandomm(Pbp->y.x1, state, mp);
+    }
+    while(fp2_checkans(Qbp, &aap) != 0){
+        mpz_urandomm(Qbp->y.x0, state, mp); 
+        mpz_urandomm(Qbp->y.x1, state, mp);
+    }
+
+    //alice
+    printf("aliceの操作\n");
+    isogeny_gets(Sap, Pap, Qap, kam, ap);
+    mpz_set_ui(py, (int)(pow((double)la, (double)eA))/2);
+    while(mpz_cmp_ui(py, 0) != 0){
+        fp2_mgecSCM(Rap, Sap, py, ap);
+        //fp2_printf(&Rap->x);
+
+        isogeny_changea(aip, &Rap->x);
+        fp2_printf(aip);
+
+        isogeny_nextp(Sap, Sap, &Rap->x, lat);
+        fp2_set(ap, aip);
+
+        //PrintEC2(Pbp);
+        //PrintEC2(Qbp);
+        //PrintEC2(Sap);
+        
+        mpz_set_ui(py, mpz_get_ui(py)/la);
+        //gmp_printf("py = %Zd\n", py);
+        //getchar();
+    }
+
+    //bob
+    printf("bobの操作\n");
+    PrintEC2(Pbp);
+    //PrintEC2(Qbp);
+    fp2_neg(&Qbp->y, &Qbp->y);
+    PrintEC2(Qbp);
+    isogeny_gets(Sbp, Pbp, Qbp, kbm, &aap);
+    mpz_set_ui(py, (int)(pow((double)lb, (double)eB))/lb);
+    while(mpz_cmp_ui(py, 0) != 0){
+        
+        //fp2_mgecSCM(Rbp, Sbp, py, ap);
+        //PrintEC2(Sbp);
+        //fp2_printf(ap);
+        fp2_set(&Rbp->x, &Sbp->x);
+        mpz_set(q,py);
+        i = 0;
+        while(mpz_cmp_ui(q, 1) != 0){
+            mpz_tdiv_q_ui(q, q, 3);
+            i++;
+        }
+        for(int j = 0; j < i; j++){
+            isogeny_mgec3(Rbp, Rbp, &aap);
+            //printf("a\n");
+        }
+        //isogeny_mgec3(Rbp, Rbp, ap);
+        //fp2_printf(&Rbp->x);
+
+        isogeny_changeb(aip, &Rbp->x, &aap);
+        //fp2_printf(aip);
+
+        isogeny_nextp(Sbp, Sbp, &Rbp->x, lbt);
+        fp2_set(&aap, aip);
+        
+        //PrintEC2(Pap);
+        //PrintEC2(Qap);
+        //PrintEC2(Sbp);
+
+        fp2_printf(&aap);
+        mpz_set_ui(py, mpz_get_ui(py)/lb);
+        
+        //getchar();
+    }
 
     return 0;
 }

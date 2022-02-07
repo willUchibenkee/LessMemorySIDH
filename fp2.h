@@ -216,12 +216,25 @@ void fp2_scalarexp(fp2 *ans, fp2 *c, mpz_t d){
     }
 }
 
-void fp2_legendre(fp2 *ans, fp2 *in){
+int fp2_legendre(fp2 *in){
     // legendre //
     mpz_t work;
+    fp2 temp, ans;
+    fp2_init(&temp);
+    fp2_init(&ans);
+    fp2_set(&temp, in);
     mpz_init(work);
     mpz_set_ui(work, (p*p-1)/2);
-    fp2_scalarexp(ans, in, work);
+
+    fp2_scalarexp(&ans, &temp, work);
+
+    if(fp2_cmp_ui(&ans, 430, 0) == 0){
+        return -1;
+    }if(fp2_cmp_ui(&ans, 1, 0) == 0){
+        return 1;
+    }else{
+        return 0;
+    }
 }
 
 void fp2_inv(fp2 *ans, fp2 *in){
@@ -246,4 +259,83 @@ void fp2_inv(fp2 *ans, fp2 *in){
     }
     //fp2_printf(wp);
     fp2_set(ans, wp);
+}
+
+void fp2_sqrt(fp2 *ANS, fp2 *A){
+    fp2 x,y,t,k,n,temp;
+
+    fp2_init(&x);
+    fp2_init(&y);
+    fp2_init(&t);
+    fp2_init(&k);
+    fp2_init(&n);
+    fp2_init(&temp);
+
+    unsigned long int e,m;
+
+    mpz_t exp, q, z, r, pp;
+
+    mpz_init(exp);
+    mpz_init(q);
+    mpz_init(z);
+    mpz_init(r);
+    mpz_init(pp);
+
+    mpz_set_ui(pp, p-1);
+
+    gmp_randstate_t state;
+
+    gmp_randinit_default(state);
+
+    mpz_urandomm(n.x0, state, pp);
+    mpz_urandomm(n.x1, state, pp);
+    while (fp2_legendre(&n) != -1){
+        mpz_urandomm(n.x0, state, pp);
+        mpz_urandomm(n.x1, state, pp);
+    }
+    
+    mpz_pow_ui(q, prime_z, 2);
+    mpz_sub_ui(q, q, 1);
+    mpz_mod_ui(r, q, 2);
+    e=0;
+
+    while(mpz_cmp_ui(r, 0)==0){
+        mpz_tdiv_q_ui(q, q, 2);
+        mpz_mod_ui(r, q, 2);
+        e++;
+    }
+
+    fp2_scalarexp(&y, &n, q);
+    mpz_set_ui(z, e);
+    mpz_sub_ui(exp, q, 1);
+    mpz_tdiv_q_ui(exp, exp, 2);
+    fp2_scalarexp(&x, A, exp);
+    fp2_mul(&temp, &x, &x);
+    fp2_mul(&k, &temp, A);
+    fp2_mul(&x, &x, A);
+
+    while(fp2_cmp_ui(&k, 1, 0) !=0){
+
+        m=1;
+        mpz_ui_pow_ui(exp, 2, m);
+        fp2_scalarexp(&temp, &k, exp);
+
+        while(fp2_cmp_ui(&temp, 1, 0) !=0){
+            m++;
+            mpz_ui_pow_ui(exp, 2, m);
+            fp2_scalarexp(&temp, &k, exp);
+        }
+
+        mpz_sub_ui(exp, z, m);
+        mpz_sub_ui(exp, exp, 1);
+        mpz_ui_pow_ui(r, 2, mpz_get_ui(exp));
+        fp2_scalarexp(&t, &y, r);
+        fp2_mul(&y, &t, &t);
+        mpz_set_ui(z, m);
+        fp2_mul(&x, &x, &t);
+        fp2_mul(&k, &k, &y);
+    }
+
+    fp2_set(ANS, &x);
+
 }

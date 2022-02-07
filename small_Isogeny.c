@@ -170,10 +170,10 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
     }else{
         //bob
 
-        Fp2 three;
-        Fp2_set_str(&three, "4 0");
+        // Fp2 three;
+        // Fp2_set_str(&three, "4 0");
         
-        Fp2 one, temp3; 
+        Fp2 one, temp3, temp4; 
         Fp2_set_str(&one, "91 0");
         // Fp2 temp; 
         // Fp2 bumbo; 
@@ -211,11 +211,14 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
         Fp2_mul(&temp2, &U.x, alpha);
         Fp2_mul(&temp2, &temp2, &U.x);
 
-        Fp2_mul(&temp3, &three, &U.x);
+        Fp2_mul(&temp3, &U.x, alpha);
         Fp2_mul(&temp3, &temp3, alpha);
         Fp2_mul(&temp3, &temp3, alpha);
 
-        Fp2_sub(&temp2, &temp2, &temp3);
+        Fp2_add(&temp4, &temp3, &temp3);
+        Fp2_add(&temp4, &temp4, &temp3);
+
+        Fp2_sub(&temp2, &temp2, &temp4);
 
         Fp2_add(&temp2, &temp2, &U.x);
 

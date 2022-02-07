@@ -6,6 +6,8 @@
 
 #define p 431
 
+mpz_t prime_z;
+
 //struct to express an Affine Rational Point on E/Fp
 
 // 補正をかける処理 //

@@ -358,26 +358,26 @@ void fp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, fp2 *ap){
     if(mpz_cmp_ui(P->inf, 1) == 0){
         if(mpz_cmp_ui(Q->inf, 1) == 0){
             mpz_set_ui(R->inf, 1);
-            printf("P,Q inf\n");
+            //printf("P,Q inf\n");
         }else{
             fp2_set(&R->x, &Q->x);
             fp2_set(&R->y, &Q->y);
             mpz_set_ui(R->inf, 0);
-            printf("Q = R \n");
+            //printf("Q = R \n");
          }
     }else{
         if(mpz_cmp_ui(Q->inf, 1) == 0){
             fp2_set(&R->x, &P->x);
             fp2_set(&R->y, &P->y);
             mpz_set_ui(R->inf, 0);
-            printf("P = R \n");
+            //printf("P = R \n");
         }else{
             if(fp2_cmp(&P->x, &Q->x) == 0 || fp2_cmp(&P->y, &Q->y) == 0){
                 if(fp2_cmp(&P->x, &Q->x) == 0 && fp2_cmp(&P->y, &Q->y) == 0){
                     fp2_mgecD(R, P, ap);
                     //printf("R = 2P or 2Q \n");
                 }else{
-                    //gmp_printf("inf\n");
+                    //gmp_printf("inf gen\n");
                     mpz_set_ui(R->inf, 1);
                 }
             }else{
@@ -495,7 +495,11 @@ void fp2_mgecSCM(ec2 *R, ec2 *P, mpz_t n, fp2 *ap){
     }else{
         mpz_get_str(binary, 2, n);
         for(int k = length-1; k >= 0; k--){
-            printf("k = %d \n", k);
+            // printf("k = %d \n", k);
+            // printf("bin[k]: %c\n", binary[k]);
+            //if(k == 5 || k ==4){
+                //gmp_printf("S.inf: %Zd  T.inf: %Zd\n", sp->inf, tp->inf);
+            //}
             if(binary[k] == '1'){
                 //printf("bin[k] == 1 \n");
                 fp2_mgecA(sp, sp, tp, ap);
@@ -507,10 +511,10 @@ void fp2_mgecSCM(ec2 *R, ec2 *P, mpz_t n, fp2 *ap){
                 //     //printf("ECA failed\n");
                 // }
                 if(mpz_cmp_ui(sp->inf, 1) == 0){
-                    printf("S = inf\n");
+                    //printf("S = inf\n");
                 }else{
-                    printf("after ECA \nT:");
-                    PrintEC2(sp);
+                    //printf("after ECA \nT:");
+                    //PrintEC2(sp);
                 }
             }
             fp2_mgecD(tp, tp, ap);
@@ -519,10 +523,10 @@ void fp2_mgecSCM(ec2 *R, ec2 *P, mpz_t n, fp2 *ap){
                 //printf("ECD failed\n");
             }
             if(mpz_cmp_ui(tp->inf, 1) == 0){
-                printf("T = inf\n");
+                //printf("T = inf\n");
             }else{
-                printf("after ECD \nT:");
-                PrintEC2(tp);
+                //printf("after ECD \nT:");
+                //PrintEC2(tp);
             }
         }
         fp2_set(&R->x, &sp->x);
