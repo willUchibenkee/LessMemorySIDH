@@ -13,6 +13,14 @@
 #define la 2
 #define lb 3
 
+void ec2_init(ec2 *in){
+
+    fp2_init(&in->x);
+    fp2_init(&in->y);
+    mpz_init(in->inf);
+
+}
+
 void isogeny_gets(ec2 *S, ec2 *P, ec2 *Q, mpz_t k, fp2 *ap){
     // SaやSbを求めます
     //Sa = Pa + ka*Qa
@@ -720,11 +728,51 @@ void isogeny_gety(fp2 *y, fp2 *x, fp2 *A){
     fp2_add(&temp, &temp, x);
 
     if(fp2_legendre(&temp) == 1){
-        printf("temp:");
+        // printf("temp:");
 
-        fp2_printf(&temp);
+        // fp2_printf(&temp);
         fp2_sqrt(y, &temp);
     }else{
         printf("no y\n");
     }
+}
+
+void isogeny_getj(fp2 *jval, fp2 *A){
+    
+    fp2 temp, temp2;
+
+    fp2_init(&temp);
+    fp2_init(&temp2);
+
+    fp2 three, four, hex2;
+
+    fp2_init(&three);
+    fp2_init(&four);
+    fp2_init(&hex2);
+
+    fp2_set_ui(&three, 3, 0);
+    fp2_set_ui(&four, 4, 0);
+    fp2_set_ui(&hex2, 256, 0);
+
+    mpz_t kata;
+
+    mpz_init(kata);
+
+    mpz_set_ui(kata, 3);
+
+    //分子256*(A**2 − 3)**3
+
+    fp2_mul(&temp, A, A);
+    fp2_sub(&temp, &temp, &three);
+    fp2_scalarexp(&temp, &temp, kata);
+    fp2_mul(&temp, &temp, &hex2);
+
+    //分母A**2 − 4
+    fp2_mul(&temp2, A, A);
+    fp2_sub(&temp2, &temp2, &four);
+
+    fp2_inv(&temp2, &temp2);
+
+    fp2_mul(jval, &temp, &temp2);
+
 }

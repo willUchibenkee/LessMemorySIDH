@@ -57,53 +57,69 @@ void Fp2_sub(Fp2 *c, Fp2 *a, Fp2 *b){
 void Fp2_mul(Fp2 *c, Fp2 *a, Fp2 *b){
     Fp t[2];
     
+    // Fp_from_Mont(elem0(a));
+    // Fp_print(elem0(a));
+    // Fp_to_Mont(elem0(a), elem0(a));
+    
     Fp_add(&t[0], elem0(a), elem1(a));    //T0
-    Fp_from_Mont(&t[0]);
-    printf("t[0] ");
-    Fp_print(&t[0]);
-    Fp_to_Mont(&t[0], &t[0]);
+    // Fp_from_Mont(&t[0]);
+    // printf("t[0] ");
+    // Fp_print(&t[0]);
+    // Fp_to_Mont(&t[0], &t[0]);
 
+    // Fp_from_Mont(elem0(b));
+    // Fp_print(elem0(b));
+    // Fp_to_Mont(elem0(b), elem0(b));
+    
     Fp_add(&t[1], elem0(b), elem1(b));    //T1
-    printf("t[1] ");
-    Fp_from_Mont(&t[1]);
-    Fp_print(&t[1]);
-    Fp_to_Mont(&t[1], &t[1]);
+    // printf("t[1] ");
+    // Fp_from_Mont(&t[1]);
+    // Fp_print(&t[1]);
+    // Fp_to_Mont(&t[1], &t[1]);
 
     Fp_mul(&t[0], &t[0], &t[1]);   //T0=(a0+a1)*(b0+b1)
-    Fp_from_Mont(&t[0]);
-    printf("t[0] ");
-    Fp_print(&t[0]);
-    Fp_to_Mont(&t[0], &t[0]);
+    // Fp_from_Mont(&t[0]);
+    // printf("t[0] ");
+    // Fp_print(&t[0]);
+    // Fp_to_Mont(&t[0], &t[0]);
 
+    // Fp_from_Mont(elem0(a));
+    // Fp_print(elem0(a));
+    // Fp_to_Mont(elem0(a), elem0(a));
+
+    // Fp_from_Mont(elem0(b));
+    // Fp_print(elem0(b));
+    // Fp_to_Mont(elem0(b), elem0(b));
+    
     Fp_mul(&t[1], elem0(a), elem0(b));    //T0
-    printf("t[1] ");
-    Fp_from_Mont(&t[1]);
-    Fp_print(&t[1]);
-    Fp_to_Mont(&t[1], &t[1]);
+    // printf("t[1] ");
+    // Fp_from_Mont(&t[1]);
+    // Fp_print(&t[1]);
+    // Fp_to_Mont(&t[1], &t[1]);
 
     Fp_mul(elem1(c), elem1(a), elem1(b));    //T1
-    printf("c1 ");
-    Fp_from_Mont(elem1(c));
-    Fp_print(elem1(c));
-    Fp_to_Mont(elem1(c), elem1(c));
+    // printf("c1 ");
+    // Fp_from_Mont(elem1(c));
+    // Fp_print(elem1(c));
+    // Fp_to_Mont(elem1(c), elem1(c));
 
     Fp_sub(elem0(c), &t[1], elem1(c));   //T4
-    printf("c0 ");
-    Fp_from_Mont(elem0(c));
-    Fp_print(elem0(c));
-    Fp_to_Mont(elem0(c), elem0(c));
+    // printf("c0 ");
+    // Fp_from_Mont(elem0(c));
+    // Fp_print(elem0(c));
+    // Fp_to_Mont(elem0(c), elem0(c));
 
     Fp_add(&t[1], elem1(c), &t[1]);    //T3
-    printf("t[1] ");
-    Fp_from_Mont(&t[1]);
-    Fp_print(&t[1]);
-    Fp_to_Mont(&t[1], &t[1]);
+    // printf("t[1] ");
+    // Fp_from_Mont(&t[1]);
+    // Fp_print(&t[1]);
+    // Fp_to_Mont(&t[1], &t[1]);
 
     Fp_sub(elem1(c), &t[0], &t[1]);   //T3
-    printf("c1 ");
-    Fp_from_Mont(elem1(c));
-    Fp_print(elem1(c));
-    Fp_to_Mont(elem1(c), elem1(c));
+    // printf("c1 ");
+    // Fp_from_Mont(elem1(c));
+    // Fp_print(elem1(c));
+    // Fp_to_Mont(elem1(c), elem1(c));
 }
 
 void Fp2_mul_acc(Fp2 *c, Fp2 *a, Fp2 *b){
@@ -312,27 +328,29 @@ void _Fp_neg(Fp *c, Fp *a){
 }
 
 //Fp2_legendre()
-int Fp2_legendre(Fp2 *a){
-	char *legendre_num="11010000000010001000111101010001110010111111111100110100110100100101100011011101001111011011001000011010010111010110011010111011001000111011101001011100001001111001110000101000100101011111101100111001100001101001010100000111101101011000011110110001001000001111010101011111111111111111010110001010100111111111111111111101110011111111011111111111111111111111111111111101010101010101";
-	Fp2 t;
-    Fp2_set(&t,a);
-    // Fp_print(&t);
-    //Left-to-right binary
-    for(int i = 1; i < 380; i++){
-        Fp2_mul(&t, &t, &t);
-        if(*(legendre_num + i) == '1') {
-            Fp2_mul(&t, &t, a);
-            // printf("はいったよ");
-        }
-    }
-    // Fp_from_Mont(&t);
-    // Fp_print(&t);
-    if(Fp2_cmp_one_mont(&t)==1){
-      return 1;
-    }else{
-      return -1;
-    }
-}
+// int Fp2_legendre(Fp2 *a){
+// 	char *legendre_num="11010000000010001000111101010001110010111111111100110100110100100101100011011101001111011011001000011010010111010110011010111011001000111011101001011100001001111001110000101000100101011111101100111001100001101001010100000111101101011000011110110001001000001111010101011111111111111111010110001010100111111111111111111101110011111111011111111111111111111111111111111101010101010101";
+// 	Fp2 t;
+//     Fp2_set(&t,a);
+//     // Fp_print(&t);
+//     //Left-to-right binary
+//     for(int i = 1; i < 380; i++){
+//         Fp2_mul(&t, &t, &t);
+//         if(*(legendre_num + i) == '1') {
+//             Fp2_mul(&t, &t, a);
+//             // printf("はいったよ");
+//         }
+//     }
+//     // Fp_from_Mont(&t);
+//     // Fp_print(&t);
+//     if(Fp2_cmp_one_mont(&t)==1){
+//       return 1;
+//     }else{
+//       return -1;
+//     }
+// }
+
+
 
 // Fp2_sqrt()
 
@@ -351,4 +369,130 @@ void Fp2_sqrt(Fp2 *ANS,Fp2 *a){
   // Fp_mul(&t,&z,&t);
   Fp2_mul(&z,&z,a);
   Fp2_set(ANS,&z);
+}
+
+void Fp2_print_s(Fp2 *in){
+    Fp2_from_Mont(in);
+    //printf("/////////////^n");
+    Fp2_print(in);
+    Fp2_to_Mont(in, in);
+    //printf("/////////////^n");
+}
+
+int Fp2_cmp_n(Fp2 *in1, Fp2 *in2){
+    if(Fp_cmp(elem0(in1), elem0(in2)) >= 0 && Fp_cmp(elem1(in1), elem1(in2)) >= 0){
+        return 1;
+    }else{
+        return -1;
+    }
+}
+
+void Fp2_scalarexp(Fp2 *ans, Fp2 *c, Fp d){
+
+    int length = 0;
+
+    length = WORD * MOD_WORDS;
+
+    char binary[length + 1];
+
+    Efp2_to2(&length, binary, &d);
+
+    Fp2 tmp;
+
+    Fp2_set(&tmp, c);
+
+
+
+    for(int i=1;i<length; i++){
+
+        Fp2_mul(&tmp, &tmp, &tmp);
+
+        if(binary[i]=='1')  Fp2_mul(&tmp, c, &tmp);
+
+    }
+
+    Fp2_set(ans,&tmp);
+}
+
+int Fp2_legendre(Fp2 *in){
+    // legendre //
+    Fp work;
+    Fp2 temp, ans, m, one2;
+
+    // fp2_init(&temp);
+    // fp2_init(&ans);
+    Fp2_set(&temp, in);
+    //mpz_init(work);
+    Fp_set_str(&work, "16ad0");
+
+    Fp2_set_str(&m, "1ae 0");
+    Fp2_set_str(&one2, "91 0");
+
+    Fp2_scalarexp(&ans, &temp, work);
+
+    if(Fp2_cmp(&ans, &m) == 0){
+        return -1;
+    }if(Fp2_cmp(&ans, &one2) == 0){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+void Fp2_sqrt_34(Fp2 *ANS, Fp2 *A){
+    Fp2 temp, alpha, temp2, temp3;
+    // fp2_init(&temp);
+    // fp2_init(&alpha);
+    // fp2_init(&temp2);
+    // fp2_init(&temp3);
+
+    Fp2 i, m;
+    //fp2_init(&i);
+    Fp2_set_str(&i, "0 91");
+    Fp2_set_str(&m, "1ae 0");
+
+    Fp q, three;
+    // mpz_init(q);
+    // mpz_init(three);
+
+    Fp_set_str(&three, "4");
+    //three = 3;
+
+    Fp_set_str(&q, pval);
+    Fp_sub(&q, &q, &three);
+    Fp_div4(&q, &q);
+
+    Fp2_scalarexp(&temp, A, q);
+    Fp2_mul(&alpha, &temp, A);
+    Fp2_mul(&alpha, &temp, &alpha);
+
+    Fp2_scalarexp(&temp2, &alpha, prime_z);
+    Fp2_mul(&temp2, &temp2, &alpha);
+
+    if(Fp2_cmp(&temp2, &m) == 0){
+        printf("no sqrt\n");
+    }else{
+        Fp2_mul(&temp3, &temp, A);
+        if(Fp2_cmp(&alpha, &m) == 0){
+            Fp2_mul(ANS, &i, &temp3);
+        }else{
+            Fp_set_str(&q, pval);
+
+            Fp2 one;
+            //fp2_init(&one);
+            Fp2_set_str(&one, "91 0");
+
+            Fp ichi;
+            //mpz_init(ichi);
+            Fp_set_str(&ichi, "91");
+
+            Fp_sub(&q, &q, &ichi);
+            Fp_div2(&q, &q);
+
+            Fp2_add(&temp, &alpha, &one);
+            Fp2_scalarexp(&temp2, &temp, q);
+
+            Fp2_mul(ANS, &temp2, &temp3);
+        }
+    }
 }

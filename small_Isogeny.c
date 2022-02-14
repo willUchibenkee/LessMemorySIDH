@@ -326,3 +326,72 @@ void Isogeny_nextp(ec2 *ans, ec2 *P, Fp2 *alpha, int l){
 //     Fp2_set(&R->x, &U.x);
 //     Fp2_from_Mont(&R->x);
 // }
+
+void isogeny_gety(Fp2 *y, Fp2 *x, Fp2 *A){
+    // y**2=x**3+Ax**2+x
+    Fp2 temp, temp2;
+
+    //Fp three;
+    //mpz_init(three);
+    //Fp_set_str(&three, "3");
+
+    Fp2_mul(&temp, x, x);
+    Fp2_mul(&temp, &temp, x);
+
+    Fp2_mul(&temp2, A, x);
+    Fp2_mul(&temp2, &temp2, x);
+
+    Fp2_add(&temp, &temp, &temp2);
+
+    Fp2_add(&temp, &temp, x);
+
+    if(Fp2_legendre(&temp) == 1){
+        printf("temp:");
+
+        Fp2_print(&temp);
+
+        Fp2_sqrt_34(y, &temp);
+    }else{
+        printf("no y\n");
+    }
+}
+
+void isogeny_getj(Fp2 *jval, Fp2 *A){
+    
+    Fp2 temp, temp2;
+
+    // fp2_init(&temp);
+    // fp2_init(&temp2);
+
+    Fp2 three, four, hex2;
+
+    // fp2_init(&three);
+    // fp2_init(&four);
+    // fp2_init(&hex2);
+
+    Fp2_set_str(&three, "4 0");
+    Fp2_set_str(&four, "95 0");
+    Fp2_set_str(&hex2, "100 0");
+
+    Fp kata;
+
+    //mpz_init(kata);
+
+    Fp_set_str(&kata, "3");
+
+    //分子256*(A**2 − 3)**3
+
+    Fp2_mul(&temp, A, A);
+    Fp2_sub(&temp, &temp, &three);
+    Fp2_scalarexp(&temp, &temp, kata);
+    Fp2_mul(&temp, &temp, &hex2);
+
+    //分母A**2 − 4
+    Fp2_mul(&temp2, A, A);
+    Fp2_sub(&temp2, &temp2, &four);
+
+    Fp2_inv(&temp2, &temp2);
+
+    Fp2_mul(jval, &temp, &temp2);
+
+}

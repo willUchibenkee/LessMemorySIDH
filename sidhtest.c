@@ -56,6 +56,9 @@ int main(void){
     fp2_set_ui(&Qbp->x, Qbxx0, Qbxx1);
     fp2_set_ui(&Qbp->y, Qbyx0, Qbyx1);
 
+    ec2 ecneg;
+    ec2_init(&ecneg);
+
     mpz_t kam, kbm;
     mpz_init(kam);
     mpz_init(kbm);
@@ -99,13 +102,21 @@ int main(void){
     mpz_init(mp);
     mpz_set_ui(mp, p);
 
+    fp2 ja, jb;
+
+    fp2_init(&ja);
+    fp2_init(&jb);
+
     //test(alice)
     isogeny_gets(Sap, Pap, Qap, kam, ap);
-    printf("Sa:");
-    PrintEC2(Sap);
+    // printf("Sa:");
+    // PrintEC2(Sap);
     isogeny_gets(Sbp, Pbp, Qbp, kbm, ap);
-    printf("Sb:");
-    PrintEC2(Sbp);
+    // printf("Sb:");
+    // PrintEC2(Sbp);
+
+    mpz_init(prime_z);
+    mpz_set_ui(prime_z, p);
 
     while(mpz_cmp_ui(py, 0) != 0){
         // gmp_printf("py = %Zd\n", py);
@@ -128,23 +139,25 @@ int main(void){
         isogeny_nextp(Sap, Sap, &Rap->x, lat);
 
         if(mpz_cmp_ui(py, 1) == 0){
-            printf("PKa:");
-            fp2_printf(aip);
-            printf("Pb:");
-            PrintEC2(Pbp);
-            printf("Qb:");
-            PrintEC2(Qbp);
+            // printf("PKa:");
+            // fp2_printf(aip);
+            // printf("Pb:");
+            // PrintEC2(Pbp);
+            // printf("Qb:");
+            // PrintEC2(Qbp);
             isogeny_gety(&Pbp->y, &Pbp->x, aip);
-            printf("a\n");
+            //printf("a\n");
             isogeny_gety(&Qbp->y, &Qbp->x, aip);
+
+            isogeny_gety(&Sap->y, &Sap->x, aip);
         }
 
         fp2_set(ap, aip);
 
-        printf("Pb:");
-        PrintEC2(Pbp);
-        printf("Qb:");
-        PrintEC2(Qbp);
+        // printf("Pb:");
+        // PrintEC2(Pbp);
+        // printf("Qb:");
+        // PrintEC2(Qbp);
         // printf("Sa:");
         // PrintEC2(Sap);
         
@@ -155,6 +168,27 @@ int main(void){
 
     fp2_set(&aap, ap);
 
+    fp2_neg(&ecneg.y, &Pbp->y);
+
+    // fp2_printf(&Pbp->y);
+    // fp2_printf(&ecneg.y);
+
+    if(fp2_cmp_n(&Pbp->y, &ecneg.y) == -1){
+        // fp2_printf(&Pbp->y);
+        // fp2_printf(&ecneg.y);
+
+        fp2_set(&Pbp->y, &ecneg.y);
+    }
+
+    fp2_neg(&ecneg.y, &Qbp->y);
+
+    if(fp2_cmp_n(&Qbp->y, &ecneg.y) == -1){
+        // fp2_printf(&Qbp->y);
+        // fp2_printf(&ecneg.y);
+
+        fp2_set(&Qbp->y, &ecneg.y);
+    }
+
     printf("PKa:");
     fp2_printf(&aap);
     printf("Pb:");
@@ -162,7 +196,16 @@ int main(void){
     printf("Qb:");
     PrintEC2(Qbp);
 
-    
+    // fp2_set(&Pbn.x, &Pbp->x);
+    // fp2_set(&Qbn.x, &Qbp->x);
+
+    // fp2_neg(&Pbn.y, &Pbp->y);
+    // fp2_neg(&Qbn.y, &Qbp->y);
+
+    // printf("Pbn:");
+    // PrintEC2(&Pbn);
+    // printf("Qbn:");
+    // PrintEC2(&Qbn);
 
     printf("//////////////////////////////////////\n");
 
@@ -176,11 +219,11 @@ int main(void){
     while(mpz_cmp_ui(py, 0) != 0){
         
         //fp2_mgecSCM(Rbp, Sbp, py, ap);
-        gmp_printf("loop: %Zd / 3\n", py);
-        printf("Sb:");
-        PrintEC2(Sbp);
-        printf("ap:");
-        fp2_printf(ap);
+        // gmp_printf("loop: %Zd / 3\n", py);
+        // printf("Sb:");
+        // PrintEC2(Sbp);
+        // printf("ap:");
+        // fp2_printf(ap);
 
         fp2_set(&Rbp->x, &Sbp->x);
         fp2_set(&Rbp->y, &Sbp->y);
@@ -193,36 +236,76 @@ int main(void){
         for(int j = 0; j < i; j++){
             isogeny_mgec3(Rbp, Rbp, ap);
 
-            printf("_______________________\n");
-            printf("Rb:");
-            fp2_printf(&Rbp->x);
-            fp2_printf(&Rbp->y);
-            printf("_______________________\n");
+            // printf("_______________________\n");
+            // printf("Rb:");
+            // fp2_printf(&Rbp->x);
+            // fp2_printf(&Rbp->y);
+            // printf("_______________________\n");
             //printf("a\n");
         }
 
         isogeny_changeb(aip, &Rbp->x, ap);
 
-        printf("newb:");
-        fp2_printf(aip);
+        // printf("newb:");
+        // fp2_printf(aip);
 
         isogeny_nextp(Pap, Pap, &Rbp->x, lbt);
         isogeny_nextp(Qap, Qap, &Rbp->x, lbt);
         isogeny_nextp(Sbp, Sbp, &Rbp->x, lbt);
         fp2_set(ap, aip);
         
-        printf("Pa:");
-        PrintEC2(Pap);
-        printf("Qa:");
-        PrintEC2(Qap);
-        printf("Sb:");
-        PrintEC2(Sbp);
+        // printf("Pa:");
+        // PrintEC2(Pap);
+        // printf("Qa:");
+        // PrintEC2(Qap);
+        // printf("Sb:");
+        // PrintEC2(Sbp);
+
+        isogeny_gety(&Pap->y, &Pap->x, ap);
+        isogeny_gety(&Qap->y, &Qap->x, ap);
+        isogeny_gety(&Sbp->y, &Sbp->x, ap);
 
         //fp2_printf(ap);
         mpz_set_ui(py, mpz_get_ui(py)/lb);
         
         //getchar();
     }
+
+    fp2_neg(&ecneg.y, &Pap->y);
+
+    if(fp2_cmp_n(&Pap->y, &ecneg.y) == -1){
+        // fp2_printf(&Pap->y);
+        // fp2_printf(&ecneg.y);
+
+        fp2_set(&Pap->y, &ecneg.y);
+    }
+
+    fp2_neg(&ecneg.y, &Qap->y);
+
+    if(fp2_cmp_n(&Qap->y, &ecneg.y) == -1){
+        // fp2_printf(&Qap->y);
+        // fp2_printf(&ecneg.y);
+
+        fp2_set(&Qap->y, &ecneg.y);
+    }
+
+    printf("PKb:");
+    fp2_printf(ap);
+    printf("Pa:");
+    PrintEC2(Pap);
+    printf("Qa:");
+    PrintEC2(Qap);
+
+    // fp2_set(&Pan.x, &Pap->x);
+    // fp2_set(&Qan.x, &Qap->x);
+
+    // fp2_neg(&Pan.y, &Pap->y);
+    // fp2_neg(&Qan.y, &Qap->y);
+
+    // printf("Pan:");
+    // PrintEC2(&Pan);
+    // printf("Qan:");
+    // PrintEC2(&Qan);
 
     // ec2 A; ec2 BB;
     // ec2 *Ap;
@@ -237,26 +320,28 @@ int main(void){
 
     //鍵共有
     printf("ここから鍵共有です\n");
-    while(fp2_checkans(Pap, ap) != 0){
-        mpz_urandomm(Pap->y.x0, state, mp); 
-        mpz_urandomm(Pap->y.x1, state, mp);
-    }
-    while(fp2_checkans(Qap, ap) != 0){
-        mpz_urandomm(Qap->y.x0, state, mp); 
-        mpz_urandomm(Qap->y.x1, state, mp);
-    }
-    while(fp2_checkans(Pbp, &aap) != 0){
-        mpz_urandomm(Pbp->y.x0, state, mp); 
-        mpz_urandomm(Pbp->y.x1, state, mp);
-    }
-    while(fp2_checkans(Qbp, &aap) != 0){
-        mpz_urandomm(Qbp->y.x0, state, mp); 
-        mpz_urandomm(Qbp->y.x1, state, mp);
-    }
+    // while(fp2_checkans(Pap, ap) != 0){
+    //     mpz_urandomm(Pap->y.x0, state, mp); 
+    //     mpz_urandomm(Pap->y.x1, state, mp);
+    // }
+    // while(fp2_checkans(Qap, ap) != 0){
+    //     mpz_urandomm(Qap->y.x0, state, mp); 
+    //     mpz_urandomm(Qap->y.x1, state, mp);
+    // }
+    // while(fp2_checkans(Pbp, &aap) != 0){
+    //     mpz_urandomm(Pbp->y.x0, state, mp); 
+    //     mpz_urandomm(Pbp->y.x1, state, mp);
+    // }
+    // while(fp2_checkans(Qbp, &aap) != 0){
+    //     mpz_urandomm(Qbp->y.x0, state, mp); 
+    //     mpz_urandomm(Qbp->y.x1, state, mp);
+    // }
 
     //alice
     printf("aliceの操作\n");
+    //isogeny_gets(Sap, Pap, Qap, kam, ap);
     isogeny_gets(Sap, Pap, Qap, kam, ap);
+
     mpz_set_ui(py, (int)(pow((double)la, (double)eA))/2);
     while(mpz_cmp_ui(py, 0) != 0){
         fp2_mgecSCM(Rap, Sap, py, ap);
@@ -277,13 +362,17 @@ int main(void){
         //getchar();
     }
 
+    isogeny_getj(&ja, ap);
+
     //bob
     printf("bobの操作\n");
-    PrintEC2(Pbp);
-    //PrintEC2(Qbp);
-    fp2_neg(&Qbp->y, &Qbp->y);
-    PrintEC2(Qbp);
+    // PrintEC2(Pbp);
+    // //PrintEC2(Qbp);
+    // fp2_neg(&Qbp->y, &Qbp->y);
+    // PrintEC2(Qbp);
+    //isogeny_gets(Sbp, Pbp, Qbp, kbm, &aap);
     isogeny_gets(Sbp, Pbp, Qbp, kbm, &aap);
+
     mpz_set_ui(py, (int)(pow((double)lb, (double)eB))/lb);
     while(mpz_cmp_ui(py, 0) != 0){
         
@@ -318,6 +407,19 @@ int main(void){
         mpz_set_ui(py, mpz_get_ui(py)/lb);
         
         //getchar();
+    }
+
+    isogeny_getj(&jb, &aap);
+
+    printf("jval:");
+    fp2_printf(&jb);
+
+    if(fp2_cmp(&ja, &jb) == 0){
+        printf("ja == jb\n");
+    }else{
+        printf("ja =! jb\n");
+        fp2_printf(&ja);
+        fp2_printf(&jb);
     }
 
     return 0;

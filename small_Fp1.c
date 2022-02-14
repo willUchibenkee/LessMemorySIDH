@@ -10,6 +10,8 @@
 #define pmbin "10001101000001111100100111000101110111001101000100011011001111110001011111110101101000000111000101001000000101011001111011110001100101110001111000001100010101100010101110101000111111110111000001011101100111101011100010111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110"
 //#define pMinus2 "10001101000001111100100111000101110111001101000100011011001111110001011111110101101000000111000101001000000101011001111011110001100101110001111000001100010101100010101110101000111111110111000001011101100111101011100010111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111101"
 
+Fp prime_z;
+
 unsigned int hextoui(char * str, int len){
     unsigned int i, val = 0;
     char c;
@@ -49,6 +51,10 @@ void Fp_set_str(Fp *a, unsigned char* str){
 
 void Fp_set_p(void){
     Fp_set_str(p, pval);
+}
+
+void Fp_set_prime_z(void){
+    Fp_set_str(&prime_z, pval);
 }
 
 void Fp_set_one(void){
@@ -365,6 +371,14 @@ void Fp_from_Mont(Fp *a ){
     Fp_mul(a,a,&first);
 }
 
+// void Fp_div2(Fp *c, Fp *a){
+//     Fp twoinv;
+//     Fp_set_str(&twoinv, "122");
+//     Fp_inv(&twoinv, &twoinv);
+
+//     Fp_mul(c, a, &twoinv);
+// }
+
 //多倍長の除算(a/2）を求める演算を行う　（x/yの時、ｘ＊（yの逆元）となる）
 void Fp_div3(Fp *c, Fp *a){
     Fp threeinv;
@@ -372,6 +386,14 @@ void Fp_div3(Fp *c, Fp *a){
     Fp_inv(&threeinv, &threeinv);
 
     Fp_mul(c, a, &threeinv);
+}
+
+void Fp_div4(Fp *c, Fp *a){
+    Fp fourinv;
+    Fp_set_str(&fourinv, "95");
+    Fp_inv(&fourinv, &fourinv);
+
+    Fp_mul(c, a, &fourinv);
 }
 
 int Fp_legendre(Fp *a){
@@ -432,3 +454,37 @@ int Fp_pow_c3(Fp *z,Fp *a){
 void Fp_AR(Fp *a){
     Fp_mul(a, a, r);
 }
+
+void Fp_print_s(Fp *in){
+    Fp_from_Mont(in);
+    //printf("/////////////^n");
+    Fp_print(in);
+    Fp_to_Mont(in, in);
+    //printf("/////////////^n");
+}
+
+void itoa(int value, char *result, int base){
+		// check that the base if valid
+		if (base < 2 || base > 36){ 
+            *result = '\0'; 
+        }else{
+
+		    char* ptr = result, *ptr1 = result, tmp_char;
+		    int tmp_value;
+
+		    do {
+			    tmp_value = value;
+			    value /= base;
+			    *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+		    } while ( value );
+
+            // Apply negative sign
+            if (tmp_value < 0) *ptr++ = '-';
+            *ptr-- = '\0';
+            while(ptr1 < ptr) {
+                tmp_char = *ptr;
+                *ptr--= *ptr1;
+                *ptr1++ = tmp_char;
+            }
+        }
+	}
