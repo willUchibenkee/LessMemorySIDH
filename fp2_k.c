@@ -23,8 +23,8 @@ int main(void){
     mpz_set_ui(prime_z, p);
 
     for(int g = 0; g < TIMES; g++){
-        //check_fp2_34();
-        check_fp2_cmp();
+        check_fp2_34();
+        //check_fp2_cmp();
         getchar();
     }
 
@@ -33,117 +33,125 @@ int main(void){
     return 0;
 }
 
-void check_fp2(){
+// void check_fp2(){
 
-    printf("check_fp2() 開始\n");
+//     printf("check_fp2() 開始\n");
 
-    fp2 A,ANS;
+//     fp2 A,ANS;
 
-    fp2_init(&A);
+//     fp2_init(&A);
 
-    fp2_init(&ANS);
+//     fp2_init(&ANS);
 
-    fp2 alpha;
+//     fp2 alpha;
 
-    fp2_init(&alpha);
+//     fp2_init(&alpha);
 
-    gmp_randstate_t state;
+//     gmp_randstate_t state;
 
-    mpz_t m;
+//     mpz_t m, bai;
 
-    mpz_init(m);
+//     mpz_init(m);
 
-    gmp_randinit_default(state);
+//     mpz_init(bai);
 
-    gmp_randseed_ui(state,(unsigned long int)time(NULL));
+//     gmp_randinit_default(state);
 
-    mpz_set_ui(m, 430);
+//     gmp_randseed_ui(state,(unsigned long int)time(NULL));
 
-    mpz_urandomm(A.x0, state, m);
-    mpz_urandomm(A.x1, state, m);
+//     mpz_set_ui(m, 430);
 
-    //fp2_set_ui(&A, 6, 310);
-    //358i + 275, 410i + 104
-    // fp2_set_ui(&alpha, 37, 18);  
+//     mpz_set_ui(bai, 185760);
 
-    // fp2_sub(&A, &A, &alpha);
+//     mpz_urandomm(A.x0, state, m);
+//     mpz_urandomm(A.x1, state, m);
 
-    // fp2_mul(&A, &A, &A);
+//     //fp2_set_ui(&A, 6, 310);
+//     //358i + 275, 410i + 104
+//     // fp2_set_ui(&alpha, 37, 18);  
 
-    printf("A = ");
-    fp2_printf(&A);
+//     // fp2_sub(&A, &A, &alpha);
 
-    fp2_inv(&ANS,&A);
+//     // fp2_mul(&A, &A, &A);
 
-    printf("A^-1 = ");
-    fp2_printf(&ANS);
+//     printf("A = ");
+//     fp2_printf(&A);
 
-    fp2_mul(&ANS,&ANS,&A);
+//     fp2_scalarexp(&ANS, &A, bai);
+//     printf("A**p*p-1:");
+//     fp2_printf(&ANS);
 
-    printf("A * A^-1 = ");
-    fp2_printf(&ANS);
+//     fp2_inv(&ANS,&A);
 
-    printf("---------------------------------\n");
+//     printf("A^-1 = ");
+//     fp2_printf(&ANS);
 
-    printf("平方根アルゴリズムの確認\n");
+//     fp2_mul(&ANS,&ANS,&A);
 
-    int flag=fp2_legendre(&A);
+//     printf("A * A^-1 = ");
+//     fp2_printf(&ANS);
 
-    printf("fp2_legendre(A) = %d\n",flag);
+//     printf("---------------------------------\n");
 
-    if(flag==1){
+//     printf("平方根アルゴリズムの確認\n");
 
-    fp2_sqrt(&ANS,&A);
+//     int flag=fp2_legendre(&A);
 
-    printf("fp2_sqrt(A) = ");
-    fp2_printf(&ANS);
+//     printf("fp2_legendre(A) = %d\n",flag);
 
-    fp2_mul(&ANS,&ANS,&ANS);
+//     if(flag==1){
 
-    //fp2_sqr(&ANS,&ANS);
+//     fp2_sqrt(&ANS,&A);
 
-    if(fp2_cmp(&ANS,&A)==0){
+//     printf("fp2_sqrt(A) = ");
+//     fp2_printf(&ANS);
 
-        printf("(fp2_sqrt(A))^2 = A\n\n");
+//     fp2_mul(&ANS,&ANS,&ANS);
 
-    }else{
+//     //fp2_sqr(&ANS,&ANS);
 
-        printf("(fp2_sqrt(A))^2 != A\n\n");
+//     if(fp2_cmp(&ANS,&A)==0){
 
-    }
+//         printf("(fp2_sqrt(A))^2 = A\n\n");
 
-    printf("---------------------------------\n");
+//     }else{
 
+//         printf("(fp2_sqrt(A))^2 != A\n\n");
 
+//     }
 
-    printf("フェルマーの小定理の確認\n");
-
-    mpz_t tmp;
-
-    mpz_init(tmp);
-
-    mpz_pow_ui(tmp, prime_z ,430);
-
-    mpz_sub_ui(tmp,tmp,1);
-
-    fp2_scalarexp(&ANS,&A,tmp);
-
-    printf("A^(p^430-1) = ");
-    fp2_printf(&ANS);
-
-    printf("---------------------------------\n");
+//     printf("---------------------------------\n");
 
 
 
-    printf("A = ");
-    fp2_printf(&A);//Aが変わっていないことの確認
+//     printf("フェルマーの小定理の確認\n");
+
+//     mpz_t tmp;
+
+//     mpz_init(tmp);
+
+//     mpz_pow_ui(tmp, prime_z ,430);
+
+//     mpz_sub_ui(tmp,tmp,1);
+
+//     fp2_scalarexp(&ANS,&A,tmp);
+
+//     printf("A^(p^430-1) = ");
+//     fp2_printf(&ANS);
+
+//     printf("---------------------------------\n");
 
 
 
-    printf("*********************************************************************************************\n\n");
+//     printf("A = ");
+//     fp2_printf(&A);//Aが変わっていないことの確認
 
-    }
-}
+
+
+//     printf("*********************************************************************************************\n\n");
+
+//     }
+// }
 
 void check_fp2_34(){
 
@@ -161,9 +169,13 @@ void check_fp2_34(){
 
     gmp_randstate_t state;
 
-    mpz_t m;
+    mpz_t m, bai;
+
+    mpz_init(bai);
 
     mpz_init(m);
+
+    mpz_set_ui(bai, 185760);
 
     gmp_randinit_default(state);
 
@@ -173,6 +185,13 @@ void check_fp2_34(){
 
     mpz_urandomm(A.x0, state, m);
     mpz_urandomm(A.x1, state, m);
+
+    // A = 58
+    // A = 387
+    // A = 3a 183
+
+    // mpz_set_ui(A.x0, 58);
+    // mpz_set_ui(A.x1, 387);
 
     //fp2_set_ui(&A, 6, 310);
     //358i + 275, 410i + 104
@@ -184,6 +203,10 @@ void check_fp2_34(){
 
     printf("A = ");
     fp2_printf(&A);
+
+    // fp2_scalarexp(&ANS, &A, bai);
+    // printf("A**p*p-1:");
+    // fp2_printf(&ANS);
 
     fp2_inv(&ANS,&A);
 

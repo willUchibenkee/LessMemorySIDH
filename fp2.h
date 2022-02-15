@@ -201,27 +201,6 @@ void fp2_scalarsub(fp2 *ans, fp2 *c, fp2 *d){
 }
 
 void fp2_scalarexp(fp2 *ans, fp2 *c, mpz_t d){
-    // int length = 0;
-    // length = (int)mpz_sizeinbase(d, 2);
-    // char binary[length + 1];
-    // fp2 s,t; fp2 *sp; fp2 *tp;
-    // sp = &s; tp = &t;
-    // fp2_init(sp); fp2_init(tp);
-    // mpz_set_ui(sp->x0, 1); mpz_set(tp->x0, c->x0);
-    // mpz_set_ui(sp->x1, 0); mpz_set(tp->x1, c->x1);
-
-    // if(mpz_cmp_ui(d, 0) == 0  || (mpz_cmp_ui(c->x0, 0) == 0 && mpz_cmp_ui(c->x1, 0) == 0)){
-    //     mpz_set_ui(ans->x0, 1); mpz_set_ui(ans->x1, 0);
-    // }else{
-    //     mpz_get_str(binary, 2, d);
-    //     for(int k = length-1; k >= 0; k--){
-    //         if(binary[k] == '1'){
-    //             fp2_mul(sp, sp, tp);
-    //         }
-    //         fp2_mul(tp, tp, tp);
-    //     }
-    //     mpz_set(ans->x0, sp->x0); mpz_set(ans->x1, sp->x1);
-    // }
 
     int i,length;
 
@@ -240,6 +219,7 @@ void fp2_scalarexp(fp2 *ans, fp2 *c, mpz_t d){
 
 
     for(i=1;i<length; i++){
+        //printf("bin[%d]: %c\n", i, binary[i]);
 
         fp2_mul(&tmp, &tmp, &tmp);
 
@@ -414,11 +394,18 @@ void fp2_sqrt_34(fp2 *ANS, fp2 *A){
     mpz_div_ui(q, q, 4);
 
     fp2_scalarexp(&temp, A, q);
+
+    //fp2_printf(&temp);
+
     fp2_mul(&alpha, &temp, A);
     fp2_mul(&alpha, &temp, &alpha);
 
+    //fp2_printf(&alpha);
+
     fp2_scalarexp(&temp2, &alpha, prime_z);
     fp2_mul(&temp2, &temp2, &alpha);
+
+    //fp2_printf(&temp2);
 
     if(fp2_cmp_ui(&temp2, 430, 0)){
         printf("no sqrt\n");
