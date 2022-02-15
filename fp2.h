@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<gmp.h>
 #include<sys/time.h>
+#include <time.h>
 #include"fp.h"
 
 #define Ax0 423
@@ -42,8 +43,8 @@ int fp2_cmp(fp2 *in1, fp2 *in2){
 }
 
 int fp2_cmp_ui(fp2 *in1, int x0, int x1){
-    if(mpz_cmp_ui(in1->x0, x0) == 0){
-        if(mpz_cmp_ui(in1->x1, x1) == 0){
+    if(mpz_cmp_si(in1->x0, x0) == 0){
+        if(mpz_cmp_si(in1->x1, x1) == 0){
             return 0;
         }else{
             return 1;
@@ -67,17 +68,17 @@ void fp2_printf(fp2 *in){
 
 void fp2_mod(fp2 *ans, fp2 *in){
     if(mpz_sgn (in->x0) != -1){
-        mpz_mod_ui (ans->x0, in->x0, p);
+        mpz_mod (ans->x0, in->x0, prime_z);
     }else{
         while(mpz_sgn (in->x0) < 0){
-            mpz_add_ui (in->x0, in->x0, p);
+            mpz_add (in->x0, in->x0, prime_z);
         }
     }
     if(mpz_sgn (in->x1) != -1){
-        mpz_mod_ui (ans->x1, in->x1, p);
+        mpz_mod (ans->x1, in->x1, prime_z);
     }else{
         while(mpz_sgn (in->x1) < 0){
-            mpz_add_ui (in->x1, in->x1, p);
+            mpz_add (in->x1, in->x1, prime_z);
         }
     }
 }
@@ -141,7 +142,7 @@ void fp2_exp(fp2 *ans, fp2 *tei, mpz_t kata){
     mpz_set_ui(ans->x0, 1); mpz_set_ui(ans->x1, 0);
     fp2 mod; fp2 *modp; modp = &mod;
     fp2_init(modp);
-    mpz_set_ui(modp->x0, p); mpz_set_ui(modp->x1, p);
+    mpz_set(modp->x0, prime_z); mpz_set(modp->x1, prime_z);
     mpz_powm(ans->x0, tei->x0, kata, modp->x0);
     mpz_powm(ans->x1, tei->x1, kata, modp->x1);
 }
@@ -238,36 +239,38 @@ int fp2_legendre(fp2 *in){
     fp2_init(&ans);
     fp2_set(&temp, in);
     mpz_init(work);
-    mpz_set_ui(work, (p*p-1)/2);
+    mpz_mul(work, prime_z,prime_z);
+    mpz_sub_ui(work,work,1);
+    mpz_div_ui(work,work,2);
 
     fp2_scalarexp(&ans, &temp, work);
-
-    if(fp2_cmp_ui(&ans, 430, 0) == 0){
-        return -1;
-    }if(fp2_cmp_ui(&ans, 1, 0) == 0){
+    if(fp2_cmp_ui(&ans, 1, 0) == 0){
         return 1;
     }else{
-        return 0;
+        return -1;
     }
 }
 
 void fp2_inv(fp2 *ans, fp2 *in){
-    mpz_t two,d,pp;
+    mpz_t two,d,pp, fp2_order;
     mpz_init(d); 
     mpz_init(pp);
     mpz_init(two);
-    mpz_set_ui(pp, p);
+    mpz_init(fp2_order);
+    mpz_set(pp, prime_z);
     mpz_set_ui(two, 2);
     mpz_mul(d, pp, pp);
     mpz_sub(d, d, two);
-    mpz_mod_ui(d, d, p*p-1);
+    mpz_mul(fp2_order,prime_z,prime_z);
+    mpz_sub_ui(fp2_order,fp2_order,1);
+    mpz_mod(d, d, fp2_order);
     fp2 w;
     fp2 *wp;
     wp = &w;
     fp2_init(wp);
-    if(mpz_cmp_ui(in->x0, 0) == 0 && mpz_cmp_ui(in->x1, 0) == 0){
+    if(mpz_cmp_si(in->x0, 0) == 0 && mpz_cmp_si(in->x1, 0) == 0){
         //printf("in = 0,0 \n");
-        mpz_set_ui(wp->x0, 1); mpz_set_ui(wp->x1, 0);
+        mpz_set_si(wp->x0, 1); mpz_set_si(wp->x1, 0);
     }else{
         fp2_scalarexp(wp, in, d);
     }
@@ -276,100 +279,72 @@ void fp2_inv(fp2 *ans, fp2 *in){
 }
 
 void fp2_sqrt(fp2 *ANS, fp2 *A){
-    fp2 x,y,t,k,n,temp;
+  fp2 x,y,t,k,n,tmp;
+  fp2_init(&x);
+  fp2_init(&y);
+  fp2_init(&t);
+  fp2_init(&k);
+  fp2_init(&n);
+  fp2_init(&tmp);
+  unsigned long int e,m;
+  mpz_t exp,q,z,result;
+  mpz_init(exp);
+  mpz_init(q);
+  mpz_init(z);
+  mpz_init(result);
+  gmp_randstate_t state;
+  gmp_randinit_default(state);
+  gmp_randseed_ui(state,(unsigned long)time(NULL));
 
-    //getchar();
-
-    fp2_init(&x);
-    fp2_init(&y);
-    fp2_init(&t);
-    fp2_init(&k);
-    fp2_init(&n);
-    fp2_init(&temp);
-
-    unsigned long int e,m;
-
-    mpz_t exp, q, z, r, pp;
-
-    mpz_init(exp);
-    mpz_init(q);
-    mpz_init(z);
-    mpz_init(r);
-    mpz_init(pp);
-
-    mpz_set_ui(pp, p-1);
-
-    gmp_randstate_t state;
-
-    gmp_randinit_default(state);
-
-    mpz_urandomm(n.x0, state, pp);
-    mpz_urandomm(n.x1, state, pp);
-    while (fp2_legendre(&n) != -1){
-        mpz_urandomm(n.x0, state, pp);
-        mpz_urandomm(n.x1, state, pp);
+    mpz_urandomm(n.x0, state, prime_z);
+    mpz_urandomm(n.x1, state, prime_z);
+    while(fp2_legendre(&n)!=-1){
+        mpz_urandomm(n.x0, state, prime_z);
+        mpz_urandomm(n.x1, state, prime_z);
     }
-    //printf("a\n");
-    
-    mpz_pow_ui(q, prime_z, 2);
-    mpz_sub_ui(q, q, 1);
-    mpz_mod_ui(r, q, 2);
-    e=0;
 
-    while(mpz_cmp_ui(r, 0)==0){
-        mpz_tdiv_q_ui(q, q, 2);
-        mpz_mod_ui(r, q, 2);
-        e++;
+  mpz_pow_ui(q,prime_z,2);
+  mpz_sub_ui(q,q,1);
+  mpz_mod_ui(result,q,2);
+  e=0;
+  while(mpz_cmp_ui(result,0)==0){
+    mpz_tdiv_q_ui(q,q,2);
+    mpz_mod_ui(result,q,2);
+    e++;
+
+  }
+  fp2_scalarexp(&y,&n,q);
+  mpz_set_ui(z,e);
+  mpz_sub_ui(exp,q,1);
+  mpz_tdiv_q_ui(exp,exp,2);
+  fp2_scalarexp(&x,A,exp);
+  fp2_mul(&tmp,&x,&x);
+  fp2_mul(&k,&tmp,A);
+  fp2_mul(&x,&x,A);
+  while(fp2_cmp_ui(&k,1,0)!=0){
+    m=1;
+    mpz_ui_pow_ui(exp,2,m);
+    fp2_scalarexp(&tmp,&k,exp);
+    while(fp2_cmp_ui(&tmp,1,0)!=0){
+      m++;
+      mpz_ui_pow_ui(exp,2,m);
+      fp2_scalarexp(&tmp,&k,exp);
     }
-    //printf("b\n");
+    mpz_sub_ui(exp,z,m);
+    mpz_sub_ui(exp,exp,1);
+    mpz_ui_pow_ui(result,2,mpz_get_ui(exp));
+    fp2_scalarexp(&t,&y,result);
+    fp2_mul(&y,&t,&t);
+    mpz_set_ui(z,m);
+    fp2_mul(&x,&x,&t);
+    fp2_mul(&k,&k,&y);
+  }
+  fp2_set(ANS,&x);
 
-    // printf("入力:");
-    // fp2_printf(A);
-
-
-    fp2_scalarexp(&y, &n, q);
-    mpz_set_ui(z, e);
-    mpz_sub_ui(exp, q, 1);
-    mpz_tdiv_q_ui(exp, exp, 2);
-    fp2_scalarexp(&x, A, exp);
-    fp2_mul(&temp, &x, &x);
-    fp2_mul(&k, &temp, A);
-    fp2_mul(&x, &x, A);
-
-    // printf("k:");
-    // fp2_printf(&k);
-
-    while(fp2_cmp_ui(&k, 1, 0) !=0){
-
-        m=1;
-        mpz_ui_pow_ui(exp, 2, m);
-        fp2_scalarexp(&temp, &k, exp);
-
-        while(fp2_cmp_ui(&temp, 1, 0) !=0){
-            m++;
-            mpz_ui_pow_ui(exp, 2, m);
-            fp2_scalarexp(&temp, &k, exp);
-            // printf("%lu\n", m);
-            // printf("temp:");
-            // fp2_printf(&temp);
-        }
-    //printf("c\n");
-
-
-        mpz_sub_ui(exp, z, m);
-        mpz_sub_ui(exp, exp, 1);
-        mpz_ui_pow_ui(r, 2, mpz_get_ui(exp));
-        fp2_scalarexp(&t, &y, r);
-        fp2_mul(&y, &t, &t);
-        mpz_set_ui(z, m);
-        fp2_mul(&x, &x, &t);
-        fp2_mul(&k, &k, &y);
-    }
-    //printf("d\n");
-
-
-    fp2_set(ANS, &x);
-
+  mpz_clear(exp);
+  mpz_clear(q);
+  mpz_clear(z);
+  mpz_clear(result);
 }
 
 void fp2_sqrt_34(fp2 *ANS, fp2 *A){
@@ -389,7 +364,7 @@ void fp2_sqrt_34(fp2 *ANS, fp2 *A){
 
     mpz_set_ui(three, 3);
 
-    mpz_set_ui(q, p);
+    mpz_set(q, prime_z);
     fp_sub(q, q, three);
     mpz_div_ui(q, q, 4);
 
@@ -407,30 +382,30 @@ void fp2_sqrt_34(fp2 *ANS, fp2 *A){
 
     //fp2_printf(&temp2);
 
-    if(fp2_cmp_ui(&temp2, 430, 0)){
-        printf("no sqrt\n");
+    // if(fp2_cmp_ui(&temp2, 430, 0)){
+    //     printf("no sqrt\n");
+    // }else{
+    fp2_mul(&temp3, &temp, A);
+    if(fp2_cmp_ui(&alpha, 430, 0)){
+        fp2_mul(ANS, &i, &temp3);
     }else{
-        fp2_mul(&temp3, &temp, A);
-        if(fp2_cmp_ui(&alpha, 430, 0)){
-            fp2_mul(ANS, &i, &temp3);
-        }else{
-            mpz_set_ui(q, p);
+        mpz_set(q, prime_z);
 
-            fp2 one;
-            fp2_init(&one);
-            fp2_set_ui(&one, 1, 0);
+        fp2 one;
+        fp2_init(&one);
+        fp2_set_ui(&one, 1, 0);
 
-            mpz_t ichi;
-            mpz_init(ichi);
-            mpz_set_ui(ichi, 1);
+        mpz_t ichi;
+        mpz_init(ichi);
+        mpz_set_ui(ichi, 1);
 
-            fp_sub(q, q, ichi);
-            mpz_div_ui(q, q, 2);
+        fp_sub(q, q, ichi);
+        mpz_div_ui(q, q, 2);
 
-            fp2_add(&temp, &alpha, &one);
-            fp2_scalarexp(&temp2, &temp, q);
+        fp2_add(&temp, &alpha, &one);
+        fp2_scalarexp(&temp2, &temp, q);
 
-            fp2_mul(ANS, &temp2, &temp3);
-        }
+        fp2_mul(ANS, &temp2, &temp3);
     }
+    // }
 }
