@@ -4,7 +4,7 @@
 #include<gmp.h>
 #include<sys/time.h>
 
-#define p 431
+// unsigned int p = 431;
 
 mpz_t prime_z;
 
@@ -13,10 +13,10 @@ mpz_t prime_z;
 // 補正をかける処理 //
 void fp_mod(mpz_t ans, mpz_t in){
     if(mpz_sgn (in) != -1){
-        mpz_mod_ui (ans, in, p);
+        mpz_mod (ans, in, prime_z);
     }else{
         while(mpz_sgn (in) < 0){
-            mpz_add_ui (in, in, p);
+            mpz_add (in, in, prime_z);
         }
     }
 }
@@ -30,7 +30,7 @@ void fp_mul(mpz_t ans, mpz_t in1, mpz_t in2){
 void fp_exp(mpz_t ans, mpz_t tei, mpz_t kata){
     mpz_set_ui(ans, 1);
     mpz_t mod; mpz_init(mod);
-    mpz_set_ui(mod, p);
+    mpz_set(mod, prime_z);
     mpz_powm(ans, tei, kata, mod);
 }
 
@@ -40,7 +40,8 @@ void fp_inv(mpz_t ans, mpz_t in){
     mpz_init(pdairi);
     mpz_init(tempin);
     mpz_set(tempin, in);
-    mpz_set_ui(pdairi, p-2);
+    mpz_set(pdairi, prime_z);
+    mpz_sub_ui(pdairi,pdairi,2);
     if(mpz_cmp_ui(tempin, 0) == 0){
         mpz_set_ui(ans, 1);
     }else{
@@ -149,7 +150,9 @@ void fp_scalarexp(mpz_t ans, mpz_t c, mpz_t d){
 void fp_legendre(mpz_t ans, mpz_t in){
     // legendre //
     mpz_t work; mpz_init(work);
-    mpz_set_ui(work, (p-1)/2);
+    mpz_set(work, prime_z);
+    mpz_sub_ui(work,work,1);
+    mpz_div_ui(work,work,2);
     fp_scalarexp(ans, in, work);
 }
 

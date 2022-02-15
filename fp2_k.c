@@ -20,138 +20,100 @@ void check_fp2_cmp();
 
 int main(void){
     mpz_init(prime_z);
-    mpz_set_ui(prime_z, p);
-
+    // mpz_set_ui(prime_z, p);
+    mpz_set_str(prime_z,"0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",16);
+    gmp_printf("prime:%Zd",prime_z);
     for(int g = 0; g < TIMES; g++){
-        check_fp2_34();
+        // check_fp2_34();
         //check_fp2_cmp();
+        check_fp2();
         getchar();
     }
 
-    //check_fp2();
 
     return 0;
 }
 
-// void check_fp2(){
+void check_fp2(){
 
-//     printf("check_fp2() 開始\n");
+    printf("check_fp2() 開始\n");
 
-//     fp2 A,ANS;
+    fp2 A,ANS,fp2_order;
 
-//     fp2_init(&A);
+    fp2_init(&A);
 
-//     fp2_init(&ANS);
+    fp2_init(&ANS);
 
-//     fp2 alpha;
+    gmp_randstate_t state;
 
-//     fp2_init(&alpha);
+    gmp_randinit_default(state);
 
-//     gmp_randstate_t state;
+    gmp_randseed_ui(state,(unsigned long int)time(NULL));
 
-//     mpz_t m, bai;
+    mpz_urandomm(A.x0, state, prime_z);
+    mpz_urandomm(A.x1, state, prime_z);
+    
+    printf("A = ");
+    fp2_printf(&A);
 
-//     mpz_init(m);
+    fp2_inv(&ANS,&A);
+    printf("A^-1 = ");
+    fp2_printf(&ANS);
 
-//     mpz_init(bai);
+    fp2_mul(&ANS,&ANS,&A);
 
-//     gmp_randinit_default(state);
+    printf("A * A^-1 = ");
+    fp2_printf(&ANS);
 
-//     gmp_randseed_ui(state,(unsigned long int)time(NULL));
+    printf("---------------------------------\n");
 
-//     mpz_set_ui(m, 430);
+    printf("平方根アルゴリズムの確認\n");
 
-//     mpz_set_ui(bai, 185760);
+    int flag=fp2_legendre(&A);
 
-//     mpz_urandomm(A.x0, state, m);
-//     mpz_urandomm(A.x1, state, m);
+    printf("fp2_legendre(A) = %d\n",flag);
 
-//     //fp2_set_ui(&A, 6, 310);
-//     //358i + 275, 410i + 104
-//     // fp2_set_ui(&alpha, 37, 18);  
+    if(flag==1){
 
-//     // fp2_sub(&A, &A, &alpha);
+    fp2_sqrt(&ANS,&A);
 
-//     // fp2_mul(&A, &A, &A);
+    printf("fp2_sqrt(A) = ");
+    fp2_printf(&ANS);
 
-//     printf("A = ");
-//     fp2_printf(&A);
+    fp2_mul(&ANS,&ANS,&ANS);
 
-//     fp2_scalarexp(&ANS, &A, bai);
-//     printf("A**p*p-1:");
-//     fp2_printf(&ANS);
+        if(fp2_cmp(&ANS,&A)==0){
 
-//     fp2_inv(&ANS,&A);
+            printf("(fp2_sqrt(A))^2 = A\n\n");
 
-//     printf("A^-1 = ");
-//     fp2_printf(&ANS);
+        }else{
 
-//     fp2_mul(&ANS,&ANS,&A);
+            printf("(fp2_sqrt(A))^2 != A\n\n");
+        }
+    }
+        printf("---------------------------------\n");
 
-//     printf("A * A^-1 = ");
-//     fp2_printf(&ANS);
+    printf("フェルマーの小定理の確認\n");
 
-//     printf("---------------------------------\n");
+    mpz_t tmp;
 
-//     printf("平方根アルゴリズムの確認\n");
+    mpz_init(tmp);
 
-//     int flag=fp2_legendre(&A);
+    mpz_pow_ui(tmp, prime_z ,2);
 
-//     printf("fp2_legendre(A) = %d\n",flag);
+    mpz_sub_ui(tmp,tmp,1);
 
-//     if(flag==1){
+    fp2_scalarexp(&ANS,&A,tmp);
 
-//     fp2_sqrt(&ANS,&A);
+    printf("A^(p^2-1) = ");
+    fp2_printf(&ANS);
 
-//     printf("fp2_sqrt(A) = ");
-//     fp2_printf(&ANS);
+    printf("---------------------------------\n");
+    printf("A = ");
+    fp2_printf(&A);//Aが変わっていないことの確認
+    printf("*********************************************************************************************\n\n");
 
-//     fp2_mul(&ANS,&ANS,&ANS);
-
-//     //fp2_sqr(&ANS,&ANS);
-
-//     if(fp2_cmp(&ANS,&A)==0){
-
-//         printf("(fp2_sqrt(A))^2 = A\n\n");
-
-//     }else{
-
-//         printf("(fp2_sqrt(A))^2 != A\n\n");
-
-//     }
-
-//     printf("---------------------------------\n");
-
-
-
-//     printf("フェルマーの小定理の確認\n");
-
-//     mpz_t tmp;
-
-//     mpz_init(tmp);
-
-//     mpz_pow_ui(tmp, prime_z ,430);
-
-//     mpz_sub_ui(tmp,tmp,1);
-
-//     fp2_scalarexp(&ANS,&A,tmp);
-
-//     printf("A^(p^430-1) = ");
-//     fp2_printf(&ANS);
-
-//     printf("---------------------------------\n");
-
-
-
-//     printf("A = ");
-//     fp2_printf(&A);//Aが変わっていないことの確認
-
-
-
-//     printf("*********************************************************************************************\n\n");
-
-//     }
-// }
+}
 
 void check_fp2_34(){
 
@@ -235,21 +197,17 @@ void check_fp2_34(){
 
     fp2_mul(&ANS,&ANS,&ANS);
 
-    //fp2_sqr(&ANS,&ANS);
-
     if(fp2_cmp(&ANS,&A)==0){
 
-        printf("(fp2_sqrt(A))^2 = A\n\n");
+        printf("(fp2_sqrt(A))^2 = A\n");
 
     }else{
 
-        printf("(fp2_sqrt(A))^2 != A\n\n");
-
+        printf("(fp2_sqrt(A))^2 != A\n");
+        fp2_printf(&ANS);
     }
 
     printf("---------------------------------\n");
-
-
 
     printf("フェルマーの小定理の確認\n");
 
@@ -268,8 +226,6 @@ void check_fp2_34(){
 
     printf("---------------------------------\n");
 
-
-
     printf("A = ");
     fp2_printf(&A);//Aが変わっていないことの確認
 
@@ -277,49 +233,5 @@ void check_fp2_34(){
 
     printf("*********************************************************************************************\n\n");
 
-    }
-}
-
-void check_fp2_cmp(){
-    printf("check_fp2_cmp() 開始\n");
-
-    fp2 A, C;
-
-    fp2_init(&A);
-
-    fp2_init(&C);
-
-    gmp_randstate_t state;
-
-    mpz_t m;
-
-    mpz_init(m);
-
-    gmp_randinit_default(state);
-
-    gmp_randseed_ui(state,(unsigned long int)time(NULL));
-
-    mpz_set_ui(m, 430);
-
-    mpz_urandomm(A.x0, state, m);
-    mpz_urandomm(A.x1, state, m);
-
-    mpz_urandomm(C.x0, state, m);
-    mpz_urandomm(C.x1, state, m);
-
-    printf("A = ");
-    fp2_printf(&A);
-
-    printf("B = ");
-    fp2_printf(&C);
-
-    if(fp2_cmp_n(&A, &C) == 1){
-        printf("Aの方が大きい\n");
-    }else{
-        if(fp2_cmp_n(&A, &C) == -1){
-            printf("Bの方が大きい\n");
-        }else{
-            printf("A == B\n");
-        }
     }
 }
