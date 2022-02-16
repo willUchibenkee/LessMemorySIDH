@@ -1,171 +1,139 @@
-// fp.h //
+#pragma once
+#ifndef FP_H
+#define FP_H
 
-#include<stdio.h>
-#include<gmp.h>
-#include<sys/time.h>
+#include "mpn.h"
 
-#define pval "0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+#include "mcl.h"
 
-// unsigned int p = 431;
-
-mpz_t prime_z;
-
-//struct to express an Affine Rational Point on E/Fp
-
-// 補正をかける処理 //
-void fp_mod(mpz_t ans, mpz_t in){
-    if(mpz_sgn (in) != -1){
-        mpz_mod (ans, in, prime_z);
-    }else{
-        while(mpz_sgn (in) < 0){
-            mpz_add (in, in, prime_z);
-        }
-    }
+void fp_init(fp_t *A);
+void fpd_init(fpd_t *A);
+void fp_printf(std::string str ,fp_t *A);
+void fpd_printf(std::string str ,fpd_t *A);
+void fpd_println(std::string str ,fpd_t *A);
+void fp_println(std::string str ,fp_t *A);
+void fp_printf_montgomery(std::string str ,fp_t *A);
+void fp_println_montgomery(std::string str ,fp_t *A);
+void fp_set(fp_t *ANS,fp_t *A);
+void fp_set_fpd(fpd_t *ANS,fp_t *A);
+void fpd_set(fpd_t *ANS,fpd_t *A);
+void fpd_set_neg_montgomery(fpd_t *ANS,fpd_t *A);
+void fp_set_ui(fp_t *ANS,unsigned long int UI);
+void fp_set_mpn(fp_t *ANS,mp_limb_t *A);
+#ifdef mcl
+inline void fp_set_neg(fp_t *ANS,fp_t *A)
+{
+	mcl_neg(ANS->x0, A->x0);
 }
-
-void fp_mul(mpz_t ans, mpz_t in1, mpz_t in2){
-    mpz_mul (ans, in1, in2);
-    fp_mod(ans, ans);
+#else
+void fp_set_neg(fp_t *ANS,fp_t *A);
+#endif
+void fp_set_neg_montgomery(fp_t *ANS,fp_t *A);
+void fp_lshift(fp_t *ANS,fp_t *A, unsigned long int UI);
+#ifdef mcl
+inline void fp_l1shift(fp_t *ANS,fp_t *A)
+{
+	mcl_add(ANS->x0, A->x0, A->x0);
 }
-
-// 〇乗 //
-void fp_exp(mpz_t ans, mpz_t tei, mpz_t kata){
-    mpz_set_ui(ans, 1);
-    mpz_t mod; mpz_init(mod);
-    mpz_set(mod, prime_z);
-    mpz_powm(ans, tei, kata, mod);
+#else
+void fp_l1shift(fp_t *ANS,fp_t *A);
+#endif
+void fp_l1shift_nonmod_single(fp_t *ANS, fp_t *A);
+void fp_l1shift_nonmod_double(fpd_t *ANS, fpd_t *A);
+void fp_l1shift_single(fp_t *ANS,fp_t *A);
+void fp_l1shift_double(fpd_t *ANS,fpd_t *A);
+void fp_r1shift(fp_t *ANS, fp_t *A);
+void fp_r1shift_nonmod_single(fp_t *ANS, fp_t *A);
+void fp_hlv(fp_t *ANS,fp_t *A);
+void fp_set_random(fp_t *ANS,gmp_randstate_t state);
+void fp_set_random_montgomery(fp_t *ANS, gmp_randstate_t state);
+void pre_montgomery();
+void fp_mulmod_montgomery(fp_t *ANS,fp_t *A,fp_t *B);
+#ifdef mcl
+inline void mpn_mulmod_montgomery(mp_limb_t *ANS,mp_size_t /*ANS_size*/,mp_limb_t *A,mp_size_t /*A_size*/,mp_limb_t *B,mp_size_t /*B_size*/)
+{
+	mcl_mont(ANS, A, B);
 }
-
-// 逆数を求める //
-void fp_inv(mpz_t ans, mpz_t in){
-    mpz_t pdairi, tempin;
-    mpz_init(pdairi);
-    mpz_init(tempin);
-    mpz_set(tempin, in);
-    mpz_set(pdairi, prime_z);
-    mpz_sub_ui(pdairi,pdairi,2);
-    if(mpz_cmp_ui(tempin, 0) == 0){
-        mpz_set_ui(ans, 1);
-    }else{
-        fp_exp(ans, tempin, pdairi);
-        fp_mod(ans, ans);
-    }
+#else
+void mpn_mulmod_montgomery(mp_limb_t *ANS,mp_size_t ANS_size,mp_limb_t *A,mp_size_t A_size,mp_limb_t *B,mp_size_t B_size);
+#endif
+void fp_sqrmod_montgomery(fp_t *ANS,fp_t *A);
+void mpn_sqrmod_montgomery(mp_limb_t *ANS,mp_size_t ANS_size,mp_limb_t *A,mp_size_t A_size);
+void mpn_mod_montgomery(mp_limb_t *ANS,mp_size_t ANS_size,mp_limb_t *A,mp_size_t A_size);
+void fp_mod_montgomery(fp_t *ANS,fp_t *A);
+void fp_to_montgomery(fp_t *ANS, fp_t *A);
+void mpn_to_montgomery(mp_limb_t *ANS, mp_limb_t *A);
+void fp_mod(fp_t *ans, mp_limb_t *a, mp_size_t size_a);
+void fp_mul(fp_t *ANS,fp_t *A,fp_t *B);
+void fp_mul_nonmod(fpd_t *ANS,fp_t *A,fp_t *B);
+void fp_mul_montgomery(mp_limb_t *ANS,mp_size_t ANS_size,mp_limb_t *A,mp_size_t A_size);
+void fp_mul_ui(fp_t *ANS,fp_t *A,unsigned long int UI);
+void fp_mul_ui_nonmod_single(fp_t *ANS, fp_t *A, unsigned long int UI);
+void fp_mul_mpn(fp_t *ANS,fp_t *A,mp_limb_t *B);
+#if 0//#ifdef mcl
+inline void fp_sqr(fp_t *ANS,fp_t *A)
+{
+	mcl_mont(ANS->x0, A->x0, A->x0);
 }
-
-void fp_neg(mpz_t ans, mpz_t in){
-    // 符号を反転させる演算 //
-    mpz_neg (ans, in);
-    fp_mod(ans, ans);
+#else
+void fp_sqr(fp_t *ANS,fp_t *A);
+#endif
+void fp_sqr_nonmod(fpd_t *ANS,fp_t *A);
+#ifdef mcl
+inline void fp_add(fp_t *ANS,fp_t *A,fp_t *B)
+{
+	mcl_add(ANS->x0, A->x0, B->x0);
 }
+#else
+void fp_add(fp_t *ANS,fp_t *A,fp_t *B);
+#endif
 
-void fp_div(mpz_t ans, mpz_t upper, mpz_t lower){
-    // 割り算 //
-    printf("sub start\n");
-    mpz_t inv;
-    mpz_init(inv);
-    fp_inv(inv, lower);
-    fp_mul(ans, inv, upper);
-    fp_mod(ans,ans);
-    printf("sub end\n");
+void fp_add_double(fpd_t *ANS, fpd_t *A, fpd_t *B);
+void fp_add_nonmod_single(fp_t *ANS,fp_t *A,fp_t *B);
+void fp_add_nonmod_double(fpd_t *ANS,fpd_t *A,fpd_t *B);
+void fp_add_ui(fp_t *ANS,fp_t *A,unsigned long int UI);
+void fp_add_mpn(fp_t *ANS,fp_t *A,mp_limb_t *B);
+#ifdef mcl
+inline void fp_sub(fp_t *ANS,fp_t *A,fp_t *B)
+{
+	mcl_sub(ANS->x0, A->x0, B->x0);
 }
+#else
+void fp_sub(fp_t *ANS,fp_t *A,fp_t *B);
+#endif
+void fp_sub_double(fpd_t *ANS,fpd_t *A,fpd_t *B);
+void fp_sub_nonmod_single(fp_t *ANS,fp_t *A,fp_t *B);
+void fp_sub_nonmod_double(fpd_t *ANS,fpd_t *A,fpd_t *B);
+void fp_sub_ui(fp_t *ANS,fp_t *A,unsigned long int UI);
+void fp_sub_mpn(fp_t *ANS,fp_t *A,mp_limb_t *B);
+void fp_inv(fp_t *ANS,fp_t *A);
+void fp_inv_montgomery(fp_t *ANS,fp_t *A);
+int  fp_legendre(fp_t *A);
+void fp_sqrt(fp_t *ANS,fp_t *A);
+void fp_pow(fp_t *ANS,fp_t *A,mpz_t scalar);
+void fp_pow_mpn(fp_t *ans,fp_t *a,mp_limb_t *r,mp_size_t n);
+void fp_pow_montgomery(fp_t *ANS, fp_t *A, mpz_t scalar);
+int  fp_cmp(fp_t *A,fp_t *B);
+int  fp_cmp_ui(fp_t *A,unsigned long int UI);
+int  fp_cmp_mpn(fp_t *A,mp_limb_t *B);
+int  fp_cmp_zero(fp_t *A);
+int  fp_cmp_one(fp_t *A);
+int fpd_cmp_zero(fpd_t *A);
+int fp_montgomery_trick(fp_t *A_inv,fp_t *A,int n);
+int fp_montgomery_trick_montgomery(fp_t *A_inv,fp_t *A,int n);
+void fp_lshift_ui_nonmod_single(fp_t *ANS, fp_t *A, int s);
+void fp_lshift_ui_nonmod_double(fpd_t *ANS, fpd_t *A, int s);
 
-void fp_add(mpz_t ans, mpz_t in1, mpz_t in2){
-    // 足し算 //
-    mpz_add(ans, in1, in2);
+#ifdef mcl
+#define fp_mul_base fp_set_neg
+#else
+void fp_mul_base(fp_t *ANS,fp_t *A);
+#endif
 
-    //gmp_printf("%Zd", ans);
+void fp_mul_base_nonmod_sigle(fp_t *ANS,fp_t *A);
+void fp_mul_base_nonmod_double(fpd_t *ANS,fpd_t *A);
 
-    fp_mod(ans, ans);
-}
+void fp_mul_base_inv(fp_t *ANS,fp_t *A);
+void fp_mul_base_inv_single(fp_t *ANS,fp_t *A);
 
-void fp_sub(mpz_t ans, mpz_t in1, mpz_t in2){
-    // 引き算 //
-    mpz_t neg; mpz_init(neg);
-    fp_neg(neg, in2);
-    fp_add(ans, in1, neg);
-    fp_mod(ans, ans);
-}
-
-void fp_scalarmul(mpz_t ans, mpz_t c, mpz_t d){
-    int length = 0;
-    length = (int)mpz_sizeinbase(d, 2);
-    char binary[length + 1];
-    mpz_t s,t;
-    mpz_init(s); mpz_init(t);
-    mpz_set_ui(s, 0); mpz_set(t, c);
-
-    if(mpz_cmp_ui(d, 0) == 0){
-        mpz_set_ui(ans, 0);
-    }else{
-        mpz_get_str(binary, 2, d);
-        for(int k = length-1; k >= 0; k--){
-            if(binary[k] == '1'){
-                fp_add(s, s, t);
-            }
-            fp_add(t, t, t);
-        }
-        mpz_set(ans, s);
-    }
-}
-
-void fp_scalarsub(mpz_t ans, mpz_t c, mpz_t d){
-    int length = 0;
-    length = (int)mpz_sizeinbase(d, 2);
-    char binary[length + 1];
-    mpz_t s,t;
-    mpz_init(s); mpz_init(t);
-    mpz_set_ui(s, 0); mpz_set(t, c);
-
-    if(mpz_cmp_ui(d, 0) == 0){
-        mpz_set_ui(ans, 0);
-    }else{
-        mpz_get_str(binary, 2, d);
-        for(int k = length-1; k >= 0; k--){
-            if(binary[k] == '1'){
-                fp_sub(s, s, t);
-            }
-            fp_add(t, t, t);
-        }
-        mpz_set(ans, s);
-    }
-}
-
-void fp_scalarexp(mpz_t ans, mpz_t c, mpz_t d){
-    int length = 0;
-    length = (int)mpz_sizeinbase(d, 2);
-    char binary[length + 1];
-    mpz_t s,t;
-    mpz_init(s); mpz_init(t);
-    mpz_set_ui(s, 1); mpz_set(t, c);
-
-    if(mpz_cmp_ui(d, 0) == 0 || mpz_cmp_ui(c, 0) == 0){
-        mpz_set_ui(ans, 1);
-    }else{
-        mpz_get_str(binary, 2, d);
-        for(int k = length-1; k >= 0; k--){
-            if(binary[k] == '1'){
-                fp_mul(s, s, t);
-            }
-            fp_mul(t, t, t);
-        }
-        mpz_set(ans, s);
-    }
-}
-
-void fp_legendre(mpz_t ans, mpz_t in){
-    // legendre //
-    mpz_t work; mpz_init(work);
-    mpz_set(work, prime_z);
-    mpz_sub_ui(work,work,1);
-    mpz_div_ui(work,work,2);
-    fp_scalarexp(ans, in, work);
-}
-
-/*void fp_sqrt(mpz_t ans, mpz_t in){
-    fp_legendre(ans, in);
-    if(mpz_cmp_ui(ans, 1) == 0){
-        mpz_sqrt(ans, in);
-    }else{
-        gmp_printf("in = %Zd は非平方余剰\n", in);
-    }
-}*/
+#endif
