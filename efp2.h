@@ -5,7 +5,7 @@
 #include"Fp2.c"
 #include <string.h>
 
-#define Aval "0000F37AB34BA0CEAD94F43CDC50DE06AD19C67CE4928346E829CB92580DA84D7C36506A2516696BBE3AEB523AD7172A6D239513C5FD2516 000196CA2ED06A657E90A73543F3902C208F410895B49CF84CD89BE9ED6E4EE7E8DF90B05F3FDB8BDFE489D1B3558E987013F9806036C5AC"
+#define Aval "6 0"
 
 Fp2 A;
 
@@ -28,11 +28,14 @@ int Efp2_checkans(ec2 *P, Fp2 *ap){
     Fp2_set(&wy, &P->y);
 
     Fp2_mul(&sahen, &wy, &wy);
-    Fp2_sqr3(&uhen, &wx);
+
+    Fp2_mul(&uhen, &wx, &wx);
+    Fp2_mul(&uhen, &uhen, &wx);
     Fp2_mul(&work, &wx, &wx);
     Fp2_mul(&work, &work, ap);
     Fp2_add(&uhen, &uhen, &work);
     Fp2_add(&uhen, &uhen, &wx);
+    
     if(Fp2_cmp(&uhen, &sahen) == 0){
         return 0;
     }else{
@@ -100,10 +103,14 @@ void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
             
             //かたまり２
             //分子の計算
-            Fp2_sqr3(&bunshi2, &work2);
+            //Fp2_sqr3(&bunshi2, &work2);
+            Fp2_mul(&bunshi2, &work2, &work2);
+            Fp2_mul(&bunshi2, &bunshi2, &work2);
             
             //分母の計算(最後にinv)
-            Fp2_sqr3(&bumbo2, &bumbo2);
+            //Fp2_sqr3(&bumbo2, &bumbo2);
+            Fp2_mul(&work, &bumbo2, &bumbo2);
+            Fp2_mul(&bumbo2, &work, &bumbo2);
             Fp2_inv(&bumbo2, &bumbo2);
    
             //分子/分母
@@ -185,7 +192,9 @@ void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
                 Fp2_sqr3(&bunshi2, &ysa);
 
                 //分母の計算(最後にinv)
-                Fp2_sqr3(&bumbo2, &xsa);
+                //Fp2_sqr3(&bumbo2, &xsa);
+                Fp2_mul(&bumbo2, &xsa, &xsa);
+                Fp2_mul(&bumbo2, &bumbo2, &xsa);
                 Fp2_inv(&bumbo2, &bumbo2);
 
 
@@ -206,7 +215,7 @@ void Efp2_to2(char *binary, Fp *in){
     for(int k = 0; k < MOD_WORDS; k++){
         while(in->value[k] != '\0'){
             binary[i] = in->value[k] % 2;
-            in->value[i] = in->value[k] / 2;
+            in->value[k] = in->value[k] / 2;
             i++;
         }
     }

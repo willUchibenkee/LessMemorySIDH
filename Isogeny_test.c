@@ -3,7 +3,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
-#include<gmp.h>
 #include"Isogeny.c"
 
 #define Pax "00003CCFC5E1F050030363E6920A0F7A4C6C71E63DE63A0E6475AF621995705F7C84500CB2BB61E950E19EAB8661D25C4A50ED279646CB48 0001AD1C1CAE7840EDDA6D8A924520F60E573D3B9DFAC6D189941CB22326D284A8816CC4249410FE80D68047D823C97D705246F869E3EA50"
@@ -113,7 +112,7 @@ int main(void){
     Fp2 aa;
     Fp2_set(&aa, &aA0);
 
-    printf("//////////////////////////////////////\n");
+    // printf("//////////////////////////////////////\n");
 
     //BobGen
 
@@ -127,6 +126,7 @@ int main(void){
     while(py > 0){
         
         Fp2_set(&Rb.x, &Sb.x);
+        Fp2_set(&Rb.y, &Sb.y);
         //Fp_set(&q, &py);
         q = py;
         //i = 0;
@@ -162,31 +162,31 @@ int main(void){
     PrintEC2(&Pa);
     PrintEC2(&Qa);
 
-    //鍵共有
-    printf("ここから鍵共有です\n");
-    // while(fp2_checkans(Pap, &ba0) != 0){
-    //     mpz_urandomm(Pap->y.x0, state, mp); 
-    //     mpz_urandomm(Pap->y.x1, state, mp);
-    // }
-    // while(fp2_checkans(Qap, &ba0) != 0){
-    //     mpz_urandomm(Qap->y.x0, state, mp); 
-    //     mpz_urandomm(Qap->y.x1, state, mp);
-    // }
-    // while(fp2_checkans(Pbp, &aa) != 0){
-    //     mpz_urandomm(Pbp->y.x0, state, mp); 
-    //     mpz_urandomm(Pbp->y.x1, state, mp);
-    // }
-    // while(fp2_checkans(Qbp, &aa) != 0){
-    //     mpz_urandomm(Qbp->y.x0, state, mp); 
-    //     mpz_urandomm(Qbp->y.x1, state, mp);
-    // }
+    // //鍵共有
+    // printf("ここから鍵共有です\n");
+    // // while(fp2_checkans(Pap, &ba0) != 0){
+    // //     mpz_urandomm(Pap->y.x0, state, mp); 
+    // //     mpz_urandomm(Pap->y.x1, state, mp);
+    // // }
+    // // while(fp2_checkans(Qap, &ba0) != 0){
+    // //     mpz_urandomm(Qap->y.x0, state, mp); 
+    // //     mpz_urandomm(Qap->y.x1, state, mp);
+    // // }
+    // // while(fp2_checkans(Pbp, &aa) != 0){
+    // //     mpz_urandomm(Pbp->y.x0, state, mp); 
+    // //     mpz_urandomm(Pbp->y.x1, state, mp);
+    // // }
+    // // while(fp2_checkans(Qbp, &aa) != 0){
+    // //     mpz_urandomm(Qbp->y.x0, state, mp); 
+    // //     mpz_urandomm(Qbp->y.x1, state, mp);
+    // // }
 
-    //AliceGet
+    // //AliceGet
 
     Isogeny_set_e();
     
     //alice
-    printf("aliceの操作\n");
+    //printf("aliceの操作\n");
     Isogeny_gets(&Sa, &Pa, &Qa, &kam, &bA0);
     //mpz_divexact(ea, ea, lat);
     //mpz_pow_ui(py, lat, mpz_get_ui(ea));
@@ -197,7 +197,7 @@ int main(void){
         //fp2_printf(&Rap->x);
 
         Isogeny_changea(&newa, &Ra.x);
-        Fp2_print(&newa);
+        //Fp2_print(&newa);
 
         Isogeny_nextp(&Sa, &Sa, &Ra.x, lat);
         Fp2_set(&bA0, &newa);
@@ -207,14 +207,14 @@ int main(void){
 
     }
 
-    //BobGet
+    // //BobGet
 
-    //bob
+    // //bob
     printf("bobの操作\n");
-    PrintEC2(&Pb);
+    //PrintEC2(&Pb);
     //PrintEC2(Qbp);
     Fp2_neg(&Qb.y, &Qb.y);
-    PrintEC2(&Qb);
+    //PrintEC2(&Qb);
     Isogeny_gets(&Sb, &Pb, &Qb, &kbm, &aa);
     //mpz_divexact(eb, eb, lbt);
     //mpz_pow_ui(py, lbt, mpz_get_ui(eb));
@@ -243,7 +243,7 @@ int main(void){
         Isogeny_nextp(&Sb, &Sb, &Rb.x, lbt);
         Fp2_set(&aa, &newa);
 
-        Fp2_print(&aa);
+        //Fp2_print(&aa);
         //mpz_divexact(py, py, lbt);
         py = py - 1;
         
