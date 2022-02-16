@@ -4,12 +4,12 @@
 #include"efp2.h"
 #include<gmp.h>
 
-#define a0x0 423
-#define a0x1 329
-#define ka 11
-#define kb 2
-#define eA 4
-#define eB 3
+#define a0x0 6
+#define a0x1 0
+#define ka "E885C9629334416F088AE5B046C5318A64E993ABE073C130BC9A1A"
+#define kb "35CFD3E50A61EFF6D3EEC413599AC3C79ADC78FE1CB24C6FC689D000"
+#define eA "000000D8"
+#define eB "00000089"
 #define la 2
 #define lb 3
 

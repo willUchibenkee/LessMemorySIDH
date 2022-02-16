@@ -1,11 +1,13 @@
+//fp2.h
+
 #include<stdio.h>
 #include<gmp.h>
 #include<sys/time.h>
 #include <time.h>
 #include"fp.h"
 
-#define Ax0 423
-#define Ax1 329
+#define Ax0 6
+#define Ax1 0
 #define B 1
 
 //struct to express an Affine Rational Point on E/Fp
@@ -28,6 +30,11 @@ void fp2_set(fp2 *ans, fp2 *in){
 void fp2_set_ui(fp2 *ans, int x0, int x1){
     mpz_set_ui(ans->x0, x0);
     mpz_set_ui(ans->x1, x1);
+}
+
+void fp2_set_str(fp2 *ans, char *x0, char *x1){
+    mpz_set_str(ans->x0, x0, 16);
+    mpz_set_str(ans->x1, x1, 16);
 }
 
 int fp2_cmp(fp2 *in1, fp2 *in2){
@@ -386,7 +393,13 @@ void fp2_sqrt_34(fp2 *ANS, fp2 *A){
     //     printf("no sqrt\n");
     // }else{
     fp2_mul(&temp3, &temp, A);
-    if(fp2_cmp_ui(&alpha, 430, 0)){
+
+    fp2 prime_m;
+
+    fp2_init(&prime_m);
+    mpz_set(prime_m.x0, prime_z);
+
+    if(fp2_cmp(&alpha, &prime_m)){
         fp2_mul(ANS, &i, &temp3);
     }else{
         mpz_set(q, prime_z);

@@ -58,70 +58,6 @@ int fp2_checkans(ec2 *P, fp2 *ap){
     }
 }
 
-//ECD
-/* void fecpD2(ec2 *R,ec2 *P){
-    fp2 katamuki, temp, intemp, two, ampz;
-    fp2 three, sa, nijyo, ni3, atashi, px2;
-    fp2 katasa, kata2;
-    fp2 *katamukip;
-    fp2 *tempp;
-    fp2 *intempp;
-    fp2 *twop;
-    fp2 *ampzp;
-    katamukip = &katamuki;
-    tempp = &temp;
-    intempp = &intemp;
-    twop = &two;
-    ampzp = &ampz;
-    fp2 *threep;
-    fp2 *sap;
-    fp2 *nijyop;
-    fp2 *ni3p;
-    fp2 *ataship;
-    fp2 *px2p;
-    threep = &three;
-    sap = &sa;
-    nijyop = &nijyo;
-    ni3p = &ni3;
-    ataship = &atashi;
-    px2p = &px2;
-    fp2 *katasap;
-    fp2 *kata2p;
-    katasap = &katasa;
-    kata2p =&kata2;
-    fp2_init(katamukip);
-    fp2_init(tempp);
-    fp2_init(intempp);
-    fp2_init(twop);
-    fp2_init(ampzp);
-    fp2_init(threep);
-    fp2_init(sap);
-    fp2_init(nijyop);
-    fp2_init(ni3p);
-    fp2_init(ataship);
-    fp2_init(px2p);
-    fp2_init(katasap);
-    fp2_init(kata2p);
-    mpz_set_ui(twop->x, 2);
-    mpz_set_ui(twop->y, 0);
-    mpz_set_ui(threep->x, 3);
-    mpz_set_ui(threep->y, 0);
-    mpz_set_ui(ampzp->x, A);
-    mpz_set_ui(ampzp->y, 0);
-    fp2_mul(tempp, twop, &P->y); 
-    fp2_inv(intempp, tempp);
-    fp2_mul(nijyop, &P->x, &P->x);
-    fp2_mul(ni3p, threep, nijyop);
-    fp2_add(ataship, ni3p, ampzp);
-    fp2_mul(katamukip, ataship, intempp);
-    fp2_mul(kata2p, katamukip, katamukip);
-    fp2_mul(px2p, twop, &P->x);
-    fp2_sub(&R->x, kata2p, px2p);
-    fp2_sub(sap, &P->x, &R->x);
-    fp2_mul(katasap, katamukip, sap);
-    fp2_sub(&R->y, katasap, &P->y);
-} */
-
 void fp2_mgecD(ec2 *R, ec2 *P, fp2 *ap){
     fp2 bumbo, bunshi, bumbo2, bunshi2, katamari, katamari2;
     fp2 *bumbop; bumbop = &bumbo;
@@ -169,6 +105,8 @@ void fp2_mgecD(ec2 *R, ec2 *P, fp2 *ap){
     fp2_set_ui(t2p, 2, 0);
     fp2_set_ui(tr2p, 3, 0);
 
+    //fp2_printf(&P->x);
+
     //printf("ecd start \n");
     if(mpz_cmp_ui(P->inf, 1) == 0){
         //printf("a\n");
@@ -186,7 +124,7 @@ void fp2_mgecD(ec2 *R, ec2 *P, fp2 *ap){
             fp2_sub(bunship, bunship, op);
             //fp2_printf(bunship);
             fp2_mul(bunship, bunship, bunship);
-            // printf("bunshi:");
+            //printf("bunshi:");
             // fp2_printf(bunship);
             //gmp_printf("bunshi = %Zd\n", bunshi);
             //分母の計算(最後にinv)
@@ -279,42 +217,6 @@ void fp2_mgecD(ec2 *R, ec2 *P, fp2 *ap){
     }
     
 }
-
-//ECA
-/* void fecpA2(ec2 *R,ec2 *P, ec2 *Q){
-    fp2 katamuki, temp, intemp, sa;
-    fp2 *katamukip;
-    fp2 *tempp;
-    fp2 *intempp;
-    fp2 *sap;
-    katamukip = &katamuki;
-    tempp = &temp;
-    intempp = &intemp;
-    sap = &sa;
-    fp2_init(katamukip);
-    fp2_init(tempp);
-    fp2_init(intempp);
-    fp2_init(sap);
-    if(mpz_cmp(P->x.x, Q->x.x) == 0 || mpz_cmp(P->y.y, Q->y.y) == 0){
-        if(mpz_cmp(P->x.x, Q->x.x) == 0 && mpz_cmp(P->y.y, Q->y.y) == 0){
-            fecpD2(R, P);
-        }else{
-            gmp_printf("inf\n");
-            mpz_set_ui(R->inf, 1);
-        }
-    }else{
-        fp2_sub(tempp, &Q->x, &P->x);
-        fp2_inv(intempp, tempp);       
-        fp2_sub(katamukip, &Q->y, &P->y);
-        fp2_mul(katamukip, katamukip, intempp);
-        fp2_mul(&R->x, katamukip, katamukip);
-        fp2_sub(&R->x, &R->x, &Q->x);
-        fp2_sub(&R->x, &R->x, &P->x);
-        fp2_sub(sap, &P->x, &R->x);
-        fp2_mul(&R->y, katamukip, sap);
-        fp2_sub(&R->y, &R->y, &P->y);    
-    }   
-} */
 
 void fp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, fp2 *ap){
     fp2 bumbo, bunshi, bumbo2, bunshi2;
@@ -445,31 +347,6 @@ void fp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, fp2 *ap){
     }   
 }
 
-//SCM
-
-/* void fp2_ecSCM(ec2 *R, ec2 *P, mpz_t n){
-    int k, j, nint; 
-    ec2 U;
-    ec2 *up;
-    up = &U;
-    fp2_init(&up->x);
-    fp2_init(&up->y);
-    mpz_init(up->inf);
-    nint = mpz_get_ui(n);
-    if(nint == 1){
-        R = P;
-    }
-    k = nint % 2;
-    j = nint / 2;
-    fecpD2(up, P);
-    for(int i = 0; i < j; i++){
-        fecpA2(R,R,up);
-    }
-    if(k == 1){
-        fecpA2(R,R,P);
-    }
-} */
-
 void fp2_mgecSCM(ec2 *R, ec2 *P, mpz_t n, fp2 *ap){
     ec2 S,T;
     ec2 *sp; ec2 *tp;
@@ -535,131 +412,3 @@ void fp2_mgecSCM(ec2 *R, ec2 *P, mpz_t n, fp2 *ap){
     }
 }
 
-/*
-void fp2_TonelliShanks(fp2 *R, fp2 *P){
-    
-    fp2 p1, one, q, s, two, work, z, ans, rop, ni, jt;
-    fp2 m, c, t, ro;
-    fp2 *p1p;
-    fp2 *onep;
-    fp2 *qp;
-    fp2 *sp;
-    fp2 *twop;
-    fp2 *workp;
-    fp2 *zp;
-    fp2 *ansp;
-    fp2 *ropp;
-    fp2 *nip;
-    fp2 *mp;
-    fp2 *cp;
-    fp2 *tp;
-    fp2 *jtp;
-    p1p = &p1;
-    onep = &one;
-    qp = &q;
-    sp = &s;
-    twop = &two;
-    workp = &work;
-    zp = &z;
-    ansp = &ans;
-    ropp = &rop;
-    nip = &ni;
-    mp = &m;
-    cp = &c;
-    tp = &t;
-    jtp = &jt;
-    int si, qi, i;
-    fp2_init(p1p);
-    fp2_init(onep);
-    fp2_init(twop);
-    fp2_init(qp);
-    fp2_init(sp);
-    fp2_init(zp);
-    fp2_init(ansp);
-    fp2_init(workp);
-    fp2_init(mp);
-    fp2_init(nip);
-    fp2_init(cp);
-    fp2_init(tp);
-    fp2_init(ropp);
-    fp2_init(jtp);
-    mpz_set(p1p->x, P->x);
-    mpz_set(p1p->y, P->y);
-    mpz_set_ui(onep->x, 1);
-    mpz_set_ui(onep->y, 1);
-    mpz_set_ui(twop->x, 2);
-    mpz_set_ui(twop->y, 0);
-    mpz_set_ui(nip->x, 2);
-    mpz_set_ui(nip->y, 2);
-    mpz_set_ui(zp->x, 1);
-    mpz_set_ui(zp->y, 0);
-    
-    fp2_inv(twop, twop);
-    mpz_set_ui(twop->x, 216);
-    mpz_set_ui(twop->y, 0);
-    fp2_sub(p1p, p1p, onep);
-    fp2_legendre(ansp,P);
-    if(mpz_cmp_ui(ansp->x,1) == 0 || mpz_cmp_ui(ansp->y,0) == 0){
-        mpz_mod_ui(workp->x, p1p->x, 2);
-        mpz_mod_ui(workp->y, p1p->y, 2);
-        while(mpz_cmp_ui(p1p->x, 0) != 0 || mpz_cmp_ui(p1p->y, 0) != 0){
-            fp2_mul(p1p, p1p, twop);
-            si++;
-            mpz_mod_ui(workp->x, p1p->x, 2);
-            mpz_mod_ui(workp->y, p1p->y, 2);
-            printf("a");
-        }
-        mpz_set(qp->x, p1p->x);
-        mpz_set(qp->y, p1p->y);
-        mpz_set_ui(sp->x, si);
-        mpz_set_ui(sp->y, si);
-        fp2_legendre(ansp,zp);
-        i = 2;
-        while(mpz_cmp_ui(ansp->x,-1) != 0 && mpz_cmp_ui(ansp->y,-1) != 0){
-            mpz_set_ui(zp->x, i);
-            mpz_set_ui(zp->y, i);
-            fp2_legendre(ansp,zp);
-            i++;
-            printf("b");
-        }
-        mpz_set(mp->x, sp->x);
-        mpz_set(mp->y, sp->y);
-        fp2_scalarexp(cp, zp, qp->x);
-        fp2_scalarexp(tp, P, qp->x);
-        fp2_add(workp, qp, onep);
-        fp2_mul(workp, workp, twop);
-        fp2_scalarexp(ropp, P, workp->x);
-        while(mpz_cmp_ui(ansp->x, 1) != 0 || mpz_cmp_ui(ansp->y, 1) != 0){
-            for(int j = 1; mpz_cmp_ui(workp->x, 1) != 0 && mpz_cmp_ui(workp->y, 1) != 0; j++){
-                mpz_set_ui(jtp->x, j);
-                mpz_set_ui(jtp->y, j);
-                fp2_scalarexp(ropp, nip, jtp->x);
-                fp2_scalarexp(workp, tp, ropp->x);
-                printf("c");
-            }
-        fp2_sub(ropp, mp, workp);
-        fp2_scalarexp(jtp, nip, ropp->x);
-        fp2_scalarexp(cp, cp, jtp->x);
-        fp2_mul(tp, tp, cp);
-        fp2_mul(workp, cp, twop);
-        fp2_mul(R, R, workp);
-        printf("d");
-        }
-    }else{
-        printf("解なし\n");
-    }
-    
-    /*
-    mpz_t f;
-    mpz_init(f);
-    mpz_set_ui(f,4);
-    fp_inv(f,f);
-    mpz_t p1;
-    mpz_init(p1);
-    mpz_set_ui(p1, p+1);
-    mpz_t kata;
-    mpz_init(kata);
-    mpz_mul(kata, p1, f);
-    fp_scalarexp2(R, P, kata);
-    
-}*/

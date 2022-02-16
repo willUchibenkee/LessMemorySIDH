@@ -4,6 +4,8 @@
 #include<gmp.h>
 #include<sys/time.h>
 
+#define pval "0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+
 // unsigned int p = 431;
 
 mpz_t prime_z;
@@ -70,6 +72,9 @@ void fp_div(mpz_t ans, mpz_t upper, mpz_t lower){
 void fp_add(mpz_t ans, mpz_t in1, mpz_t in2){
     // 足し算 //
     mpz_add(ans, in1, in2);
+
+    //gmp_printf("%Zd", ans);
+
     fp_mod(ans, ans);
 }
 
