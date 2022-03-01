@@ -13,7 +13,8 @@
 #include "field_test.h"
 #include "test_efp.h"
 #include "create.h"
-// #include "isogeny.h"
+#include "isogeny.h"
+#include "test_isogeny.h"
 
 int main(){
 
@@ -92,6 +93,19 @@ int main(){
   // efp_ecd(&P2, &P,&Ea.x0, &Eb.x0);
   // efp_println("P2 = ",&P2);
   // efp_checkOnCurve(&P2,&Ea.x0,&Eb.x0);
+
+  int py = (int)(pow((double)la, (double)eA))/2;
+
+  int q;
+  int i = 0;
+
+  check_gets();
+
+  int flag = 2;
+
+  check_isogeny(&P, &Q, &S, &A0, flag);
+
+  check_getj();
 
   return 0;
 }

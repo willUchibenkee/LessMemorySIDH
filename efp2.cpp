@@ -21,6 +21,7 @@ void efp2_jacobian_init(efp2_jacobian_t *P){
   fp2_init(&P->z);
   P->infinity=0;
 }
+
 void efp2_printf(std::string str ,efp2_t *P){
   printf("%s",str.c_str());
   if(P->infinity==0){

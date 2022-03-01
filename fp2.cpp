@@ -64,6 +64,11 @@ void fpd2_set(fpd2_t *ANS, fpd2_t *A) {
   fpd_set(&ANS->x1, &A->x1);
 }
 
+void fp2_set_fp(fp2_t *ANS, fp_t *A, fp_t *B) {
+  fp_set(&ANS->x0, A);
+  fp_set(&ANS->x1, B);
+}
+
 void fp2_set_ui(fp2_t *ANS,unsigned long int UI){
   fp_set_ui(&ANS->x0,UI);
   fp_set_ui(&ANS->x1,0);

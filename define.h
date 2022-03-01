@@ -157,6 +157,10 @@ TTT_EXTERN float MILLER_ATE_6SPARSE_TIME;
 TTT_EXTERN float MILLER_ATE_7SPARSE_TIME;
 TTT_EXTERN float FINAL_EXP_TIME;
 
+//isogeny
+TTT_EXTERN fp2_t A0;
+TTT_EXTERN int ea, eb;
+
 typedef struct {
   int add;
   int add_ui;
