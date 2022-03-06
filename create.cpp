@@ -245,3 +245,141 @@ void tmp_init(){
   mpz_init_set_ui(three,3);
 
 }
+
+void create_a0(void){
+
+    mpz_t tmp, tmp2;
+    mpz_init_set_str(tmp, Aval0, 16);
+    mpz_init_set_str(tmp2, Aval1, 16);
+
+    // gmp_printf("tmp: %Zd\n", tmp);
+    // gmp_printf("tmp2: %Zd\n", tmp2);
+
+    fp_t temp, temp2;
+    fp_init(&temp);
+    fp_init(&temp2);
+    mpn_set_mpz(temp.x0, tmp);
+    mpn_set_mpz(temp2.x0, tmp2);
+
+    fp2_set_fp(&A0, &temp, &temp2);
+
+    //fp2_println("A = ", &A0);
+
+    mpz_init_set_str(tmp, Bval0, 16);
+    mpz_init_set_str(tmp2, Bval1, 16);
+
+    mpn_set_mpz(temp.x0, tmp);
+    mpn_set_mpz(temp2.x0, tmp2);
+
+    fp2_set_fp(&B, &temp, &temp2);
+
+    //fp2_println("B = ", &B);
+
+    mpz_clear(tmp);
+    mpz_clear(tmp2);
+ 
+}
+
+void create_e(void){
+
+    mpz_t tmp;
+    const char *ch = eA;
+
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(ea.x0, tmp);
+    //ea = mpz_get_ui(tmp);
+
+    ch = eB;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(eb.x0, tmp);
+    //eb = mpz_get_ui(tmp);
+
+    mpz_clear(tmp);
+
+}
+
+void create_point(void){
+    mpz_t tmp;
+    const char *ch = Pax0;
+
+    efp2_init(&Pa);
+    efp2_init(&Pb);
+    efp2_init(&Qa);
+    efp2_init(&Qb);
+    efp2_init(&Sa);
+    efp2_init(&Sb);
+    efp2_init(&Ra);
+    efp2_init(&Rb);
+
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pa.x.x0.x0, tmp);
+
+    ch = Pax1;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pa.x.x1.x0, tmp);
+
+    ch = Pay0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pa.y.x0.x0, tmp);
+
+    ch = Pay1;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pa.y.x1.x0, tmp);
+
+    //efp2_println("P = ", &Pa);
+
+    ch = Qax0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Qa.x.x0.x0, tmp);
+
+    ch = Qax1;
+    mpz_init_set_str(tmp, Qax1, 16);
+    mpn_set_mpz(Qa.x.x1.x0, tmp);
+
+    ch = Qay0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Qa.y.x0.x0, tmp);
+
+    ch = Qay1;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Qa.y.x1.x0, tmp);
+
+    //efp2_println("Q = ", &Qa);
+
+    ch = Pbx0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pb.x.x0.x0, tmp);
+
+    ch = Pbx1;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pb.x.x1.x0, tmp);
+
+    ch = Pby0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pb.y.x0.x0, tmp);
+
+    ch = Pby1;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Pb.y.x1.x0, tmp);
+
+    //efp2_println("P = ", &Pa);
+
+    ch = Qbx0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Qb.x.x0.x0, tmp);
+
+    ch = Qbx1;
+    mpz_init_set_str(tmp, Qax1, 16);
+    mpn_set_mpz(Qb.x.x1.x0, tmp);
+
+    ch = Qby0;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Qb.y.x0.x0, tmp);
+
+    ch = Qby1;
+    mpz_init_set_str(tmp, ch, 16);
+    mpn_set_mpz(Qb.y.x1.x0, tmp);
+
+    mpz_clear(tmp);
+
+}

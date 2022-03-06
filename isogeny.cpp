@@ -1,61 +1,6 @@
 #include "isogeny.h"
 
 //fp2_t A0;
-int ea, eb;
-efp2_t P,Q;
-
-void Isogeny_set_a0(void){
-
-    mpz_t tmp, tmp2;
-    mpz_init_set_str(tmp, Aval0, 16);
-    mpz_init_set_str(tmp2, Aval1, 16);
-
-    fp_t temp, temp2;
-    fp_init(&temp);
-    fp_init(&temp2);
-    mpn_set_mpz(temp.x0, tmp);
-    mpn_set_mpz(temp2.x0, tmp2);
-
-    fp2_set_fp(&A0, &temp, &temp2);
-
-    mpz_clear(tmp);
-    mpz_clear(tmp2);
- 
-}
-
-void Isogeny_set_e(void){
-    ea = eA;
-    eb = eB;
-}
-
-void Isogeny_set_point(void){
-    mpz_t tmp;
-
-    mpz_init_set_str(&tmp, Pax0, 16);
-    mpn_set_mpz(P.x.x0.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Pax1, 16);
-    mpn_set_mpz(P.x.x1.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Pay0, 16);
-    mpn_set_mpz(P.y.x0.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Pay1, 16);
-    mpn_set_mpz(P.y.x1.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Qax0, 16);
-    mpn_set_mpz(Q.x.x0.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Qax1, 16);
-    mpn_set_mpz(Q.x.x1.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Qay0, 16);
-    mpn_set_mpz(Q.y.x0.x0, &tmp);
-
-    mpz_init_set_str(&tmp, Qay1, 16);
-    mpn_set_mpz(Q.y.x1.x0, &tmp);
-
-}
 
 void Isogeny_gets(efp2_t *S, efp2_t *P, efp2_t *Q, mpz_t k, fp2_t *ap){
     // SaやSbを求めます
@@ -70,7 +15,7 @@ void Isogeny_gets(efp2_t *S, efp2_t *P, efp2_t *Q, mpz_t k, fp2_t *ap){
     fp2_init(&eb);
     fp2_set_ui(&eb, 1);
 
-    efp2_eca(S, P, &U, ap, &eb);
+    efp2_eca(S, P, &U, ap, &B);
 
 }
 

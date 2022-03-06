@@ -15,5 +15,9 @@ void create_weil();
 //void skew_frobenius_map_g2(efp5_t *skew_Q,efp5_t *Q);
 void tmp_init();
 
+void create_a0();
+void create_e();
+void create_point();
+
 #endif
  

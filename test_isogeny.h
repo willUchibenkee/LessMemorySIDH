@@ -9,8 +9,8 @@
 #include "isogeny.h"
 #include "./time.h"
 
-void check_gets();
+void check_gets(efp2_t *P, efp2_t *Q, efp2_t *S, fp2_t *A, int flag);
 
-void check_isogeny();
+void check_isogeny(efp2_t *P, efp2_t *Q, efp2_t *S, fp2_t *A, int flag);
 
-void check_getj();
+void check_getj(fp2_t *A);

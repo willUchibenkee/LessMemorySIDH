@@ -39,7 +39,7 @@ void efp2_set_neg(efp2_t *ANS,efp2_t *A);
 void efp2_jacobian_set_neg(efp2_jacobian_t *ANS,efp2_jacobian_t *A);
 int efp2_cmp(efp2_t *A,efp2_t *B);
 void efp2_rational_point(efp2_t *P);
-void efp2_ecd(efp2_t *ANS,efp2_t *P,efp2_t *P2, fp2_t *_Ea, fp2_t *_Eb);
+void efp2_ecd(efp2_t *ANS,efp2_t *P, fp2_t *_Ea, fp2_t *_Eb);
 void efp2_ecd_jacobian_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P);
 void efp2_eca(efp2_t *ANS,efp2_t *P1,efp2_t *P2, fp2_t *_Ea, fp2_t *_Eb);
 void efp2_eca_jacobian_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P1,efp2_jacobian_t *P2);

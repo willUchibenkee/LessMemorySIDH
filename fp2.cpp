@@ -646,6 +646,13 @@ int fp2_cmp(fp2_t *A,fp2_t *B){
   return 1;
 }
 
+int fp2_cmp_n(fp2_t *A,fp2_t *B){
+  if(fp_cmp(&A->x0,&B->x0)>= 0 && fp_cmp(&A->x1,&B->x1)>= 0){
+    return 0;
+  }
+  return -1;
+}
+
 int fp2_cmp_ui(fp2_t *A,unsigned long int UI){
   if(fp_cmp_ui(&A->x0,UI)==0 && fp_cmp_ui(&A->x1,UI)==0){
     return 0;

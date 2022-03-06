@@ -67,6 +67,7 @@ void fp2_sqrt(fp2_t *ANS,fp2_t *A);
 void fp2_pow(fp2_t *ANS,fp2_t *A,mpz_t scalar);
 void fp2_pow_montgomery(fp2_t *ANS, fp2_t *A, mpz_t scalar);
 int fp2_cmp(fp2_t *A,fp2_t *B);
+int fp2_cmp_n(fp2_t *A,fp2_t *B);
 int fp2_cmp_ui(fp2_t *A,unsigned long int UI);
 int fp2_cmp_mpn(fp2_t *A,mp_limb_t *B);
 int fp2_cmp_zero(fp2_t *A);

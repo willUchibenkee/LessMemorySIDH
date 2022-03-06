@@ -32,6 +32,10 @@ int main(){
   // frobenius_precalculation();
   curve_search();
   create_weil();
+
+  create_a0();
+  create_e();
+  create_point();
   
   printf("*********************************************************************************************\n\n");
   
@@ -46,8 +50,8 @@ int main(){
   // check_fp_with_montgomery();
   // check_fp2_with_montgomery();
   // check_fp6_with_montgomery();
-  check_fp();
-  check_fp2();
+  // check_fp();
+  // check_fp2();
 
   // BENCH_fp2_fp6_mul_lazy_montgomery(CHECK_PAIRING_TIME_LOOP);
   // BENCH_miller_jac_lazy_montgomery(CHECK_PAIRING_TIME_LOOP);
@@ -57,8 +61,8 @@ int main(){
   // BENCH_Pairing_proj_lazy_montgomery(CHECK_PAIRING_TIME_LOOP);
   // BENCH_Pairing_proj_lazy_montgomery_static(CHECK_PAIRING_TIME_LOOP);
 
-  check_efp();
-  check_efp2();
+  // check_efp();
+  // check_efp2();
   // check_efp6();
   // check_g1_g2();
 
@@ -94,18 +98,15 @@ int main(){
   // efp_println("P2 = ",&P2);
   // efp_checkOnCurve(&P2,&Ea.x0,&Eb.x0);
 
-  int py = (int)(pow((double)la, (double)eA))/2;
-
-  int q;
-  int i = 0;
-
-  check_gets();
-
   int flag = 2;
 
-  check_isogeny(&P, &Q, &S, &A0, flag);
 
-  check_getj();
+  check_gets(&Sa, &Pa, &Qa, &A0, flag);
+  check_gets(&Sb, &Pb, &Qb, &A0, flag);
+
+  check_isogeny(&Pa, &Qa, &Sa, &A0, flag);
+
+  check_getj(&A0);
 
   return 0;
 }
