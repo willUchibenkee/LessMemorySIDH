@@ -46,7 +46,7 @@ void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
         isogeny_nextp(Q3, Q3, &R.x, 2);
         isogeny_nextp(&S, &S, &R.x, 2);
 
-        efp2_recover_y(&S, S.x, &Ea);
+        efp2_recover_y(&S, S.x);
 
     }
 
@@ -85,7 +85,7 @@ void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
         isogeny_nextp(Q2, Q2, &R.x, 3);
         isogeny_nextp(&S, &S, &R.x, 3);
 
-        efp2_recover_y(&S, S.x, &Ea);
+        efp2_recover_y(&S, S.x);
 
     }
 
@@ -173,17 +173,18 @@ void keygen(){
 
         // Rを2or3同種写像で求める
         //isogeny_changea(fp2_t *nexta, fp2_t *nextb, fp2_t *oldb, fp2_t *alpha)
-        isogeny_changea(&Ea, &Eb, &Ea, &R.x);
+        isogeny_changea(&Ea, &Eb, &Eb, &R.x);
 
         fp2_printf("Rx = ", &R.x);
         fp2_printf("newa = ", &Ea);
+        fp2_printf("newb = ", &Eb);
 
         // Rxを使ってP,Q,Sを更新する
         isogeny_nextp(&P3, &P3, &R.x, 2);
         isogeny_nextp(&Q3, &Q3, &R.x, 2);
         isogeny_nextp(&S, &S, &R.x, 2);
 
-        efp2_recover_y(&S, S.x, &Ea);
+        efp2_recover_y(&S, S.x);
 
         efp2_checkOnCurve(&S, &Ea, &Eb);
 
@@ -195,8 +196,8 @@ void keygen(){
 
     printf("recover_y\n");
 
-    efp2_recover_y(&P3, P3.x, &Ea);
-    efp2_recover_y(&Q3, Q3.x, &Ea);
+    efp2_recover_y(&P3, P3.x);
+    efp2_recover_y(&Q3, Q3.x);
 
     efp2_checkOnCurve(&P3, &Ea, &Eb);
     efp2_checkOnCurve(&Q3, &Ea, &Eb);
@@ -245,12 +246,12 @@ void keygen(){
         isogeny_nextp(&Q2, &Q2, &R.x, 3);
         isogeny_nextp(&S, &S, &R.x, 3);
 
-        efp2_recover_y(&S, S.x, &Ea);
+        efp2_recover_y(&S, S.x);
 
     }
 
-    efp2_recover_y(&P2, P2.x, &Ea);
-    efp2_recover_y(&Q2, Q2.x, &Ea);
+    efp2_recover_y(&P2, P2.x);
+    efp2_recover_y(&Q2, Q2.x);
 
     efp2_checkOnCurve(&P2, &Ea, &Eb);
     efp2_checkOnCurve(&Q2, &Ea, &Eb);

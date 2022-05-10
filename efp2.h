@@ -46,5 +46,5 @@ void efp2_eca(efp2_t *ANS,efp2_t *P1,efp2_t *P2, fp2_t *_Ea, fp2_t *_Eb);
 void efp2_eca_jacobian_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P1,efp2_jacobian_t *P2);
 void efp2_eca_mixture_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P1,efp2_jacobian_t *P2);
 void efp2_scm(efp2_t *ANS,efp2_t *P,mpz_t scalar);
-void efp2_recover_y(efp2_t *ANS, fp2_t X, fp2_t *a);
+void efp2_recover_y(efp2_t *ANS, fp2_t X);
 #endif

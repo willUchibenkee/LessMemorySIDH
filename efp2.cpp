@@ -694,9 +694,10 @@ void efp2_recover_y(efp2_t *ANS, fp2_t X){
   //printf("a\n");
   fp2_sqr(&tmp1, &X);
   //printf("b\n");
-  fp2_mul(&tmp2, &tmp1,&X);     // X^3
+  fp2_mul(&tmp1, &tmp1,&X);     // X^3
   //printf("c\n");
-  fp2_mul(&tmp2, &tmp1, &Ea);  //aX^2
+  fp2_mul(&tmp2, &X, &Ea);  //aX^2
+  fp2_mul(&tmp2, &X, &tmp2);  //aX^2
   //printf("d\n");
   fp2_add(&tmp1,&tmp1,&tmp2);   //X^3+aX^2
   //printf("e\n");
@@ -707,8 +708,15 @@ void efp2_recover_y(efp2_t *ANS, fp2_t X){
   fp2_inv(&tmp2, &Eb);
   fp2_mul(&tmp1, &tmp1, &tmp2);     //(右辺 = 左辺) / Eb
 
+  int flag=fp2_legendre(&tmp1);
+
+  if(flag != 1){
+    printf("tmp1がおかしい\n");
+  }
+
+  printf("↓sqrt\n");
   fp2_sqrt(&tmp1,&tmp1);  //(X^3+aX^2+X)^1/2
-  printf("g\n");
+  printf("sqrt突破\n");
   fp2_set_neg(&tmp2,&tmp1);//-(X^3+aX^2+X)^1/2
 
   if(mpn_cmp(tmp1.x0.x0, tmp2.x0.x0, FPLIMB)<0 && mpn_cmp(tmp1.x1.x0, tmp2.x1.x0, FPLIMB)<0){

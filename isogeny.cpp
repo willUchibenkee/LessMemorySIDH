@@ -93,6 +93,8 @@ void isogeny_nextp(efp2_t *ans, efp2_t *P, fp2_t *alpha, int l){
         //alice       
         //分子
 
+        //xφ2(P) =xP**2 * x2 − xP/ xP − x2
+
         fp2_mul(&temp, &U.x, &U.x);
         fp2_mul(&temp, &temp, alpha);
         fp2_sub(&temp, &temp, &U.x);
