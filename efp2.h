@@ -1,247 +1,50 @@
-// efp2.h(Montgomery)
+#pragma once
+#ifndef EFP2_H
+#define EFP2_H
 
-#include "my_pairing.h"
-#include <stdio.h>
-#include"Fp2.c"
-#include <string.h>
+#include "efp.h"
 
-#define Aval "0000F37AB34BA0CEAD94F43CDC50DE06AD19C67CE4928346E829CB92580DA84D7C36506A2516696BBE3AEB523AD7172A6D239513C5FD2516 000196CA2ED06A657E90A73543F3902C208F410895B49CF84CD89BE9ED6E4EE7E8DF90B05F3FDB8BDFE489D1B3558E987013F9806036C5AC"
-
-Fp2 A;
-
-void Efp2_set_A(){
-    Fp2_set_str(&A, Aval);
-}
-
-//点の出力
-int PrintEC2(ec2 *op){
-    if( op->inf == 1 )printf("!Inf!\n");
-    else {
-        Fp2_print(&op->x);
-        Fp2_print(&op->y);
-    }
-}
-
-int Efp2_checkans(ec2 *P, Fp2 *ap){
-    Fp2 wx, wy, uhen, sahen, work;
-    Fp2_set(&wx, &P->x);
-    Fp2_set(&wy, &P->y);
-
-    Fp2_mul(&sahen, &wy, &wy);
-    Fp2_sqr3(&uhen, &wx);
-    Fp2_mul(&work, &wx, &wx);
-    Fp2_mul(&work, &work, ap);
-    Fp2_add(&uhen, &uhen, &work);
-    Fp2_add(&uhen, &uhen, &wx);
-    if(Fp2_cmp(&uhen, &sahen) == 0){
-        return 0;
-    }else{
-        return 1;
-    }
-}
-
-void Efp2_mgecD(ec2 *R, ec2 *P, Fp2 *ap){
-    Fp2 bumbo, bunshi, bumbo2, bunshi2, katamari, katamari2, work, work2, work3;
-    Fp2 one, four, two2, three2;
-    
-    ec2 U;
-
-    Fp2_set_str(&one, "1 0");
-    Fp2_set_str(&four, "4 0");
-    Fp2_set_str(&two2, "2 0");
-    Fp2_set_str(&three2, "3 0");
-
-    if(P->inf == 1){
-        R->inf = 1;
-    }else{
-        if(Fp2_cmp_zero(&P->x) == 0 || Fp2_cmp_zero(&P->y) == 0){
-            P->inf = 1;
-        }else{
-            //x座標
-
-            //分子の計算
-            Fp2_mul(&bunshi, &P->x, &P->x);
-            Fp2_sub(&bunshi, &bunshi, &one);
-            Fp2_mul(&bunshi, &bunshi, &bunshi);
-            
-            //分母の計算(最後にinv)
-            Fp2_mul(&bumbo, &P->x, &P->x);
-            Fp2_mul(&work, ap, &P->x); 
-            Fp2_add(&bumbo, &bumbo, &work);
-            Fp2_add(&bumbo, &bumbo, &one);
-            Fp2_mul(&bumbo, &bumbo, &P->x);
-            Fp2_mul(&bumbo, &bumbo, &four);
-            Fp2_inv(&bumbo, &bumbo);
-            
-            //分子/分母
-            Fp2_mul(&U.x, &bunshi, &bumbo);
-            
-            //y座標
-            //かたまり１
-            //分子の計算
-            Fp2_mul(&work, &P->x, &two2);
-            Fp2_add(&work, &work, &P->x);
-            Fp2_add(&work, &work, ap);
-            Fp2_mul(&work2, &P->x, &P->x);
-            Fp2_mul(&work2, &work2, &three2);
-            Fp2_mul(&work3, &P->x, ap);
-            Fp2_mul(&work3, &work3, &two2);
-            Fp2_add(&work2, &work2, &work3);
-            Fp2_add(&work2, &work2, &one);
-            Fp2_mul(&bunshi, &work, &work2);
-            
-            //分母の計算(最後にinv)
-            Fp2_mul(&bumbo, &two2, &P->y);
-            Fp2_set(&bumbo2, &bumbo);
-            Fp2_inv(&bumbo, &bumbo);
-            
-            //分子/分母
-            Fp2_mul(&katamari, &bunshi, &bumbo);
-            
-            //かたまり２
-            //分子の計算
-            Fp2_sqr3(&bunshi2, &work2);
-            
-            //分母の計算(最後にinv)
-            Fp2_sqr3(&bumbo2, &bumbo2);
-            Fp2_inv(&bumbo2, &bumbo2);
-   
-            //分子/分母
-            Fp2_mul(&katamari2, &bunshi2, &bumbo2);
-            Fp2_sub(&U.y, &katamari, &katamari2);
-            Fp2_sub(&U.y, &U.y, &P->y);
-            
-            Fp2_set(&R->x, &U.x);
-            Fp2_set(&R->y, &U.y);
-            
-        }
-    }
-    
-}
-
-void Efp2_mgecA(ec2 *R, ec2 *P, ec2 *Q, Fp2 *ap){
-    Fp2 bumbo, bunshi, bumbo2, bunshi2;
-    Fp2 xsa, ysa, work, work2, katamari, katamari2, temp, temp2;
-    Fp2 two;
-    
-    Fp2_set_str(&two, "2 0");
-
-    if(P->inf == 1){
-        if(Q->inf == 1){
-            R->inf = 1;
-        }else{
-            Fp2_set(&R->x, &Q->x);
-            Fp2_set(&R->y, &Q->y);
-            R->inf = 0;
-         }
-    }else{
-        if(Q->inf == 1){
-            Fp2_set(&R->x, &P->x);
-            Fp2_set(&R->y, &P->y);
-            R->inf = 0;
-        }else{
-            if(Fp2_cmp(&P->x, &Q->x) == 0 || Fp2_cmp(&P->y, &Q->y) == 0){
-                if(Fp2_cmp(&P->x, &Q->x) == 0 && Fp2_cmp(&P->y, &Q->y) == 0){
-                    Efp2_mgecD(R, P, ap);
-                }else{
-                    R->inf = 1;
-                }
-            }else{
-                Fp2_sub(&xsa, &Q->x, &P->x);
-                Fp2_sub(&ysa, &Q->y, &P->y);
-
-                //x座標
-                //分子の計算
-                Fp2_mul(&work, &Q->x, &P->y);
-                Fp2_mul(&work2, &Q->y, &P->x);
-                Fp2_sub(&bunshi, &work, &work2); 
-                Fp2_mul(&bunshi, &bunshi, &bunshi);
-                
-                //分母の計算(最後にinv)
-                Fp2_mul(&work, &xsa, &xsa);
-                Fp2_mul(&bumbo, &work, &P->x);
-                Fp2_mul(&bumbo, &bumbo, &Q->x);
-                Fp2_inv(&bumbo, &bumbo);
-
-                //分子/分母
-                Fp2_mul(&temp2, &bumbo, &bunshi);
-
-                //y座標
-                //かたまり１
-                //分子の計算
-                Fp2_mul(&bunshi, &P->x, &two);
-                Fp2_add(&bunshi, &bunshi, &Q->x);
-                Fp2_add(&bunshi, &bunshi, ap);
-                Fp2_mul(&bunshi, &bunshi, &ysa);               
-
-                //分母の計算(最後にinv)
-                Fp2_inv(&bumbo, &xsa);
-
-                //分子/分母
-                Fp2_mul(&katamari, &bumbo, &bunshi);
-
-                //かたまり２
-                //分子の計算
-                Fp2_sqr3(&bunshi2, &ysa);
-
-                //分母の計算(最後にinv)
-                Fp2_sqr3(&bumbo2, &xsa);
-                Fp2_inv(&bumbo2, &bumbo2);
-
-
-                //分子/分母
-                Fp2_mul(&katamari2, &bumbo2, &bunshi2);
-                Fp2_sub(&temp, &katamari, &katamari2);
-                Fp2_sub(&R->y, &temp, &P->y);
-                Fp2_set(&R->x, &temp2);
-            }
-        }
-    }   
-}
-
-void Efp2_to2(char *binary, Fp *in){
-    int i = 0;
-    // value[14] 32bit*14 448bit
-    //2**32=4294967296 max
-    for(int k = 0; k < MOD_WORDS; k++){
-        while(in->value[k] != '\0'){
-            binary[i] = in->value[k] % 2;
-            in->value[i] = in->value[k] / 2;
-            i++;
-        }
-    }
-    
-}
-
-void Efp2_mgecSCM(ec2 *R, ec2 *P, Fp *n, Fp2 *ap){
-    ec2 S,T;
-    S.inf = 1;
-    T.inf = 0;
-
-    // n(16進数)を2進数に変換してbinary[]に入れる
-    int length = 0;
-    length = WORD * MOD_WORDS;
-    char binary[length + 1];
-    Efp2_to2(binary, n);
-    //
-
-    Fp2_set(&T.x, &P->x);
-    Fp2_set(&T.y, &P->y);
-    T.inf = P->inf;
-
-    if(Fp_cmp_one(n)){
-        Fp2_set(&R->x, &P->x);
-        Fp2_set(&R->y, &P->y);
-    }else{
-        for(int k = length-1; k >= 0; k--){
-            if(binary[k] == '1'){
-                Efp2_mgecA(&S, &S, &T, ap);
-            }
-            Efp2_mgecD(&T, &T, ap);
-        }
-        Fp2_set(&R->x, &S.x);
-        Fp2_set(&R->y, &S.y);
-        R->inf = S.inf;
-    }
-}
-
+void efp2_init(efp2_t *P);
+void efp2_projective_init(efp2_projective_t *P);
+void efp2_jacobian_init(efp2_jacobian_t *P);
+void efp2_printf(std::string str ,efp2_t *P);
+void efp2_println(std::string str ,efp2_t *P);
+void efp2_projective_printf(std::string str ,efp2_projective_t *P);
+void efp2_jacobian_printf(std::string str ,efp2_jacobian_t *P);
+void efp2_printf_montgomery(std::string str ,efp2_t *P);
+void efp2_jacobian_printf_montgomery(std::string str ,efp2_jacobian_t *P);
+void efp2_projective_printf_montgomery(std::string str ,efp2_projective_t *P);
+void efp2_projective_printf_affine(std::string str ,efp2_projective_t *P);
+void efp2_projective_printf_affine_montgomery(std::string str ,efp2_projective_t *P);
+void efp2_set(efp2_t *ANS,efp2_t *A);
+void efp2_projective_set(efp2_projective_t *ANS,efp2_projective_t *A);
+void efp2_jacobian_set(efp2_jacobian_t *ANS,efp2_jacobian_t *A);
+void efp2_affine_to_projective(efp2_projective_t *ANS,efp2_t *A);
+void efp2_affine_to_jacobian(efp2_jacobian_t *ANS,efp2_t *A);
+void efp2_affine_to_projective_montgomery(efp2_projective_t *ANS,efp2_t *A);
+void efp2_affine_to_jacobian_montgomery(efp2_jacobian_t *ANS,efp2_t *A);
+void efp2_jacobian_to_affine(efp2_t *ANS,efp2_jacobian_t *A);
+void efp2_projective_to_affine(efp2_t *ANS,efp2_projective_t *A);
+void efp2_jacobian_to_affine_montgomery(efp2_t *ANS,efp2_jacobian_t *A);
+void efp2_projective_to_affine_montgomery(efp2_t *ANS,efp2_projective_t *A);
+void efp2_mix(efp2_jacobian_t *ANS,efp2_jacobian_t *A,fp2_t *Zi);
+void efp2_mix_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *A,fp2_t *Zi);
+void efp2_set_ui(efp2_t *ANS,unsigned long int UI);
+void efp2_to_montgomery(efp2_t *ANS,efp2_t *A);
+void efp2_projective_to_montgomery(efp2_projective_t *ANS,efp2_projective_t *A);
+void efp2_mod_montgomery(efp2_t *ANS,efp2_t *A);
+void efp2_projective_mod_montgomery(efp2_projective_t *ANS,efp2_projective_t *A);
+void efp2_set_mpn(efp2_t *ANS,mp_limb_t *A);
+void efp2_set_neg(efp2_t *ANS,efp2_t *A);
+void efp2_jacobian_set_neg(efp2_jacobian_t *ANS,efp2_jacobian_t *A);
+int efp2_cmp(efp2_t *A,efp2_t *B);
+void efp2_rational_point(efp2_t *P);
+void efp2_ecd(efp2_t *ANS, efp2_t *P, fp2_t *_Ea, fp2_t *_Eb);
+void efp2_ecd_jacobian_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P);
+void efp2_checkOnCurve(efp2_t* A, fp2_t *_Ea, fp2_t *_Eb);
+void efp2_eca(efp2_t *ANS,efp2_t *P1,efp2_t *P2, fp2_t *_Ea, fp2_t *_Eb);
+void efp2_eca_jacobian_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P1,efp2_jacobian_t *P2);
+void efp2_eca_mixture_lazy_montgomery(efp2_jacobian_t *ANS,efp2_jacobian_t *P1,efp2_jacobian_t *P2);
+void efp2_scm(efp2_t *ANS,efp2_t *P,mpz_t scalar);
+void efp2_recover_y(efp2_t *ANS, fp2_t X, fp2_t *a);
+#endif
