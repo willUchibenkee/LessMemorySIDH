@@ -46,7 +46,7 @@ void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
         isogeny_nextp(Q3, Q3, &R.x, 2);
         isogeny_nextp(&S, &S, &R.x, 2);
 
-        efp2_recover_y(&S, S.x);
+        //efp2_recover_y(&S, S.x);
 
     }
 
@@ -184,8 +184,9 @@ void keygen(){
         isogeny_nextp(&Q3, &Q3, &R.x, 2);
         isogeny_nextp(&S, &S, &R.x, 2);
 
-        efp2_recover_y(&S, S.x);
+        //efp2_recover_y(&S, S.x);
 
+        printf("S check\n");
         efp2_checkOnCurve(&S, &Ea, &Eb);
 
         //gmp_printf("j: %Zd\n", j);
@@ -194,10 +195,10 @@ void keygen(){
 
     }
 
-    printf("recover_y\n");
+    //printf("recover_y\n");
 
-    efp2_recover_y(&P3, P3.x);
-    efp2_recover_y(&Q3, Q3.x);
+    // efp2_recover_y(&P3, P3.x);
+    // efp2_recover_y(&Q3, Q3.x);
 
     efp2_checkOnCurve(&P3, &Ea, &Eb);
     efp2_checkOnCurve(&Q3, &Ea, &Eb);
