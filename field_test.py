@@ -4,39 +4,30 @@ import fp
 import fp2
 
 #fpのテストです
-# a = fp.fp_t(56)
-# b = fp.fp_t(281)
-# ans = fp.fp_t(0)
-
-# #add 337になるはず
-# print(f'a + b = {a + b}')
-
-# #sub 206のはず
-# print(f'a - b = {a - b}')
-
-# #フェルマーの小定理 A*(A/1) = 1
-# ans.inv(a)
-# print("フェルマーの小定理の確認")
-# ans = fp.mul(a, ans)
-# fp.print_fp(ans)
+afp = fp.fp_t(56)
+bfp = fp.fp_t(281)
+ansfp = fp.fp_t(0)
+#add 337になるはず
+print(f'a + b = {afp + bfp}')
+#sub 206のはず
+print(f'a - b = {afp - bfp}')
+#フェルマーの小定理 A*(A/1) = 1
+inv = afp.inv()
+print("フェルマーの小定理の確認")
+ansfp = afp*inv
+print(ansfp)
+#fp2のテストです
 
 #fp2のテストです
-a, bi = 56, 67
-c, di = 281, 38
-
-ans, ansi = fp2.fp2_add(a, bi, c, di)
-
+c = fp2.fp2_t(56,334)
+d = fp2.fp2_t(281,27)
+ans2 = fp2.fp2_t(0,0)
 #add 337になるはず
-print(f'c + d = {ans} + {ansi}i')
-
-ans, ansi = fp2.fp2_sub(a, bi, c, di)
-
+print(f'c + d = {c + d}')
 #sub 206のはず
-print(f'c - d = {ans} + {ansi}i')
-
+print(f'c - d = {c - d}')
 #フェルマーの小定理 A*(A/1) = 1
-fp2.fp2_print(c, di)
-tmp, tmpi = fp2.fp2_inv(c, di)
+inv2 = c.inv()
 print("フェルマーの小定理の確認")
-ans, ansi = fp2.fp2_mul(c, di, tmp, tmpi)
-fp2.fp2_print(ans, ansi)
+ans2 = c*inv2
+print(ans2)
