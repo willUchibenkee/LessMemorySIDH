@@ -75,9 +75,9 @@ class fp2_t:
     #inv     フェルマーの小定理 a**(p-1) = 1 mod p　から　a**(p-2) = 1/a
     def inv(self):
         ans = fp2_t(1, 0)
-        for count in range(define.prime_z - 2):
+        for count in range(define.prime_z**2 - 2):
             ans = ans * self
-            print(ans)
+            #print(ans)
             #ans.mod()
-            input()
+            #input()
         return ans.mod()
