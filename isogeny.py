@@ -51,78 +51,77 @@ def isogeny_changea(oldb: fp2.fp2_t, alpha: fp2.fp2_t):
     return nexta.mod(), nextb.mod()
 
 # 2-isogeny
-# def isogeny_nextp(ans: efp2_t, P: efp2_t, alpha:fp2_t, l:int):
-    # # //同種写像Φを求めます
-    # # //P...点 alpha...スタート点 l...AliceですかBobですか
-    # U,V = efp2_t(P.x.x0,P.x.x1,P.y.x0,P.y.x1,0, efp2_t(0,0,0,0,0))
+def isogeny_nextp(ans: efp2_t, P: efp2_t, alpha:fp2_t, l:int):
+    # //同種写像Φを求めます
+    # //P...点 alpha...スタート点 l...AliceですかBobですか
+    U,V = efp2_t(P.x.x0,P.x.x1,P.y.x0,P.y.x1,0, efp2_t(0,0,0,0,0))
 
-    # #//U.infinity =  P->infinity
+    #//U.infinity =  P->infinity
 
-    # temp, temp2, bumbo = fp2.fp2_t(0,0),fp2.fp2_t(0,0), fp2.fp2_t(0,0)
+    temp, temp2, bumbo = fp2.fp2_t(0,0),fp2.fp2_t(0,0), fp2.fp2_t(0,0)
 
-    # #if(l == 2){
-    #     # //alice       
-    #     # //分子
+    if l == 2:
+        # //alice       
+        # //分子
 
-    #     # //xφ2(P) =xP**2 * x2 − xP/ xP − x2
+        # //xφ2(P) =xP**2 * x2 − xP/ xP − x2
 
-    #     temp = &U.x * &U.x
-    #     temp = &temp * alpha
-    #     temp = temp - &U.x
+        temp = U.x * U.x
+        temp = temp * alpha
+        temp = temp - U.x
 
-    #     #//fp2_printf("bunshi = ", &temp)
+        #//fp2_printf("bunshi = ", &temp)
 
-    #     #//分母
-    #     bumbo = P.x - alpha
+        #//分母
+        bumbo = P.x - alpha
 
-    #     #//fp2_printf("bumbo = ", &bumbo);
+        #//fp2_printf("bumbo = ", &bumbo);
 
-    #     bumbo = bumbo.inv()
+        bumbo = bumbo.inv()
 
-    #     #//fp2_printf("inv bumbo = ", &bumbo)
+        #//fp2_printf("inv bumbo = ", &bumbo)
 
-    #     #//掛け算
-    #     V.x = temp * bumbo
+        #//掛け算
+        V.x = temp * bumbo
 
-    #     #//set
-    #     ans.x = &V.x
+        #//set
+        ans.x = V.x
 
-    #     #//y 分子 xP**2* alpha − 2*xP*alpha**2 + alpha
-    #     fp2_mul(&temp, &U.x, &U.x)
-    #     fp2_mul(&temp, &temp, alpha)
-    #     fp2_sub(&temp, &temp, &U.x)
+        #//y 分子 xP**2* alpha − 2*xP*alpha**2 + alpha
+        temp = U.x * U.x
+        temp = temp * alpha
+        temp = temp - U.x
 
-    #     fp2_add(&temp2, &U.x, &U.x)
-    #     fp2_mul(&temp2, &temp2, alpha)
-    #     fp2_mul(&temp2, &temp2, alpha)
+        temp2 = U.x * U.x
+        temp2 = temp2 * alpha
+        temp2 = temp2 * alpha
 
-    #     fp2_sub(&temp, &temp, &temp2)
+        temp = temp - temp2
 
-    #     fp2_add(&temp, &temp, alpha)
+        temp = temp + alpha
 
-    #     #//fp2_printf("bunshi =", &temp);
+        #//fp2_printf("bunshi =", &temp);
 
-    #     #//分母　(xP − alpha)**2
-    #     fp2_sub(&bumbo, &U.x, alpha)
-    #     fp2_mul(&bumbo, &bumbo, &bumbo)
+        #//分母　(xP − alpha)**2
+        bumbo = U.x - alpha
+        bumbo = bumbo * bumbo
 
-    #     #//fp2_printf("bumbo =", &bumbo);
+        #//fp2_printf("bumbo =", &bumbo);
 
-    #     fp2_inv(&bumbo, &bumbo)
+        bumbo = bumbo.inv()
 
-    #     #//fp2_printf("inv bumbo =", &bumbo);
+        #//fp2_printf("inv bumbo =", &bumbo);
 
-    #     fp2_mul(&temp, &temp, &bumbo)
-    #     fp2_mul(&V.y, &temp, &U.y)
+        temp = temp * bumbo
+        V.y = temp * U.y
 
-    #     # // c**2 = alpha からcを求めて掛ける
-    #     # //(C), (D)の切り替え
-    #     if(fp2_legendre(alpha) == 1){
-    #         fp2_sqrt(&temp, alpha)
-    #         fp2_mul(&V.y, &V.y, &temp)
-    #     }
+        # // c**2 = alpha からcを求めて掛ける
+        # //(C), (D)の切り替え
+        if fp2_legendre(alpha) == 1:
+            fp2_sqrt(&temp, alpha)
+            V.y = V.y * temp
 
-    #     fp2_set(&ans->y, &V.y)
+        ans.y = V.y
 
     # # }else{
     # #     //bob

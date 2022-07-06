@@ -81,3 +81,68 @@ class fp2_t:
             #ans.mod()
             #input()
         return ans.mod()
+
+    def pow(self, scalar: int):
+  int i,length;
+  length=(int)mpz_sizeinbase(scalar,2);
+  char binary[length+1];
+  mpz_get_str(binary,2,scalar);
+  fp2_t tmp;
+  fp2_init(&tmp);
+  fp2_set(&tmp,A);
+
+  for(i=1;i<length; i++){
+    fp2_sqr(&tmp,&tmp);
+    if(binary[i]=='1')  fp2_mul(&tmp,A,&tmp);
+  }
+  fp2_set(ANS,&tmp);
+    
+    #sqrt
+    def fp2_sqrt(self):
+        x,y,t,k,n,tmp = fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0)
+    e,m = 0, 0
+    exp,q,z,result = 0, 0, 0, 0
+
+    fp2_set_random(&n,state)
+    while fp2_legendre(&n) != -1 :
+        n = state  #nは乱数
+    q = prime_z**2
+    q = q - 1
+    result = q**2
+    e = 0
+    while result == 0:
+        q = q / 2
+        result = q % 2
+        e = e + 1
+    y = n**q
+    z = e
+    exp = q-1
+    exp = exp/2
+    fp2_pow(&x,A,exp);
+    fp2_mul(&tmp,&x,&x);
+    fp2_mul(&k,&tmp,A);
+    fp2_mul(&x,&x,A);
+    while(fp2_cmp_one(&k)!=0){
+        m=1;
+        mpz_ui_pow_ui(exp,2,m);
+        fp2_pow(&tmp,&k,exp);
+        while(fp2_cmp_one(&tmp)!=0){
+        m++;
+        mpz_ui_pow_ui(exp,2,m);
+        fp2_pow(&tmp,&k,exp);
+        }
+        mpz_sub_ui(exp,z,m);
+        mpz_sub_ui(exp,exp,1);
+        mpz_ui_pow_ui(result,2,mpz_get_ui(exp));
+        fp2_pow(&t,&y,result);
+        fp2_mul(&y,&t,&t);
+        mpz_set_ui(z,m);
+        fp2_mul(&x,&x,&t);
+        fp2_mul(&k,&k,&y);
+    }
+    fp2_set(ANS,&x);
+
+    mpz_clear(exp);
+    mpz_clear(q);
+    mpz_clear(z);
+    mpz_clear(result);
