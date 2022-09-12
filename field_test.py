@@ -31,3 +31,13 @@ inv2 = c.inv()
 print("フェルマーの小定理の確認")
 ans2 = c*inv2
 print(ans2)
+
+#powのテストとsqrtのテスト
+inv3 = c.pow(define.prime_z**2-2)
+print(f'inv2: {inv2}')
+print(inv3)
+ans3 = c * inv3
+print(f'c * c**p**2-2 = {ans3}')
+test = c*c
+ans4 = c.sqrt()
+print(f'c = {ans4}')

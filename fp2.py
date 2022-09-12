@@ -1,6 +1,7 @@
 #fp2.py
 import define
 import fp
+import random
 
 class fp2_t:
     def __init__(self, x0, x1):
@@ -83,66 +84,105 @@ class fp2_t:
         return ans.mod()
 
     def pow(self, scalar: int):
-  int i,length;
-  length=(int)mpz_sizeinbase(scalar,2);
-  char binary[length+1];
-  mpz_get_str(binary,2,scalar);
-  fp2_t tmp;
-  fp2_init(&tmp);
-  fp2_set(&tmp,A);
+        #T:tmp S:s
+        i,length = 0, 0
+        length = bin(scalar)
+        binary = str(length)
+        tmp = fp2_t(0,0)
+        tmp = self
+        s = fp2_t(1,0)
 
-  for(i=1;i<length; i++){
-    fp2_sqr(&tmp,&tmp);
-    if(binary[i]=='1')  fp2_mul(&tmp,A,&tmp);
-  }
-  fp2_set(ANS,&tmp);
+        for i in reversed(range(2, len(length))):
+
+            #print(i)
+            #print(binary[i])
+
+            if binary[i] == '1':
+                s = s * tmp
+                #print('S = ST')
+            
+            #input()
+            tmp = tmp * tmp
+
+        return s.mod()
+
+#0なら0, そうでないなら１を返す
+    def cmp_one(self):
+        if self.x0 == 0:
+            if self.x1 == 0:
+                return 0
+            else:
+                return 1
+        else:
+            return 1
+
+    def legendre(self):
+        tmp = fp2_t(0, 0)
+
+        #(p^2 -1)/2 を計算
+        expo = define.prime_z**2
+        expo = expo - 1
+        expo = expo / 2
+        print(expo)
+        tmp = self.pow(int(expo))
+
+        if tmp.cmp_one() == 0:
+            return 1
+        else:
+            return -1
     
     #sqrt
-    def fp2_sqrt(self):
-        x,y,t,k,n,tmp = fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0), fp2.fp2_t(0,0)
-    e,m = 0, 0
-    exp,q,z,result = 0, 0, 0, 0
+    def sqrt(self):
+        x,y,t,k,n,tmp = fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0)
+        e,m = 0, 0
+        exp,q,z,result = 0, 0, 0, 0
 
-    fp2_set_random(&n,state)
-    while fp2_legendre(&n) != -1 :
-        n = state  #nは乱数
-    q = prime_z**2
-    q = q - 1
-    result = q**2
-    e = 0
-    while result == 0:
-        q = q / 2
-        result = q % 2
-        e = e + 1
-    y = n**q
-    z = e
-    exp = q-1
-    exp = exp/2
-    fp2_pow(&x,A,exp);
-    fp2_mul(&tmp,&x,&x);
-    fp2_mul(&k,&tmp,A);
-    fp2_mul(&x,&x,A);
-    while(fp2_cmp_one(&k)!=0){
-        m=1;
-        mpz_ui_pow_ui(exp,2,m);
-        fp2_pow(&tmp,&k,exp);
-        while(fp2_cmp_one(&tmp)!=0){
-        m++;
-        mpz_ui_pow_ui(exp,2,m);
-        fp2_pow(&tmp,&k,exp);
-        }
-        mpz_sub_ui(exp,z,m);
-        mpz_sub_ui(exp,exp,1);
-        mpz_ui_pow_ui(result,2,mpz_get_ui(exp));
-        fp2_pow(&t,&y,result);
-        fp2_mul(&y,&t,&t);
-        mpz_set_ui(z,m);
-        fp2_mul(&x,&x,&t);
-        fp2_mul(&k,&k,&y);
-    }
-    fp2_set(ANS,&x);
+        n.x0 = random.randint(0, define.prime_z-1)
+        n.x1 = random.randint(0, define.prime_z-1)
 
-    mpz_clear(exp);
-    mpz_clear(q);
-    mpz_clear(z);
-    mpz_clear(result);
+        n.info()
+
+        while n.legendre() != -1 :
+            n.x0 = random.randint(0, define.prime_z-1)
+            n.x1 = random.randint(0, define.prime_z-1)  #nは乱数
+            
+        q = define.prime_z**2
+        q = q - 1
+        result = q**2
+        e = 0
+
+        while result == 0:
+            q = q / 2
+            result = q % 2
+            e = e + 1
+
+        y = n**q #ここでバグ
+        z = e
+        exp = q-1
+        exp = exp/2
+        x = self.pow(exp)
+        tmp = x * x
+        k = tmp * self
+        x = x * self
+
+        while k.cmp_one()!=0:
+            m=1
+            exp = 2**m
+            tmp = k.pow(exp)
+
+            while tmp.cmp_one()!=0:
+                m = m + 1
+                exp = 2**m
+                tmp = k.pow(exp)
+
+            exp = z - m
+            exp = exp - 1
+            result = 2**exp.x0
+            t = y.pow(result)
+            y = t * t
+            z = m
+            x = x * t
+            k = k * y
+
+        ANS = x
+        return ANS.mod()
