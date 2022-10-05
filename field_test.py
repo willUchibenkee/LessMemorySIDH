@@ -35,9 +35,11 @@ print(ans2)
 #powのテストとsqrtのテスト
 inv3 = c.pow(define.prime_z**2-2)
 print(f'inv2: {inv2}')
-print(inv3)
+#print(inv3)
 ans3 = c * inv3
 print(f'c * c**p**2-2 = {ans3}')
+#sqrt ２乗してルートをとったら戻る？
 test = c*c
-ans4 = c.sqrt()
-print(f'c = {ans4}')
+print(f'c**2 = {test}')
+ans4, ans5 = test.sqrt()
+print(f'c = {ans4} or {ans5}')

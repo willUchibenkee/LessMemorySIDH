@@ -108,7 +108,7 @@ class fp2_t:
 
 #0なら0, そうでないなら１を返す
     def cmp_one(self):
-        if self.x0 == 0:
+        if self.x0 == 1:
             if self.x1 == 0:
                 return 0
             else:
@@ -123,7 +123,7 @@ class fp2_t:
         expo = define.prime_z**2
         expo = expo - 1
         expo = expo / 2
-        print(expo)
+        #print(expo)
         tmp = self.pow(int(expo))
 
         if tmp.cmp_one() == 0:
@@ -132,57 +132,98 @@ class fp2_t:
             return -1
     
     #sqrt
-    def sqrt(self):
-        x,y,t,k,n,tmp = fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0)
-        e,m = 0, 0
-        exp,q,z,result = 0, 0, 0, 0
+    #x = ± n**(p+1)/4
+    # def sqrt(self):
+    #     # tmp = define.prime_z + 1
+    #     # tmp = tmp / 4
+    #     # #print(tmp)
+    #     # #print(self)
+    #     # ans2 = self.pow(108)
+    #     # ans = self.pow(int(tmp))
+    #     # # print(ans)
+    #     # # print(ans2)
+    #     # return ans.mod(), ans.neg()
+    #     x,y,t,k,n,tmp = fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0), fp2_t(0,0)
+    #     e,m = 0, 0
+    #     exp,q,z,result = 0, 0, 0, 0
 
-        n.x0 = random.randint(0, define.prime_z-1)
-        n.x1 = random.randint(0, define.prime_z-1)
+    #     n.x0 = random.randint(0, define.prime_z-1)
+    #     n.x1 = random.randint(0, define.prime_z-1)
 
-        n.info()
-
-        while n.legendre() != -1 :
-            n.x0 = random.randint(0, define.prime_z-1)
-            n.x1 = random.randint(0, define.prime_z-1)  #nは乱数
+    #     while n.legendre() != -1 :
+    #         n.x0 = random.randint(0, define.prime_z-1)
+    #         n.x1 = random.randint(0, define.prime_z-1)  #nは乱数
             
-        q = define.prime_z**2
-        q = q - 1
-        result = q**2
-        e = 0
+    #     q = define.prime_z**2
+    #     q = q - 1
+    #     result = q**2
+    #     e = 0
 
-        while result == 0:
-            q = q / 2
-            result = q % 2
-            e = e + 1
+    #     print(f'result = {result}')
 
-        y = n**q #ここでバグ
-        z = e
-        exp = q-1
-        exp = exp/2
-        x = self.pow(exp)
-        tmp = x * x
-        k = tmp * self
-        x = x * self
+    #     while result != 0:
+    #         q = q / 2
+    #         result = q % 2
+    #         e = e + 1
 
-        while k.cmp_one()!=0:
-            m=1
-            exp = 2**m
-            tmp = k.pow(exp)
+    #         print(f'result = {result}')
+    #         print(f'q = {q}')
 
-            while tmp.cmp_one()!=0:
-                m = m + 1
-                exp = 2**m
-                tmp = k.pow(exp)
+    #     n.info()
+    #     print(q)
 
-            exp = z - m
-            exp = exp - 1
-            result = 2**exp.x0
-            t = y.pow(result)
-            y = t * t
-            z = m
-            x = x * t
-            k = k * y
+    #     y = n.pow(int(q)) 
+    #     z = e
+    #     exp = q-1
+    #     exp = exp/2
+    #     x = self.pow(int(exp))
+    #     tmp = x * x
+    #     k = tmp * self
+    #     x = x * self
 
-        ANS = x
-        return ANS.mod()
+    #     print('loopここから')
+
+    #     while k.cmp_one()!=0:
+    #         m=1
+    #         exp = 2**m
+    #         tmp = k.pow(int(exp))
+
+    #         while tmp.cmp_one()!=0:
+    #             m = m + 1
+    #             exp = 2**m
+    #             print(exp)
+    #             tmp = k.pow(int(exp))
+    #             print(f'tmp: {tmp}')
+    #             input()
+
+    #         exp = z - m
+    #         exp = exp - 1
+    #         result = 2**exp.x0
+    #         t = y.pow(int(result))
+    #         y = t * t
+    #         z = m
+    #         x = x * t
+    #         k = k * y
+    #         print(f'k: {k}')
+    #         input()
+
+    #     ANS = x
+    #     return ANS.mod()
+
+    # p = 431
+    # q = p
+    def sqrt(self):
+        tmp = (define.prime_z-3)//4
+        a1 = self.pow(tmp)
+        alpha = a1*(a1*self)
+        #print(alpha)
+        tmp = define.prime_z
+        a0 = alpha.pow(tmp)
+        x0 = a1*self
+        tmp = (define.prime_z-1)//2
+        alpha = alpha + fp2_t(1, 0)
+        #print(alpha)
+        #print(tmp)
+        b = alpha.pow(tmp)
+        x = b*x0
+        return x, x.neg()
