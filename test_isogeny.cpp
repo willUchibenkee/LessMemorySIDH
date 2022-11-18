@@ -1,7 +1,15 @@
 //test_isogeny.cpp
+
 #include "test_isogeny.h"
 #include "isogeny.h"
 #include <cstdio>
+
+/*①補助点P,QからSを計算(eca,scm P+kQ)
+　②SからRを計算 (αの決定 ecd or ect)
+　③αからP,Q,S,aを再決定 (changea(), nextp())
+　最終形 PKa (Pb, Qb, aA), PKb(Pa, Qa, aB)
+　ある関数：gets(), changa(), changeb(), nextp(), eca(), ecd(), scm(), ect(), gety(), getj()
+　作る関数　keygen():公開鍵作成まで keyexcng():j不変量一致まで*/
 
 void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
     // 鍵共有
@@ -108,8 +116,11 @@ void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
 }
 
 void keygen(){
-    // 鍵生成
-
+    /*やること
+    ①補助点P,QからSを計算(eca,scm P+kQ)
+　　②SからRを計算 (αの決定 ecd or ect)
+　　③αからP,Q,S,aを再決定 (changea(), nextp())
+　　②、③は繰り返す*/
     printf("keygen starts.\n");
 
     gmp_randinit_default(state);
@@ -122,10 +133,10 @@ void keygen(){
     efp2_init(&P3);
     efp2_init(&Q3);
 
-    // efp2_rational_point(&P3);
-    // efp2_rational_point(&Q3);
-    efp2_set_a_b_c_d(&P3, 275, 358, 104, 410);
-    efp2_set_a_b_c_d(&Q3, 185, 20, 239, 281);
+    efp2_rational_point(&P3);
+    efp2_rational_point(&Q3);
+    // efp2_set_a_b_c_d(&P3, 275, 358, 104, 410);
+    // efp2_set_a_b_c_d(&Q3, 185, 20, 239, 281);
     efp2_println("P3 = ",&P3);
     efp2_println("Q3 = ",&Q3);
     printf("---------------------------------\n");
@@ -189,18 +200,18 @@ void keygen(){
         //efp2_recover_y(&S, S.x);
 
         printf("S check\n");
-        efp2_checkOnCurve(&S, &Ea, &Eb);
+        //efp2_checkOnCurve(&S, &Ea, &Eb);
 
         //gmp_printf("j: %Zd\n", j);
 
-        getchar();
+        //getchar();
 
     }
 
-    //printf("recover_y\n");
+    printf("recover_y\n");
 
-    // efp2_recover_y(&P3, P3.x);
-    // efp2_recover_y(&Q3, Q3.x);
+    efp2_recover_y(&P3, P3.x);
+    efp2_recover_y(&Q3, Q3.x);
 
     efp2_checkOnCurve(&P3, &Ea, &Eb);
     efp2_checkOnCurve(&Q3, &Ea, &Eb);

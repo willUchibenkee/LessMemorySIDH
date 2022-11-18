@@ -303,7 +303,7 @@ void isogeny_nextp(efp2_t *ans, efp2_t *P, fp2_t *alpha, int l){
         //tmp = temp * alpha
         fp2_mul(&tmp, &tmp, alpha);
         //tmp = temp - Ux
-        fp2_sub(&tmp, &tmp, Ux);
+        fp2_sub(&tmp, &tmp, &Ux);
 
         //print('tmp = {temp}')
 

@@ -74,11 +74,6 @@ void fp2_set_ui_ui(fp2_t *ANS,unsigned long int UI){
   fp_set_ui(&ANS->x1,UI);
 }
 
-void fp2_set_a_b(fp2_t *ANS, unsigned long int UI_a, unsigned long int UI_b){
-  fp_set_ui(&ANS->x0, UI_a);
-  fp_set_ui(&ANS->x1, UI_b);
-}
-
 void fp2_set_mpn(fp2_t *ANS,mp_limb_t *A){
   fp_set_mpn(&ANS->x0,A);
   fp_set_ui(&ANS->x1,0);
