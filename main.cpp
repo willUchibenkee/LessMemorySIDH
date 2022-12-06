@@ -94,11 +94,7 @@ int main(){
   // efp_println("P2 = ",&P2);
   // efp_checkOnCurve(&P2,&Ea.x0,&Eb.x0);
 
-  // sidh ground
-
   keygen();
-
-  printf("*********************************************************************************************\n\n");
 
   return 0;
 }

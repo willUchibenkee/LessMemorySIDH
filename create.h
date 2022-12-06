@@ -2,8 +2,7 @@
 #ifndef CREATE_H
 #define CREATE_H
 
-//#include "efp2.h"
-#include "isogeny.h"
+#include "efp2.h"
 
 void create_prt();
 void check_base();

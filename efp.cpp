@@ -233,22 +233,16 @@ void efp_rational_point(efp_t *P){
   fp_init(&tmp_ax);
   fp_init(&tmp_y2);
 
-  fp_t tmp;
-  fp_init(&tmp);
-
   P->infinity=0;
   while(1){
     fp_set_random(&P->x,state);
-    //by^2 = x^3 + ax^2+ x 
+    //by^2 = x^3 + ax^2+ x (b=1)
     fp_sqr(&tmp_ax,&P->x);            //x^2
     fp_mul(&tmp_y2,&tmp_ax,&P->x);    //x^3
     fp_mul(&tmp_ax,&tmp_ax,&Ea.x0);   //Eax^2x
 
     fp_add(&tmp_y2,&tmp_y2,&P->x);    //x^3 + x
     fp_add(&tmp_y2,&tmp_y2,&tmp_ax);  //x^3 + EaX^2 + x 
-
-    fp_inv(&tmp, &Eb.x0);
-    fp_mul(&tmp_y2, &tmp_y2, &tmp);
 
     if(fp_legendre(&tmp_y2)==1){
       fp_sqrt(&P->y,&tmp_y2);

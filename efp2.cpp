@@ -264,12 +264,6 @@ void efp2_set_ui(efp2_t *ANS,unsigned long int UI){
   ANS->infinity=0;
 }
 
-void efp2_set_a_b_c_d(efp2_t *ANS, unsigned long int UI_a, unsigned long int UI_b, unsigned long int UI_c, unsigned long int UI_d){
-  fp2_set_a_b(&ANS->x, UI_a, UI_b);
-  fp2_set_a_b(&ANS->y, UI_c, UI_d);
-  ANS->infinity=0;
-}
-
 void efp2_to_montgomery(efp2_t *ANS,efp2_t *A){
   fp2_to_montgomery(&ANS->x,&A->x);
   fp2_to_montgomery(&ANS->y,&A->y);
@@ -691,41 +685,21 @@ void efp2_scm(efp2_t *ANS,efp2_t *P,mpz_t scalar){
 void efp2_recover_y(efp2_t *ANS, fp2_t X){
   fp2_t tmp1, tmp2;
   fp2_set(&ANS->x, &X);
-
-  printf("recover_y start.\n");
-
-  fp2_printf("X = ", &X);
   
   //create right
-  //printf("a\n");
   fp2_sqr(&tmp1, &X);
-  //printf("b\n");
-  fp2_mul(&tmp1, &tmp1,&X);     // X^3
-  //printf("c\n");
-  fp2_mul(&tmp2, &X, &Ea);  //aX^2
-  fp2_mul(&tmp2, &X, &tmp2);  //aX^2
-  //printf("d\n");
-  fp2_add(&tmp1,&tmp1,&tmp2);   //X^3+aX^2
-  //printf("e\n");
-  fp2_add(&tmp1,&tmp1,&X);      //X^3+aX^2+X
+  fp2_mul(&tmp2, &tmp1,&X);     // X^3
+  fp2_mul(&tmp1, &tmp1, &Ea);  //AX^2
+  fp2_add(&tmp1,&tmp1,&tmp2);   //X^3+AX^2
+  fp2_add(&tmp1,&tmp1,&X);      //X^3+AX^2+X
 
-  fp2_println("temp1: ", &tmp1);
-
-  fp2_inv(&tmp2, &Eb);
-  fp2_mul(&tmp1, &tmp1, &tmp2);     //(右辺 = 左辺) / Eb
-
-  fp2_println("Eb: ", &Eb);
-
-  int flag=fp2_legendre(&tmp1);
-
-  if(flag != 1){
-    printf("tmp1がおかしい\n");
+  if(fp2_legendre(&tmp1) == -1){
+    printf("no sqrt\n");
   }
-
-  printf("↓sqrt\n");
-  fp2_sqrt(&tmp1,&tmp1);  //(X^3+aX^2+X)^1/2
-  printf("sqrt突破\n");
-  fp2_set_neg(&tmp2,&tmp1);//-(X^3+aX^2+X)^1/2
+  printf("sqrt\n");
+  //fp2_println("tmp1 = ", &tmp1);
+  fp2_sqrt(&tmp1,&tmp1);  //(X^3+6X^2+X)^1/2
+  fp2_set_neg(&tmp2,&tmp1);//-(X^3+6X^2+X)^1/2
 
   if(mpn_cmp(tmp1.x0.x0, tmp2.x0.x0, FPLIMB)<0 && mpn_cmp(tmp1.x1.x0, tmp2.x1.x0, FPLIMB)<0){
     fp2_set(&ANS->y, &tmp1);
