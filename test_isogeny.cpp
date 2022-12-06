@@ -133,17 +133,23 @@ void keygen(){
     efp2_init(&P3);
     efp2_init(&Q3);
 
-    efp2_rational_point(&P3);
-    efp2_rational_point(&Q3);
+    efp2_set(&P2, &Pa);
+    efp2_set(&Q2, &Qa);
+
+    efp2_set(&P3, &Pb);
+    efp2_set(&Q3, &Qb);
     // efp2_set_a_b_c_d(&P3, 275, 358, 104, 410);
     // efp2_set_a_b_c_d(&Q3, 185, 20, 239, 281);
     efp2_println("P3 = ",&P3);
     efp2_println("Q3 = ",&Q3);
 
-    efp2_rational_point(&P2);
-    efp2_rational_point(&Q2);
     efp2_println("P2 = ",&P2);
     efp2_println("Q2 = ",&Q2);
+
+    efp2_checkOnCurve(&P3, &Ea, &Eb);
+    efp2_checkOnCurve(&Q3, &Ea, &Eb);
+    efp2_checkOnCurve(&P2, &Ea, &Eb);
+    efp2_checkOnCurve(&Q2, &Ea, &Eb);
 
     printf("---------------------------------\n");
 

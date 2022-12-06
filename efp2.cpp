@@ -290,9 +290,15 @@ void efp2_projective_mod_montgomery(efp2_projective_t *ANS,efp2_projective_t *A)
   ANS->infinity=A->infinity;
 }
 
-void efp2_set_mpn(efp2_t *ANS,mp_limb_t *A){
+void efp2_set_mpn(efp2_t *ANS, mp_limb_t *A){
   fp2_set_mpn(&ANS->x,A);
   fp2_set_mpn(&ANS->y,A);
+  ANS->infinity=0;
+}
+
+void efp2_set_mpn2(efp2_t *ANS, mp_limb_t *A, mp_limb_t *B, mp_limb_t *C, mp_limb_t *D){
+  fp2_set_mpn2(&ANS->x,A, B);
+  fp2_set_mpn2(&ANS->y,C, D);
   ANS->infinity=0;
 }
 

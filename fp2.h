@@ -16,6 +16,7 @@ void fpd2_set(fpd2_t *ANS, fpd2_t *A);
 void fp2_set_ui(fp2_t *ANS,unsigned long int UI);
 void fp2_set_ui_ui(fp2_t *ANS,unsigned long int UI);
 void fp2_set_mpn(fp2_t *ANS,mp_limb_t *A);
+void fp2_set_mpn2(fp2_t *ANS, mp_limb_t *A, mp_limb_t *B);
 void fp2_set_neg(fp2_t *ANS,fp2_t *A);
 void fp2_set_conj(fp2_t *ANS,fp2_t *A);
 void fp2_set_conj_montgomery(fp2_t *ANS,fp2_t *A);

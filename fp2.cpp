@@ -79,6 +79,11 @@ void fp2_set_mpn(fp2_t *ANS,mp_limb_t *A){
   fp_set_ui(&ANS->x1,0);
 }
 
+void fp2_set_mpn2(fp2_t *ANS, mp_limb_t *A, mp_limb_t *B){
+  fp_set_mpn(&ANS->x0,A);
+  fp_set_mpn(&ANS->x1,B);
+}
+
 void fp2_set_neg(fp2_t *ANS,fp2_t *A){
   fp_set_neg(&ANS->x0,&A->x0);
   fp_set_neg(&ANS->x1,&A->x1);
