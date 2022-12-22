@@ -6,12 +6,14 @@
 #include <gmp.h>
 
 void create_prt(){
-  //c=22,HW=6
-  mpz_set_str(X_z,"efffffffffffffe00000000000000000",16);
+  //c=22,HW=6 ハミングウェイトが６
+  //mpz_set_str(X_z,"efffffffffffffe00000000000000000",16);
   mpz_set_str(prime_z,"0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",16);
+  mpz_set_str(ap,"1000000000000000000000000000000000000000000000000000000",16);
+  mpz_set_str(bp,"2341f271773446cfc5fd681c520567bc65c783158aea3fdc1767ae3",16);
   if(!mpz_probab_prime_p(prime_z,30))printf("Inputed p*(prime_z) is not a prime");
 
-  mpz_set_str(order_z,"e0ffffffffffffc400000000000003ff10000000000000200000000000000001",16);
+  //mpz_set_str(order_z,"e0ffffffffffffc400000000000003ff10000000000000200000000000000001",16);
   mpz_set_str(trace_z,"0",10);
   const unsigned char* xai = reinterpret_cast<const unsigned char *>("efffffffffffffe00000000000000000");
   mpn_set_str(&X,xai,sizeof(char)*34,16); //ui(&X,1,319014718988379808906617884108577046528);
@@ -24,12 +26,12 @@ void create_prt(){
   mpn_lshift(prime705,prime705,FPLIMB2,1);
   gmp_printf("%Nx\n Size %d\n\n",prime705,FPLIMB2,mpn_sizeinbase(prime705,FPLIMB2,2));
 
-  gmp_printf("X     (%4dbit length) = %Zd\n",(int)mpz_sizeinbase(X_z,2),X_z);
+  //gmp_printf("X     (%4dbit length) = %Zd\n",(int)mpz_sizeinbase(X_z,2),X_z);
   gmp_printf("prime (%4dbit length) = %Zd\n",(int)mpz_sizeinbase(prime_z,2),prime_z);
-  gmp_printf("order (%4dbit length) = %Zd\n",(int)mpz_sizeinbase(order_z,2),order_z);
+  //gmp_printf("order (%4dbit length) = %Zd\n",(int)mpz_sizeinbase(order_z,2),order_z);
   gmp_printf("trace (%4dbit length) = %Zd\n",(int)mpz_sizeinbase(trace_z,2),trace_z);
-  printf("X     (HW :%2ld)(binary) = ",mpz_popcount(X_z));
-  mpz_out_str(stdout,2,X_z);printf("\n");
+  //printf("X     (HW :%2ld)(binary) = ",mpz_popcount(X_z));
+  //mpz_out_str(stdout,2,X_z);printf("\n");
   printf("trace (HW :%2ld)(binary) = ",mpz_popcount(trace_z));
   mpz_out_str(stdout,2,trace_z);printf("\n");
   fp_set_ui(&base_c,1);
@@ -281,9 +283,9 @@ void create_weil(){
 }
 
 void tmp_init(){
-  mpz_init(X_z);
+  //mpz_init(X_z);
   mpz_init(prime_z);
-  mpz_init(order_z);
+  //mpz_init(order_z);
   mpz_init(trace_z);
 
   mpz_init(efp_total);

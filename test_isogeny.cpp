@@ -177,10 +177,13 @@ void keygen(){
 
     mpz_set(j, ea_z);
 
+    int count = 0;
+
     // ループ(R=Sまで)
     for(mpz_sub_ui(j, j, 1); mpz_cmp_ui(j, 0) >= 0; mpz_sub_ui(j, j, 1)){
 
         efp2_set(&R, &S);
+        count++;
         //gmp_printf("j = %Zd\n", j);
 
         if(mpz_cmp_ui(j, 0) > 0){
@@ -195,6 +198,7 @@ void keygen(){
                 //getchar();
 
             }
+            gmp_printf("%Zd回2乗した\n", i);
         }
 
         //printf("R check\n");
@@ -223,6 +227,9 @@ void keygen(){
         //getchar();
 
     }
+
+    printf("%d回同種写像計算をした\n", count);
+    //216回と137回
 
     printf("recover_y\n");
     fp2_println("a = ",&Ea);
