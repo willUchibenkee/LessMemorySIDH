@@ -1,15 +1,7 @@
 //test_isogeny.cpp
-
 #include "test_isogeny.h"
 #include "isogeny.h"
 #include <cstdio>
-
-/*①補助点P,QからSを計算(eca,scm P+kQ)
-　②SからRを計算 (αの決定 ecd or ect)
-　③αからP,Q,S,aを再決定 (changea(), nextp())
-　最終形 PKa (Pb, Qb, aA), PKb(Pa, Qa, aB)
-　ある関数：gets(), changa(), changeb(), nextp(), eca(), ecd(), scm(), ect(), gety(), getj()
-　作る関数　keygen():公開鍵作成まで keyexcng():j不変量一致まで*/
 
 void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
     // 鍵共有
@@ -116,11 +108,8 @@ void keycon(efp2_t *P2, efp2_t *Q2, efp2_t *P3, efp2_t *Q3){
 }
 
 void keygen(){
-    /*やること
-    ①補助点P,QからSを計算(eca,scm P+kQ)
-　　②SからRを計算 (αの決定 ecd or ect)
-　　③αからP,Q,S,aを再決定 (changea(), nextp())
-　　②、③は繰り返す*/
+    // 鍵生成
+
     printf("keygen starts.\n");
 
     gmp_randinit_default(state);
@@ -133,24 +122,14 @@ void keygen(){
     efp2_init(&P3);
     efp2_init(&Q3);
 
-    efp2_set(&P2, &Pa);
-    efp2_set(&Q2, &Qa);
-
-    efp2_set(&P3, &Pb);
-    efp2_set(&Q3, &Qb);
-    // efp2_set_a_b_c_d(&P3, 275, 358, 104, 410);
-    // efp2_set_a_b_c_d(&Q3, 185, 20, 239, 281);
+    // efp2_rational_point(&P3);
+    // efp2_rational_point(&Q3);
+    efp2_set_a_b_c_d(&P3, 275, 358, 104, 410);
+    efp2_set_a_b_c_d(&Q3, 185, 20, 239, 281);
+    efp2_set_a_b_c_d(&P2, 248, 100, 199, 304);
+    efp2_set_a_b_c_d(&Q2, 394, 426, 79, 51);
     efp2_println("P3 = ",&P3);
     efp2_println("Q3 = ",&Q3);
-
-    efp2_println("P2 = ",&P2);
-    efp2_println("Q2 = ",&Q2);
-
-    efp2_checkOnCurve(&P3, &Ea, &Eb);
-    efp2_checkOnCurve(&Q3, &Ea, &Eb);
-    efp2_checkOnCurve(&P2, &Ea, &Eb);
-    efp2_checkOnCurve(&Q2, &Ea, &Eb);
-
     printf("---------------------------------\n");
 
     // 秘密鍵
@@ -169,6 +148,9 @@ void keygen(){
 
     efp2_checkOnCurve(&S, &Ea, &Eb);
 
+    fp2_printf("Ea = ", &Ea);
+    efp2_printf("S = ", &S);
+
     mpz_t j, i;
     mpz_init(j);
     mpz_init(i);
@@ -177,50 +159,49 @@ void keygen(){
 
     mpz_set(j, ea_z);
 
-    int count = 0;
-
     // ループ(R=Sまで)
-    for(mpz_sub_ui(j, j, 1); mpz_cmp_ui(j, 0) >= 0; mpz_sub_ui(j, j, 1)){
+    for(mpz_sub_ui(j, j, 1); mpz_cmp_ui(j, 0) > 0; mpz_sub_ui(j, j, 1)){
 
         efp2_set(&R, &S);
-        count++;
-        //gmp_printf("j = %Zd\n", j);
 
-        if(mpz_cmp_ui(j, 0) > 0){
-            for(mpz_set_ui(i, 0); mpz_cmp(i, j) < 0; mpz_add_ui(i, i, 1)){
+        for(mpz_set_ui(i, 0); mpz_cmp(i, j) < 0; mpz_add_ui(i, i, 1)){
 
-                efp2_ecd(&R, &R, &Ea, &Eb);
-                //gmp_printf("i = %Zd\n", i);
+        efp2_ecd(&R, &R, &Ea, &Eb);
 
-                //efp2_checkOnCurve(&R, &a2, &b);
+        //efp2_checkOnCurve(&R, &a2, &b);
 
-                //efp2_printf("R = ", &R);
-                //getchar();
+        //efp2_printf("R = ", &R);
+        //getchar();
+        printf("a");
 
-            }
-            gmp_printf("%Zd回2乗した\n", i);
         }
 
-        //printf("R check\n");
-        //efp2_checkOnCurve(&R, &Ea, &Eb);
+        printf("R check\n");
+        efp2_checkOnCurve(&R, &Ea, &Eb);
 
         // Rを2or3同種写像で求める
         //isogeny_changea(fp2_t *nexta, fp2_t *nextb, fp2_t *oldb, fp2_t *alpha)
         isogeny_changea(&Ea, &Eb, &Eb, &R.x);
 
-        // fp2_printf("Rx = ", &R.x);
-        // fp2_printf("newa = ", &Ea);
-        // fp2_printf("newb = ", &Eb);
+        fp2_printf("Rx = ", &R.x);
+        fp2_printf("newa = ", &Ea);
+        fp2_printf("newb = ", &Eb);
 
         // Rxを使ってP,Q,Sを更新する
         isogeny_nextp(&P3, &P3, &R.x, 2);
         isogeny_nextp(&Q3, &Q3, &R.x, 2);
         isogeny_nextp(&S, &S, &R.x, 2);
 
-        //efp2_recover_y(&S, S.x);
+        efp2_printf("P = ", &P3);
+        efp2_printf("Q = ", &Q3);
+        efp2_printf("S = ", &S);
+        
+        efp2_recover_y(&S, S.x);
 
-        //printf("S check\n");
-        //efp2_checkOnCurve(&S, &Ea, &Eb);
+        printf("S check\n");
+        efp2_checkOnCurve(&S, &Ea, &Eb);
+        
+        efp2_printf("S = ", &S);
 
         //gmp_printf("j: %Zd\n", j);
 
@@ -228,21 +209,12 @@ void keygen(){
 
     }
 
-    printf("%d回同種写像計算をした\n", count);
-    //216回と137回
-
-    printf("recover_y\n");
-    fp2_println("a = ",&Ea);
-    fp2_println("b = ",&Eb);
+    //printf("recover_y\n");
 
     efp2_recover_y(&P3, P3.x);
-    efp2_checkOnCurve(&P3, &Ea, &Eb);
-    efp2_println("P3 = ",&P3);
-    efp2_println("Q3 = ",&Q3);
     efp2_recover_y(&Q3, Q3.x);
 
-    printf("afetr recover_y\n");
-    //efp2_checkOnCurve(&P3, &Ea, &Eb);
+    efp2_checkOnCurve(&P3, &Ea, &Eb);
     efp2_checkOnCurve(&Q3, &Ea, &Eb);
 
     fp2_set(&tmp_a, &Ea);
@@ -250,12 +222,15 @@ void keygen(){
 
     printf("---------------------------------\n");
 
-    getchar();
+    efp2_rational_point(&P2);
+    efp2_rational_point(&Q2);
+    efp2_println("P2 = ",&P2);
+    efp2_println("Q2 = ",&Q2);
 
     fp2_set_ui(&Ea, 6);
     fp2_set_ui(&Eb, 1);
 
-    isogeny_gets(&S, &P3, &Q3, kb_z, &Ea);
+    isogeny_gets(&S, &P2, &Q2, kb_z, &Ea);
 
     efp2_checkOnCurve(&S, &Ea, &Eb);
 

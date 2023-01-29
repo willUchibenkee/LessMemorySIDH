@@ -264,6 +264,12 @@ void efp2_set_ui(efp2_t *ANS,unsigned long int UI){
   ANS->infinity=0;
 }
 
+void efp2_set_a_b_c_d(efp2_t *ANS, unsigned long int UI_a, unsigned long int UI_b, unsigned long int UI_c, unsigned long int UI_d){
+  fp2_set_a_b(&ANS->x, UI_a, UI_b);
+  fp2_set_a_b(&ANS->y, UI_c, UI_d);
+  ANS->infinity=0;
+}
+
 void efp2_to_montgomery(efp2_t *ANS,efp2_t *A){
   fp2_to_montgomery(&ANS->x,&A->x);
   fp2_to_montgomery(&ANS->y,&A->y);
@@ -290,15 +296,9 @@ void efp2_projective_mod_montgomery(efp2_projective_t *ANS,efp2_projective_t *A)
   ANS->infinity=A->infinity;
 }
 
-void efp2_set_mpn(efp2_t *ANS, mp_limb_t *A){
+void efp2_set_mpn(efp2_t *ANS,mp_limb_t *A){
   fp2_set_mpn(&ANS->x,A);
   fp2_set_mpn(&ANS->y,A);
-  ANS->infinity=0;
-}
-
-void efp2_set_mpn2(efp2_t *ANS, mp_limb_t *A, mp_limb_t *B, mp_limb_t *C, mp_limb_t *D){
-  fp2_set_mpn2(&ANS->x,A, B);
-  fp2_set_mpn2(&ANS->y,C, D);
   ANS->infinity=0;
 }
 
