@@ -247,17 +247,18 @@ void keygen(){
     efp2_println("P2 = ",&P2);
     efp2_println("Q2 = ",&Q2);
 
+    //リセット
     fp2_set_ui_ui(&Ea, 329);
     fp2_add_ui(&Ea, &Ea, 94);
     fp2_set_ui(&Eb, 1);
+    efp2_set_a_b_c_d(&P3, 275, 358, 104, 410);
+    efp2_set_a_b_c_d(&Q3, 185, 20, 239, 281);
 
-    
-    efp2_set_a_b_c_d(&Ptmp3, 275, 358, 104, 410);
-    efp2_set_a_b_c_d(&Qtmp3, 185, 20, 239, 281);
-
-    isogeny_gets(&S, &Ptmp3, &Qtmp3, kb_z, &Ea);
+    isogeny_gets(&S, &P3, &Q3, kb_z, &Ea);
 
     efp2_checkOnCurve(&S, &Ea, &Eb);
+
+    efp2_printf("S = ", &S);
 
     // Alice, Bobどっちもやる
 
@@ -268,10 +269,11 @@ void keygen(){
 
         efp2_set(&R, &S);
 
-        for(mpz_set_ui(i, 1); mpz_cmp(i, j) < 0; mpz_add_ui(i, i, 1)){
+        for(mpz_set_ui(i, 0); mpz_cmp(i, j) < 0; mpz_add_ui(i, i, 1)){
 
             isogeny_mgec3(&R, &R, &Ea);
             //efp2_ecd(&R, &R, &a, &b);
+            printf("a");
             
         }
 
@@ -279,16 +281,42 @@ void keygen(){
         //isogeny_changeb(fp2_t *nexta, fp2_t *nextb, fp2_t *beta, fp2_t *olda, fp2_t *oldb)
         isogeny_changeb(&Ea, &Eb, &R.x, &Ea, &Eb);
 
-        efp2_checkOnCurve(&R, &Ea, &Eb);
+        fp2_printf("Rx = ", &R.x);
+        fp2_printf("newa = ", &Ea);
+        fp2_printf("newb = ", &Eb);
 
         // Rxを使ってP,Q,Sを更新する
         isogeny_nextp(&P2, &P2, &R.x, 3);
         isogeny_nextp(&Q2, &Q2, &R.x, 3);
         isogeny_nextp(&S, &S, &R.x, 3);
 
+        efp2_printf("P = ", &P2);
+        efp2_printf("Q = ", &Q2);
+        efp2_printf("S = ", &S);
+
         efp2_recover_y(&S, S.x);
 
+        printf("S check\n");
+        efp2_checkOnCurve(&S, &Ea, &Eb);
+        
+        efp2_printf("S = ", &S);
+
     }
+
+    fp2_printf("Rx = ", &R.x);
+
+    efp2_set(&R, &S);
+    fp2_printf("Rx = ", &R.x);
+    isogeny_changeb(&Ea, &Eb, &R.x, &Ea, &Eb);
+
+    fp2_printf("newa = ", &Ea);
+    fp2_printf("newb = ", &Eb);
+
+    // Rxを使ってP,Q,Sを更新する
+    isogeny_nextp(&P2, &P2, &R.x, 3);
+    isogeny_nextp(&Q2, &Q2, &R.x, 3);
+    efp2_printf("P = ", &P2);
+    efp2_printf("Q = ", &Q2);
 
     efp2_recover_y(&P2, P2.x);
     efp2_recover_y(&Q2, Q2.x);
@@ -299,9 +327,9 @@ void keygen(){
     // A(P,Q,a), B(P.Q.a)
 
     printf("Aliceの鍵:");
-    efp2_println("P3 = ",&P3);
-    efp2_println("Q3 = ",&Q3);
-    fp2_println("a = ", &Ea);
+    efp2_println("P3 = ",&Ptmp3);
+    efp2_println("Q3 = ",&Qtmp3);
+    fp2_println("a = ", &tmp_a);
 
     printf("Bobの鍵:");
     efp2_println("P2 = ",&P2);

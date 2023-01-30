@@ -108,10 +108,10 @@ void isogeny_changeb(fp2_t *nexta, fp2_t *nextb, fp2_t *beta, fp2_t *olda, fp2_t
     // ここの処理の有無でA. Costello B. SIDHspec 楕円曲線式を切り替える
     // b = oldb * beta**2
 
-    fp2_sqr(&temp, beta);
-    fp2_mul(&temp, &temp, oldb);
+    // fp2_sqr(&temp, beta);
+    // fp2_mul(&temp, &temp, oldb);
 
-    fp2_set(nextb, &temp);
+    // fp2_set(nextb, &temp);
 
 }
 
@@ -331,6 +331,7 @@ void isogeny_nextp(efp2_t *ans, efp2_t *P, fp2_t *alpha, int l){
     
     if(l == 3){
         //bob
+        fp2_printf("in nextp Rx = ", alpha);
 
         //print("bob")
         //one = fp2.fp2_t(1, 0)
