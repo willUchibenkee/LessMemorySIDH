@@ -180,6 +180,9 @@ void curve_search(){
   
   fp2_init(&tmp_a);
   fp2_init(&tmp_b);
+  
+  efp2_init(&Ptmp3);
+  efp2_init(&Qtmp3);
 
   printf("Elliptic curve search is done\n");
 }

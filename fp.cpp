@@ -184,7 +184,7 @@ void pre_montgomery() {
   mpz_clear(R);
   mpz_clear(R3_z);
 
-  fp_to_montgomery(&base_d_inv_montgomery, &base_d_inv);
+  //fp_to_montgomery(&base_d_inv_montgomery, &base_d_inv);
 }
 
 

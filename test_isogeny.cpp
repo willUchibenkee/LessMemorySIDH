@@ -172,7 +172,7 @@ void keygen(){
 
         //efp2_printf("R = ", &R);
         //getchar();
-        printf("a");
+        //printf("a");
 
         }
 
@@ -211,26 +211,51 @@ void keygen(){
 
     //printf("recover_y\n");
 
+    efp2_set(&R, &S);
+    isogeny_changea(&Ea, &Eb, &Eb, &R.x);
+
+    fp2_printf("Rx = ", &R.x);
+    fp2_printf("newa = ", &Ea);
+    fp2_printf("newb = ", &Eb);
+
+    // Rxを使ってP,Qを更新する
+    isogeny_nextp(&P3, &P3, &R.x, 2);
+    isogeny_nextp(&Q3, &Q3, &R.x, 2);
+
+    efp2_printf("P = ", &P3);
+    efp2_printf("Q = ", &Q3);
+
     efp2_recover_y(&P3, P3.x);
     efp2_recover_y(&Q3, Q3.x);
 
     efp2_checkOnCurve(&P3, &Ea, &Eb);
     efp2_checkOnCurve(&Q3, &Ea, &Eb);
 
+    //結果保持
     fp2_set(&tmp_a, &Ea);
     fp2_set(&tmp_b, &Eb);
+    
+    efp2_set(&Ptmp3, &P3);
+    efp2_set(&Qtmp3, &Q3);
+
+    efp2_printf("P'3 = ", &Ptmp3);
+    efp2_printf("Q'3 = ", &Qtmp3);
+    fp2_printf("a' = ", &tmp_a);
 
     printf("---------------------------------\n");
 
-    efp2_rational_point(&P2);
-    efp2_rational_point(&Q2);
     efp2_println("P2 = ",&P2);
     efp2_println("Q2 = ",&Q2);
 
-    fp2_set_ui(&Ea, 6);
+    fp2_set_ui_ui(&Ea, 329);
+    fp2_add_ui(&Ea, &Ea, 94);
     fp2_set_ui(&Eb, 1);
 
-    isogeny_gets(&S, &P2, &Q2, kb_z, &Ea);
+    
+    efp2_set_a_b_c_d(&Ptmp3, 275, 358, 104, 410);
+    efp2_set_a_b_c_d(&Qtmp3, 185, 20, 239, 281);
+
+    isogeny_gets(&S, &Ptmp3, &Qtmp3, kb_z, &Ea);
 
     efp2_checkOnCurve(&S, &Ea, &Eb);
 

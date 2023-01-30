@@ -152,6 +152,7 @@ TTT_EXTERN mp_limb_t Ni_neg;  //Ni_neg=-N^(-1)
 TTT_EXTERN mpz_t ka_z, kb_z, ea_z, eb_z;
 TTT_EXTERN mp_limb_t ka[FPLIMB], kb[FPLIMB], ea[FPLIMB], eb[FPLIMB];
 TTT_EXTERN fp2_t tmp_a, tmp_b;
+TTT_EXTERN efp2_t Ptmp3, Qtmp3;
 
 TTT_EXTERN struct timeval tv_start,tv_end;
 TTT_EXTERN float MILLER_ATE_4SPARSE_TIME;

@@ -74,14 +74,14 @@ void fp2_set_ui_ui(fp2_t *ANS,unsigned long int UI){
   fp_set_ui(&ANS->x1,UI);
 }
 
+void fp2_set_a_b(fp2_t *ANS, unsigned long int UI_a, unsigned long int UI_b){
+  fp_set_ui(&ANS->x0, UI_a);
+  fp_set_ui(&ANS->x1, UI_b);
+}
+
 void fp2_set_mpn(fp2_t *ANS,mp_limb_t *A){
   fp_set_mpn(&ANS->x0,A);
   fp_set_ui(&ANS->x1,0);
-}
-
-void fp2_set_mpn2(fp2_t *ANS, mp_limb_t *A, mp_limb_t *B){
-  fp_set_mpn(&ANS->x0,A);
-  fp_set_mpn(&ANS->x1,B);
 }
 
 void fp2_set_neg(fp2_t *ANS,fp2_t *A){
@@ -559,12 +559,9 @@ void fp2_sqrt(fp2_t *ANS,fp2_t *A){
   //gmp_randseed_ui(state,(unsigned long)time(NULL));
 
   fp2_set_random(&n,state);
-  //非平方剰余 n を決める
   while(fp2_legendre(&n)!=-1){
     fp2_set_random(&n,state);
-    //printf("a");
   }
-  //p−1 = Q⋅2**S に変形する
   mpz_pow_ui(q,prime_z,2);
   mpz_sub_ui(q,q,1);
   mpz_mod_ui(result,q,2);
@@ -573,9 +570,7 @@ void fp2_sqrt(fp2_t *ANS,fp2_t *A){
     mpz_tdiv_q_ui(q,q,2);
     mpz_mod_ui(result,q,2);
     e++;
-    //printf("b");
   }
-  //M0=S c0=z**Q t0=n**Q R0=n**(Q+1)/2　を求める
   fp2_pow(&y,&n,q);
   mpz_set_ui(z,e);
   mpz_sub_ui(exp,q,1);
@@ -584,11 +579,6 @@ void fp2_sqrt(fp2_t *ANS,fp2_t *A){
   fp2_mul(&tmp,&x,&x);
   fp2_mul(&k,&tmp,A);
   fp2_mul(&x,&x,A);
-  //ti≡1 なら ループを抜ける 抜けるまで下記のように値更新
-  //Mi+1=((ti)**2j ≡ 1を満たす最小のj,ただし0<j<Mi)
-  //ci+1=(ci)2**(Mi−Mi+1)
-  //ti+1=ti⋅(ci)**2(Mi−Mi+1)
-  //Ri+1=Ri⋅(ci)**2(Mi−Mi+1−1)
   while(fp2_cmp_one(&k)!=0){
     m=1;
     mpz_ui_pow_ui(exp,2,m);
@@ -597,7 +587,6 @@ void fp2_sqrt(fp2_t *ANS,fp2_t *A){
       m++;
       mpz_ui_pow_ui(exp,2,m);
       fp2_pow(&tmp,&k,exp);
-      //printf("c");
     }
     mpz_sub_ui(exp,z,m);
     mpz_sub_ui(exp,exp,1);
@@ -607,7 +596,6 @@ void fp2_sqrt(fp2_t *ANS,fp2_t *A){
     mpz_set_ui(z,m);
     fp2_mul(&x,&x,&t);
     fp2_mul(&k,&k,&y);
-    //printf("d");
   }
   fp2_set(ANS,&x);
 
