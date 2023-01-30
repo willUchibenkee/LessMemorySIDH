@@ -331,7 +331,7 @@ void isogeny_nextp(efp2_t *ans, efp2_t *P, fp2_t *alpha, int l){
     
     if(l == 3){
         //bob
-        fp2_printf("in nextp Rx = ", alpha);
+        //fp2_printf("in nextp Rx = ", alpha);
 
         //print("bob")
         //one = fp2.fp2_t(1, 0)

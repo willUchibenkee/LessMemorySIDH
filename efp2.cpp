@@ -702,12 +702,12 @@ void efp2_recover_y(efp2_t *ANS, fp2_t X){
   //fp2_printf("右辺 = ", &tmp1);
 
   if(fp2_legendre(&tmp1) == -1){
-    printf("no sqrt\n");
+    //printf("no sqrt\n");
     if(fp2_cmp_zero(&tmp1) == 0){
       fp2_set_ui(&ANS->y, 0);
     }
   }else{
-      printf("sqrt\n");
+      //printf("sqrt\n");
     //fp2_println("tmp1 = ", &tmp1);
     fp2_sqrt(&tmp1,&tmp1);  //(X^3+6X^2+X)^1/2
     fp2_set_neg(&tmp2,&tmp1);//-(X^3+6X^2+X)^1/2
