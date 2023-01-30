@@ -25,16 +25,12 @@ int main(){
   gmp_randinit_default(state);
   gmp_randseed_ui(state,(unsigned long int)time(NULL));
 
-  printf("tmp_init\n");
   tmp_init();
-  printf("create_prt\n");
   create_prt();
   // check_base();
   // pre_montgomery();
   // frobenius_precalculation();
-  printf("create_search\n");
   curve_search();
-  printf("create_weil\n");
   create_weil();
   
   printf("*********************************************************************************************\n\n");
@@ -98,11 +94,7 @@ int main(){
   // efp_println("P2 = ",&P2);
   // efp_checkOnCurve(&P2,&Ea.x0,&Eb.x0);
 
-  // sidh ground
-
   keygen();
-
-  printf("*********************************************************************************************\n\n");
 
   return 0;
 }

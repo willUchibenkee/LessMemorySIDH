@@ -39,7 +39,8 @@
 
 #ifdef  X64
 #define FPLIMB_BITS FPLIMB*ARCBIT
-#define FPLIMB 1 // 64bit * 7 = 448bit
+//#define FPLIMB 7 //
+#define FPLIMB 7 //
 #define FPLIMB2 FPLIMB*2  //??
 #endif
 
@@ -122,12 +123,13 @@ typedef struct{
 TTT_EXTERN gmp_randstate_t state;//for random
 TTT_EXTERN int cost_add,cost_add_ui,cost_sub,cost_sub_ui,cost_mul,cost_mul_ui,cost_mul_base,cost_sqr,cost_inv,cost_mod,cost_set_neg;
 TTT_EXTERN int cost_add_nonmod, cost_add_nonmod_double, cost_sub_nonmod, cost_sub_nonmod_double, cost_r1shift, cost_mod_nomal;
-TTT_EXTERN mpz_t X_z,prime_z,order_z,trace_z; //標数p
+TTT_EXTERN mpz_t X_z,prime_z,order_z,trace_z;
 TTT_EXTERN mp_limb_t X,prime[FPLIMB];
 TTT_EXTERN mp_limb_t prime2[FPLIMB2],prime705[FPLIMB2],prime672[FPLIMB2];
-// TTT_EXTERN fp_t base_c,base_d;//α^7=c, β^2=α となるように逐次拡大で拡大体を構成する
-// TTT_EXTERN fp_t base_c_inv,base_d_inv,base_d_inv_montgomery;//α^7=c, β^2=α に出てくるcの逆元の計算結果
+TTT_EXTERN fp_t base_c,base_d;//α^7=c, β^2=α となるように逐次拡大で拡大体を構成する
+TTT_EXTERN fp_t base_c_inv,base_d_inv,base_d_inv_montgomery;//α^7=c, β^2=α に出てくるcの逆元の計算結果
 
+TTT_EXTERN mpz_t ap, bp;
 TTT_EXTERN fp2_t Ea, Eb;
 TTT_EXTERN fp_t curve_b;
 TTT_EXTERN mpz_t sqrt_power_z;
@@ -141,6 +143,7 @@ TTT_EXTERN mpz_t hardpart,hp_3w,three;
 TTT_EXTERN fp_t frobenius_1_6,frobenius_2_6,frobenius_4_6,frobenius_5_6;//c^((p-1)/10)の計算結果
 TTT_EXTERN fp_t frobenius_1_6MR,frobenius_2_6MR,frobenius_4_6MR,frobenius_5_6MR;//c^((p-1)/10)の計算結果
 
+
 //montgomery
 TTT_EXTERN mp_limb_t R[FPLIMB],Ri[FPLIMB],R1[FPLIMB],RR[FPLIMB],Ni[FPLIMB];
 TTT_EXTERN int m;
@@ -148,11 +151,16 @@ TTT_EXTERN mp_limb_t u[FPLIMB+1];
 TTT_EXTERN mp_limb_t N[FPLIMB2],R2[FPLIMB],R3[FPLIMB],RmodP[FPLIMB];
 TTT_EXTERN mp_limb_t Ni_neg;  //Ni_neg=-N^(-1)
 
+
 //isogeny
 TTT_EXTERN mpz_t ka_z, kb_z, ea_z, eb_z;
 TTT_EXTERN mp_limb_t ka[FPLIMB], kb[FPLIMB], ea[FPLIMB], eb[FPLIMB];
 TTT_EXTERN fp2_t tmp_a, tmp_b;
+TTT_EXTERN mpz_t Pax0_z, Pax1_z, Qax0_z, Qax1_z, Pbx0_z, Pbx1_z, Qbx0_z, Qbx1_z, Pay0_z, Pay1_z, Qay0_z, Qay1_z, Pby0_z, Pby1_z, Qby0_z, Qby1_z;
+TTT_EXTERN mp_limb_t Pax0[FPLIMB], Pax1[FPLIMB], Qax0[FPLIMB], Qax1[FPLIMB], Pbx0[FPLIMB], Pbx1[FPLIMB], Qbx0[FPLIMB], Qbx1[FPLIMB], Pay0[FPLIMB], Pay1[FPLIMB], Qay0[FPLIMB], Qay1[FPLIMB], Pby0[FPLIMB], Pby1[FPLIMB], Qby0[FPLIMB], Qby1[FPLIMB];
+TTT_EXTERN efp2_t Pa, Qa, Pb, Qb;
 TTT_EXTERN efp2_t Ptmp3, Qtmp3;
+
 
 TTT_EXTERN struct timeval tv_start,tv_end;
 TTT_EXTERN float MILLER_ATE_4SPARSE_TIME;

@@ -28,6 +28,7 @@ void check_efp2(){
   efp2_init(&ANS);
 
   efp2_rational_point(&P);
+  efp2_checkOnCurve(&P, &Ea, &Eb);
   efp2_println("P = ",&P);
 
   printf("---------------------------------\n");
@@ -37,6 +38,16 @@ void check_efp2(){
   efp2_println("[p^2 +1 -t2]P = ",&ANS);
   printf("---------------------------------\n");
 
+  efp2_println("P = ",&P);//Aが変わっていないことの確認
+
+  efp2_checkOnCurve(&P, &Ea, &Eb);
+  printf("recover_yの確認\n");
+  // if(fp2_legendre(&P.x) == -1){
+  //   printf("no sqrt\n");
+  // }
+  fp2_println("Eb = ",&Eb);
+  efp2_recover_y(&P, P.x);
+  efp2_checkOnCurve(&P, &Ea, &Eb);
   efp2_println("P = ",&P);//Aが変わっていないことの確認
 
   printf("*********************************************************************************************\n\n");
