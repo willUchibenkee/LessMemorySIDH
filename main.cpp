@@ -46,8 +46,8 @@ int main(){
   // check_fp_with_montgomery();
   // check_fp2_with_montgomery();
   // check_fp6_with_montgomery();
-  check_fp();
-  check_fp2();
+  // check_fp();
+  // check_fp2();
 
   // BENCH_fp2_fp6_mul_lazy_montgomery(CHECK_PAIRING_TIME_LOOP);
   // BENCH_miller_jac_lazy_montgomery(CHECK_PAIRING_TIME_LOOP);
@@ -57,8 +57,8 @@ int main(){
   // BENCH_Pairing_proj_lazy_montgomery(CHECK_PAIRING_TIME_LOOP);
   // BENCH_Pairing_proj_lazy_montgomery_static(CHECK_PAIRING_TIME_LOOP);
 
-  check_efp();
-  check_efp2();
+  // check_efp();
+  // check_efp2();
   // check_efp6();
   // check_g1_g2();
 
@@ -94,6 +94,14 @@ int main(){
   // efp_println("P2 = ",&P2);
   // efp_checkOnCurve(&P2,&Ea.x0,&Eb.x0);
 
+  // for(int i = 0; i < 10; i++){
+  //   keygen();
+  //   create_prt();
+  //   tmp_init();
+  //   curve_search();
+  //   create_weil();
+  // }
+  // printf("aa\n");
   keygen();
 
   return 0;

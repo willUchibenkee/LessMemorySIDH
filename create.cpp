@@ -9,6 +9,7 @@ void create_prt(){
   //c=22,HW=6 ハミングウェイトが６
   //mpz_set_str(X_z,"efffffffffffffe00000000000000000",16);
   mpz_set_str(prime_z,"0002341F271773446CFC5FD681C520567BC65C783158AEA3FDC1767AE2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",16);
+  //mpz_set_str(prime_z,"431",10);
   mpz_set_str(ap,"1000000000000000000000000000000000000000000000000000000",16);
   mpz_set_str(bp,"2341f271773446cfc5fd681c520567bc65c783158aea3fdc1767ae3",16);
   if(!mpz_probab_prime_p(prime_z,30))printf("Inputed p*(prime_z) is not a prime");
@@ -210,6 +211,14 @@ void curve_search(){
 
   fp2_set_ui(&Ea,6);
   fp2_set_ui(&Eb,1);
+
+  printf("tmpの初期化\n");
+  
+  fp2_init(&tmp_a);
+  fp2_init(&tmp_b);
+  
+  efp2_init(&Ptmp3);
+  efp2_init(&Qtmp3);
 
   printf("Elliptic curve search is done\n");
 }

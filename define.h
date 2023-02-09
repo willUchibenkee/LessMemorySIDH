@@ -39,6 +39,7 @@
 
 #ifdef  X64
 #define FPLIMB_BITS FPLIMB*ARCBIT
+//#define FPLIMB 7 //
 #define FPLIMB 7 //
 #define FPLIMB2 FPLIMB*2  //??
 #endif
@@ -158,6 +159,7 @@ TTT_EXTERN fp2_t tmp_a, tmp_b;
 TTT_EXTERN mpz_t Pax0_z, Pax1_z, Qax0_z, Qax1_z, Pbx0_z, Pbx1_z, Qbx0_z, Qbx1_z, Pay0_z, Pay1_z, Qay0_z, Qay1_z, Pby0_z, Pby1_z, Qby0_z, Qby1_z;
 TTT_EXTERN mp_limb_t Pax0[FPLIMB], Pax1[FPLIMB], Qax0[FPLIMB], Qax1[FPLIMB], Pbx0[FPLIMB], Pbx1[FPLIMB], Qbx0[FPLIMB], Qbx1[FPLIMB], Pay0[FPLIMB], Pay1[FPLIMB], Qay0[FPLIMB], Qay1[FPLIMB], Pby0[FPLIMB], Pby1[FPLIMB], Qby0[FPLIMB], Qby1[FPLIMB];
 TTT_EXTERN efp2_t Pa, Qa, Pb, Qb;
+TTT_EXTERN efp2_t Ptmp3, Qtmp3;
 
 
 TTT_EXTERN struct timeval tv_start,tv_end;
